@@ -173,7 +173,7 @@ app.get("/play/stats", requireAdmin, (req, res) => {
   const sess = new Map();
   for (const e of recent) {
     let s = sess.get(e.session);
-    if (!s) { s = { names: new Set(), parts: new Set(), utm: e.utm || {}, last: null, cards: 0 }; sess.set(e.session, s); }
+    if (!s) { s = { device: e.device || e.session, names: new Set(), parts: new Set(), utm: e.utm || {}, last: null, cards: 0 }; sess.set(e.session, s); }
     s.names.add(e.name);
     if (e.name === "part_reached") s.parts.add((e.props.round || "") + ":" + e.props.part);
     if (e.name === "card_answer") s.cards++;
@@ -197,7 +197,9 @@ app.get("/play/stats", requireAdmin, (req, res) => {
     ["Clicked to the villa", s => has(s, "villa_click")],
   ];
   const top = all.filter(s => has(s, "landing")).length || all.length || 1;
-  const funnel = steps.map(([label, fn]) => { const n = all.filter(fn).length; return { label, n, pct: Math.round(n * 100 / top) }; });
+  const uniq = list => new Set(list.map(s => s.device)).size;
+  const topU = uniq(all.filter(s => has(s, "landing"))) || uniq(all) || 1;
+  const funnel = steps.map(([label, fn]) => { const hit = all.filter(fn), n = hit.length, u = uniq(hit); return { label, n, u, pct: Math.round(n * 100 / top), upct: Math.round(u * 100 / topU) }; });
   // where unfinished games stopped
   const stops = {};
   for (const s of all) {
@@ -227,9 +229,9 @@ app.get("/play/stats", requireAdmin, (req, res) => {
   const e = escapeHtml, tok = encodeURIComponent(req.query.token || "");
   res.type("html").send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game stats · Future Family Holidays</title>
 <style>body{font:15px/1.45 -apple-system,system-ui,sans-serif;margin:0;background:#FAF6EE;color:#1E1A16}main{max-width:860px;margin:0 auto;padding:20px 16px 60px}h1{font-size:24px;margin:0 0 4px}h2{font-size:17px;margin:28px 0 8px}p.m{color:#6B5F53;margin:0 0 14px}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #E2D6C2;border-radius:10px;overflow:hidden}td,th{padding:7px 10px;border-bottom:1px solid #EFE6D6;text-align:left;font-variant-numeric:tabular-nums}th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#6B5F53;background:#FAF6EE}.bar{height:10px;background:#FF851B;border-radius:5px}.r{text-align:right}a{color:#C45F0E}.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.tile{background:#fff;border:1px solid #E2D6C2;border-radius:10px;padding:12px}.tile b{display:block;font-size:24px}</style></head><body><main>
-<h1>Future Family Holidays · game stats</h1><p class="m">Last ${days} days · ${all.length} visits · <a href="?token=${tok}&days=7">7d</a> · <a href="?token=${tok}&days=30">30d</a> · <a href="?token=${tok}&days=90">90d</a> · <a href="/api/ffh/export.csv?token=${tok}">plays CSV</a> · <a href="/api/ffh/events.csv?token=${tok}">events CSV</a></p>
-<div class="tiles"><div class="tile">Finished<b>${funnel[8].n}</b>${funnel[8].pct}% of visits</div><div class="tile">Prize entries<b>${funnel[9].n}</b>${funnel[9].pct}% of visits</div><div class="tile">Median time to finish<b>${durs.length ? Math.round(med(durs) / 60 * 10) / 10 + " min" : "–"}</b>${durs.length} finished games</div><div class="tile">Who played<b style="font-size:15px;margin-top:6px">${Object.entries(modes).map(([k, v]) => e(k) + " " + v).join(" · ") || "–"}</b></div></div>
-<h2>Funnel</h2><table><tr><th>Step</th><th class="r">Visits</th><th class="r">%</th><th style="width:40%"></th></tr>${funnel.map(f => `<tr><td>${e(f.label)}</td><td class="r">${f.n}</td><td class="r">${f.pct}%</td><td><div class="bar" style="width:${f.pct}%"></div></td></tr>`).join("")}</table>
+<h1>Future Family Holidays · game stats</h1><p class="m">Last ${days} days · ${all.length} visits · ${uniq(all)} unique visitors · <a href="?token=${tok}&days=7">7d</a> · <a href="?token=${tok}&days=30">30d</a> · <a href="?token=${tok}&days=90">90d</a> · <a href="/api/ffh/export.csv?token=${tok}">plays CSV</a> · <a href="/api/ffh/events.csv?token=${tok}">events CSV</a></p>
+<div class="tiles"><div class="tile">Finished<b>${funnel[8].u}</b>${funnel[8].upct}% of unique visitors</div><div class="tile">Prize entries<b>${funnel[9].u}</b>${funnel[9].upct}% of unique visitors</div><div class="tile">Median time to finish<b>${durs.length ? Math.round(med(durs) / 60 * 10) / 10 + " min" : "–"}</b>${durs.length} finished games</div><div class="tile">Who played<b style="font-size:15px;margin-top:6px">${Object.entries(modes).map(([k, v]) => e(k) + " " + v).join(" · ") || "–"}</b></div></div>
+<h2>Funnel</h2><p class="m">Visits count every time the game is opened (one person can visit several times). Unique visitors count each phone or browser once. % is of unique visitors who opened the game.</p><table><tr><th>Step</th><th class="r">Visits</th><th class="r">Unique visitors</th><th class="r">%</th><th style="width:34%"></th></tr>${funnel.map(f => `<tr><td>${e(f.label)}</td><td class="r">${f.n}</td><td class="r">${f.u}</td><td class="r">${f.upct}%</td><td><div class="bar" style="width:${f.upct}%"></div></td></tr>`).join("")}</table>
 <h2>Where unfinished games stopped</h2><p class="m">The last screen or card before someone left without finishing.</p><table><tr><th>Last seen</th><th class="r">Visits</th></tr>${stopRows.map(([k, v]) => `<tr><td>${e(k)}</td><td class="r">${v}</td></tr>`).join("") || "<tr><td colspan=2>No data yet</td></tr>"}</table>
 <h2>Slowest cards</h2><p class="m">Median seconds people spent before answering. Long times can mean "interesting" or "confusing".</p><table><tr><th>Card · round</th><th class="r">Median sec</th><th class="r">Answers</th></tr>${timeRows.map(([k, m, n]) => `<tr><td>${e(k)}</td><td class="r">${m.toFixed(1)}</td><td class="r">${n}</td></tr>`).join("") || "<tr><td colspan=3>No data yet</td></tr>"}</table>
 <h2>By source / campaign / ad</h2><p class="m">From the utm_ tags on your links. DMs and bio links show as "direct" unless tagged.</p><table><tr><th>Source / campaign / ad</th><th class="r">Opened</th><th class="r">Started</th><th class="r">Finished</th><th class="r">Entered</th><th class="r">Shared</th></tr>${srcRows.map(([k, r]) => `<tr><td>${e(k)}</td><td class="r">${r.open}</td><td class="r">${r.start}</td><td class="r">${r.done}</td><td class="r">${r.lead}</td><td class="r">${r.share}</td></tr>`).join("")}</table>
