@@ -217,7 +217,7 @@ label.check input{width:22px;height:22px;margin-top:1px;accent-color:var(--sun);
         <button class="linkbtn" id="restartBtn" type="button" style="align-self:flex-start">Start over</button>
       </div>
       <button class="btn" id="startBtn" type="button">Let's play</button>
-      <p class="fine" style="text-align:center">About 27 quick taps. Stop any time, it saves your place.</p>
+      <p class="fine" style="text-align:center">About 21 quick taps. Stop any time, it saves your place.</p>
     </div>
   </section>
 
@@ -399,6 +399,16 @@ const PERSONAS = {
 };
 
 const AGES = ["0–2","3–5","6–8","9–12","13+"];
+/* cards taken out of the game (kept here so older saved plays still read correctly) */
+const RETIRED = ["l4","n4","i5","f1","f2","f3","f4","f5","q5"];
+const GAME_WORLDS = ["b","m","r","n","l","i","c"];
+/* which age groups a card suits, as [youngest, oldest] index into AGES; cards not listed suit everyone */
+const AGE_FIT = { e4:[0,0], e2:[0,3], n2:[2,4], n3:[2,4], r3:[2,4], b2:[2,4], b3:[2,4], i4:[2,4], b1:[2,4], i3:[1,4], m2:[1,4], l1:[1,4], i2:[1,4] };
+function fitsAges(id){
+  const r=AGE_FIT[id]; if(!r) return true;
+  if(!S || !S.ages || !S.ages.length) return id!=="e4"; // baby box only when a baby is actually coming
+  return S.ages.some(a=>{ const i=AGES.indexOf(a); return i>=r[0] && i<=r[1]; });
+}
 const CITIES = ["Singapore","Jakarta","Kuala Lumpur","Perth","Gold Coast","Sydney / Melbourne","Somewhere else"];
 const POINTS = {book:3,love:2,maybe:1,nope:0};
 const BPOINTS = {so:2,agree:1,unsure:0,not:0};
@@ -899,9 +909,14 @@ $i("startBtn").addEventListener("click",()=>{
 });
 $i("s-who").addEventListener("click",e=>{const b=e.target.closest("[data-mode]");if(!b)return;S.mode=b.dataset.mode;renderChips();track("mode_chosen",{mode:S.mode});show("s-ages");});
 $i("agesNext").addEventListener("click",()=>{
-  const worlds = ["b","m","r","n","l","i","f","c"];
   const kidPlays = S.mode==="kid" || S.mode==="turns";
-  S.ideaIds = worlds.flatMap(w=>shuffle(IDEAS.filter(c=>c.w===w && !(kidPlays && c.parentOnly))).slice(0,2).map(c=>c.id));
+  // 12 ideas: 2 from five themes and 1 from the other two, rotating; cards matched to the kids' ages where possible
+  const order = shuffle(GAME_WORLDS);
+  S.ideaIds = order.flatMap((w,i)=>{
+    const pool = IDEAS.filter(c=>c.w===w && !RETIRED.includes(c.id) && !(kidPlays && c.parentOnly));
+    const fit = shuffle(pool.filter(c=>fitsAges(c.id))), rest = shuffle(pool.filter(c=>!fitsAges(c.id)));
+    return fit.concat(rest).slice(0, i<5 ? 2 : 1).map(c=>c.id);
+  });
   S.players = {}; S.beliefs = {}; S.ease = {}; S.picks = {}; S.notes = {}; S.unlocked = {}; S.seenSection = {};
   track("ages_done",{ages:S.ages, city:S.city});
   save();
@@ -913,8 +928,9 @@ function buildDeck(who){
   const ideas = shuffle(S.ideaIds).map(id=>({kind:"idea",id}));
   const picks = PICKS.map(p=>({kind:"pick",id:p.id}));
   if(who==="kid") return ideas.concat(picks);
-  const beliefs = shuffle(BELIEFS).slice(0,3).map(b=>({kind:"belief",id:b.id}));
-  const ease = shuffle(EASE).map(c=>({kind:"ease",id:c.id}));
+  const beliefs = shuffle(BELIEFS.filter(b=>!RETIRED.includes(b.id))).slice(0,3).map(b=>({kind:"belief",id:b.id}));
+  // 3 "Sorted" cards, in this order of preference, skipping any that don't suit the kids' ages
+  const ease = ["e2","e1","e4","e3","e5"].filter(fitsAges).slice(0,3).map(id=>({kind:"ease",id}));
   return ideas.concat(picks, beliefs, ease);
 }
 function checkpoints(total){ return [Math.ceil(total/3), Math.ceil(total*2/3), total]; }
@@ -936,12 +952,12 @@ function startPhase(who){
 }
 const kindOf = it => (it.kind==="idea"||it.kind==="pick") ? (it.kind+(S.phase==="kid"?"Kid":"")) : it.kind;
 const SECTIONS = {
-  idea:{part:"Part 1 of 4", title:"Holiday ideas", text:"16 ideas, some sensible, some silly. Tell me what you'd actually want on a holiday with your kids.", say:""},
+  idea:{part:"Part 1 of 4", title:"Holiday ideas", text:"12 ideas, some sensible, some silly. Tell me what you'd actually want on a holiday with your kids.", say:""},
   ideaKid:{part:"Your turn!", title:"Hi! I'm Sunny.", text:"I'll show you some holiday ideas. Tap a button to vote. Sunny reads every card out loud.", say:"Hi! I'm Sunny, the Endless Summer sun. I'm going to show you some holiday ideas. If you love it, tap the green button. If you don't like it, tap the pink button. If you're not sure, tap the middle one. And if it would be the best holiday ever, tap the big orange button at the bottom. Ready? Tap start!"},
   pick:{part:"Part 2 of 4", title:"Pick your favourites", text:"Three quick ones: board games, dress-up and sports. Tap as many as you like, then Next.", say:""},
   pickKid:{part:"Part 2", title:"Pick your favourites!", text:"Tap every picture you like. You can pick lots! Then tap Next.", say:"Now pick your favourites! Tap every picture you like. You can pick lots. When you're done, tap the big orange button."},
   belief:{part:"Part 3 of 4", title:"Three quick ones about you", text:"Next are 3 things parents often say. Tell me if each one sounds like you. The buttons change a little for this part.", say:""},
-  ease:{part:"Part 4 of 4, last one", title:"The boring-but-brilliant stuff", text:"5 little things in a family villa. Would you expect it, would it make your day, or would you rather bring your own?", say:""}
+  ease:{part:"Part 4 of 4, last one", title:"The boring-but-brilliant stuff", text:"3 little things in a family villa. Would you expect it, would it make your day, or would you rather bring your own?", say:""}
 };
 function sectionLegend(k){
   if(k==="pick"||k==="pickKid") return `<div class="legend" style="grid-template-columns:repeat(3,1fr)"><div class="ans mid">🚢<small>tap to pick</small></div><div class="ans mid" style="border-color:var(--sun-deep)">🧱 ✓<small>picked</small></div><div class="ans mid">🔴<small>tap to pick</small></div><div class="ans top" style="grid-column:1/-1">Next ›<small>when you're done</small></div></div>`;
