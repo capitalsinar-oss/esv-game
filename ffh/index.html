@@ -69,7 +69,7 @@ p{margin:0}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
 .btn.ghost{background:var(--paper)}
 .btn.small{font-size:.95rem;padding:10px 16px;box-shadow:0 3px 0 var(--ink);width:auto}
-.btn:disabled{background:var(--sand);color:var(--ink-soft);border-color:var(--ink-soft);box-shadow:0 3px 0 var(--ink-soft)}
+.btn:disabled,.btn.dim{background:var(--sand);color:var(--ink-soft);border-color:var(--ink-soft);box-shadow:0 3px 0 var(--ink-soft)}
 .linkbtn{background:none;border:0;color:var(--ink-soft);text-decoration:underline;font-weight:700;padding:4px}
 .choice[aria-pressed="true"]{background:var(--sun-tint,#FFE7D2);box-shadow:0 0 0 3px var(--sun) inset,0 3px 0 var(--ink)}
 .choice{border:1.5px solid var(--ink);border-radius:20px;background:var(--paper);padding:14px 16px;display:flex;align-items:center;gap:14px;text-align:left;box-shadow:0 3px 0 var(--ink)}
@@ -211,7 +211,7 @@ label.check input{width:22px;height:22px;margin-top:1px;accent-color:var(--sun);
     <div class="stack">
       <div class="hero"><img id="heroImg" alt="Two girls playing in the Endless Summer play room"><span class="prize"><i>★</i> Prize: 3 nights free in Bali</span></div>
       <h1>What should kids actually do on holiday?</h1>
-      <p class="muted">I'm Jayne, mum of three. Help us decide what Endless Summer builds next. Your kids get a real vote.</p>
+      <p class="muted">I'm Jayne, mum of three. Endless Summer is our 4-bedroom family villa in Ungasan, Uluwatu, Bali. We're deciding what to add next, and your kids get a real vote.</p>
       <div class="resume" id="resumeBox" hidden>
         <b id="resumeTxt">You're halfway through.</b>
         <button class="btn small" id="resumeBtn" type="button">Pick up where you left off</button>
@@ -219,6 +219,7 @@ label.check input{width:22px;height:22px;margin-top:1px;accent-color:var(--sun);
       </div>
       <button class="btn" id="startBtn" type="button">Let's play</button>
       <p class="fine" style="text-align:center">About 3 minutes. Stop any time, it saves your place.</p>
+      <p class="fine" style="text-align:center"><a href="https://www.instagram.com/endless.summer.bali/" target="_blank" rel="noopener" id="introIg" style="color:inherit">See the villa on Instagram: @endless.summer.bali</a></p>
     </div>
   </section>
 
@@ -1212,7 +1213,8 @@ function compareTurns(){
 /* ---------- the card families post (1080 × 1920 story) ---------- */
 function loadImg(src){ return new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=src; }); }
 function wrap(x, text, maxW){ const ws=text.split(" "), out=[]; let l=""; ws.forEach(w=>{ const t=l?l+" "+w:w; if(x.measureText(t).width>maxW && l){ out.push(l); l=w; } else l=t; }); if(l) out.push(l); return out; }
-function shareName(){ const c=(S.lead&&S.lead.contact)||$i("contact")?.value.trim()||""; return /^@?[A-Za-z0-9._]{2,30}$/.test(c) && !c.includes("@",1) ? "@"+c.replace(/^@/,"") : "Our family"; }
+function normContact(v){ v=(v||"").trim(); const m=v.match(/instagram\.com\/([A-Za-z0-9._]{2,30})/i); if(m) return "@"+m[1]; return v.replace(/^@+/,"@"); }
+function shareName(){ const c=normContact((S.lead&&S.lead.contact)||$i("contact")?.value||""); return /^@?[A-Za-z0-9._]{2,30}$/.test(c) && !c.includes("@",1) ? "@"+c.replace(/^@/,"") : "Our family"; }
 async function buildCard(){
   try{ await Promise.all(["60px Belleza","700 40px Caveat","800 30px Nunito","500 30px Nunito"].map(f=>document.fonts.load(f))); }catch(e){}
   const k=S.persona, P=PERSONAS[k], W=1080, H=1920, c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d");
@@ -1220,16 +1222,21 @@ async function buildCard(){
   const lg=await loadImg(ASSETS.LOGO); const lw=440, lh=lw*lg.height/lg.width; x.drawImage(lg,(W-lw)/2,130,lw,lh);
   let y=130+lh+110; x.textAlign="center"; x.fillStyle="#C45F0E"; x.font="800 30px Nunito"; x.fillText("OUR FAMILY HOLIDAY PERSONA",W/2,y);
   y+=40;
-  const pic=await loadImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DRAW[k]())); const pw=940, ph=pw*210/320;
+  x.font="86px Belleza"; const nameL=wrap(x,P.name,920);
+  x.font="500 34px Nunito"; const lineL=wrap(x,P.line,900).slice(0,4);
+  const tp=topPick(), chipsH=92+(tp?92:0);
+  const textH=110+nameL.length*94+6+lineL.length*46+44+chipsH;
+  const maxPh=940*210/320, room=1580-y-textH; const ph=Math.max(300,Math.min(maxPh,room)), pw=ph*320/210;
+  const pic=await loadImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DRAW[k]()));
   x.save(); x.beginPath(); (x.roundRect?x.roundRect((W-pw)/2,y,pw,ph,36):x.rect((W-pw)/2,y,pw,ph)); x.clip(); x.drawImage(pic,(W-pw)/2,y,pw,ph); x.restore();
   y+=ph+110;
-  x.fillStyle="#1E1A16"; x.font="86px Belleza"; wrap(x,P.name,920).forEach(l=>{x.fillText(l,W/2,y);y+=94;});
-  y+=6; x.font="500 36px Nunito"; x.fillStyle="#6B5F53"; wrap(x,P.line,880).slice(0,3).forEach(l=>{x.fillText(l,W/2,y);y+=48;});
+  x.fillStyle="#1E1A16"; x.font="86px Belleza"; nameL.forEach(l=>{x.fillText(l,W/2,y);y+=94;});
+  y+=6; x.font="500 34px Nunito"; x.fillStyle="#6B5F53"; lineL.forEach(l=>{x.fillText(l,W/2,y);y+=46;});
   y+=44;
   const chip=(t,cy)=>{ x.font="800 32px Nunito"; let tt=t; while(x.measureText(tt).width>880 && tt.length>8) tt=tt.slice(0,-2); if(tt!==t) tt=tt.trim()+"…"; const bw=x.measureText(tt).width+64; x.fillStyle="#FFFFFF"; x.strokeStyle="#1E1A16"; x.lineWidth=3; x.beginPath(); (x.roundRect?x.roundRect((W-bw)/2,cy-46,bw,68,34):x.rect((W-bw)/2,cy-46,bw,68)); x.fill(); x.stroke(); x.fillStyle="#1E1A16"; x.fillText(tt,W/2,cy); };
   const d=new Date(S.finishedAt||Date.now()).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
-  chip(shareName()+" · "+d, Math.min(y,1460)); y=Math.min(y,1460)+92;
-  const tp=topPick(); if(tp && y<1560) chip("Our top pick: "+tp, y);
+  chip(shareName()+" · "+d, y); y+=92;
+  if(tp) chip("Our top pick: "+tp, y);
   const bandY=1620; x.fillStyle="#FF851B"; x.fillRect(0,bandY,W,H-bandY);
   x.fillStyle="#1E1A16"; x.font="700 62px Caveat"; x.fillText("Which one is your family?",W/2,bandY+95);
   x.font="800 42px Nunito"; x.fillText("Play at @endless.summer.bali",W/2,bandY+168);
@@ -1269,7 +1276,7 @@ function showResult(){
       <label class="field" for="contact">Your Instagram handle or email<input id="contact" autocomplete="email" inputmode="email" placeholder="@yourhandle or you@email.com"></label>
       <label class="check" for="consent"><input type="checkbox" id="consent"> <span>Enter me for the 3 free nights. <button class="linkbtn" id="termsBtn" type="button" style="padding:0">Prize terms</button></span></label>
       ${TERMS}
-      <button class="btn" id="saveShare" type="button" disabled>Save my card and share</button>
+      <button class="btn dim" id="saveShare" type="button">Save my card and share</button>
       <p class="fine" id="saveMsg" role="status">Post it, tag @endless.summer.bali and the family you'd bring.</p>
     </div>
     <div class="panel">
@@ -1290,14 +1297,16 @@ function showResult(){
   let canvas=null, tmr=null;
   const render = async()=>{ canvas = await buildCard(); $i("cardImg").src = canvas.toDataURL("image/png"); };
   render();
-  const valid = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || /^@?[A-Za-z0-9._]{2,30}$/.test(v);
-  const check = ()=>{ $i("saveShare").disabled = !(valid($i("contact").value.trim()) && $i("consent").checked); };
+  const valid = v => { v=normContact(v); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || /^@?[A-Za-z0-9._]{2,30}$/.test(v); };
+  const check = ()=>{ const ok = valid($i("contact").value) && $i("consent").checked; $i("saveShare").classList.toggle("dim", !ok); };
   $i("contact").addEventListener("input",()=>{ check(); clearTimeout(tmr); tmr=setTimeout(render,450); });
   $i("consent").addEventListener("change",check);
   const na=$i("noAdsBtn"); if(na) na.addEventListener("click",()=>{ try{ localStorage.setItem("esv_ffh_noads","1"); }catch(e){} try{ if(window.fbq) fbq("consent","revoke"); }catch(e){} na.textContent="Ad tracking is off"; na.disabled=true; });
   $i("termsBtn").addEventListener("click",e=>{ e.preventDefault(); const t=$i("terms"); t.hidden=!t.hidden; });
   $i("saveShare").addEventListener("click",async()=>{
-    const contact=$i("contact").value.trim(), msg=$i("saveMsg");
+    const contact=normContact($i("contact").value), msg=$i("saveMsg");
+    if(!valid(contact)){ msg.textContent="Add your Instagram handle (like @yourname) or your email first."; $i("contact").focus(); return; }
+    if(!$i("consent").checked){ msg.textContent="Tick the box to enter for the 3 free nights, then tap again."; return; }
     S.lead={contact, isEmail:contact.includes("@",1)&&/\./.test(contact), consent:true, at:new Date().toISOString()};
     track("lead",{isEmail:S.lead.isEmail});
     await render();
@@ -1368,6 +1377,7 @@ if(saved && !saved.completed && saved.deck && saved.deck.length){
 }
 (()=>{ let loadMs=null; try{ const nav=performance.getEntriesByType("navigation")[0]; loadMs=Math.round(nav ? (nav.domContentLoadedEventEnd||nav.responseEnd) : performance.now()); }catch(e){ loadMs=Math.round(performance.now()); }
   track("landing",{resumable:!$i("resumeBox").hidden, source:UTM.utm_source||UTM.ref||"", campaign:UTM.utm_campaign||"", loadMs, inApp:INAPP, mobile:/Mobi|Android|iPhone/i.test(navigator.userAgent)}); })();
+if(TESTER) window.__ffh={buildCard,showResult,PERSONAS,get S(){ return S; }};
 })();
 </script>
 
