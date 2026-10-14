@@ -81,6 +81,25 @@ p{margin:0}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--cream)}
 
 /* landing */
+.reel{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/5;max-height:58vh;width:100%;background:#2b241d}
+.reel-imgs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity 1.1s ease, transform 6s ease-out}
+.reel-imgs img.on{opacity:1;transform:scale(1)}
+.reel:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%);pointer-events:none}
+.reel-kicker{position:absolute;z-index:2;left:16px;right:16px;top:14px;margin:0;color:#fff;font-family:var(--display);font-size:1.5rem;line-height:1.1;text-shadow:0 1px 8px rgba(0,0,0,.35)}
+.reel-cap{position:absolute;z-index:2;left:16px;right:16px;bottom:54px;margin:0;color:#fff;font-family:var(--hand);font-weight:700;font-size:1.55rem;line-height:1.1;text-shadow:0 1px 8px rgba(0,0,0,.45);min-height:2.2em;display:flex;align-items:flex-end}
+.reel-cap span{animation:capin .7s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes capin{from{opacity:0;transform:translateY(10px)}}
+.reel-dots{position:absolute;z-index:2;right:14px;bottom:20px;display:flex;gap:5px}
+.reel-dots i{width:6px;height:6px;border-radius:9px;background:rgba(255,255,255,.5);transition:width .3s}
+.reel-dots i.on{width:16px;background:#fff}
+.reel .prize{z-index:2}
+.why{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.why-row{display:flex;gap:12px;align-items:flex-start;background:var(--paper);border:1.5px solid var(--line);border-radius:18px;padding:12px 14px}
+.why-row p{margin:0}
+.why-row .label{margin-bottom:2px}
+.why-ic{font-size:1.5rem;line-height:1}
+.rise{opacity:0;transform:translateY(14px);transition:opacity .6s ease, transform .6s ease}
+.rise.in{opacity:1;transform:none}
 .hero{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/3;max-width:100%}
 .hero img{width:100%;height:100%;object-fit:cover;display:block}
 .prize{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,.94);border-radius:99px;padding:6px 12px;font-weight:800;font-size:.85rem;display:flex;gap:6px;align-items:center}
@@ -214,9 +233,15 @@ label.check input{width:22px;height:22px;margin-top:1px;accent-color:var(--sun);
   <section class="screen scroll" id="s-intro">
     <div class="brand"><div class="logo-slot"></div></div>
     <div class="stack">
-      <div class="hero"><img id="heroImg" alt="Two girls playing in the Endless Summer play room"><span class="prize"><i>★</i> Prize: 3 nights free in Bali</span></div>
-      <h1>What should kids actually do on holiday?</h1>
-      <p class="muted">I'm Jayne, mum of three. Endless Summer is our 4-bedroom family villa in Ungasan, Uluwatu, Bali. We're deciding what to add next, and your kids get a real vote.</p>
+      <div class="reel" id="introReel" aria-label="Photos from Endless Summer Villa">
+        <div class="reel-imgs" id="reelImgs"></div>
+        <p class="reel-kicker">Picture your next family holiday</p>
+        <p class="reel-cap" id="reelCap" aria-live="polite"></p>
+        <div class="reel-dots" id="reelDots"></div>
+        <span class="prize"><i>★</i> Prize: 3 nights free in Bali</span>
+      </div>
+      <h1>Now help us decide what's in it.</h1>
+      <p class="muted">Swipe through 12 ideas for our family villa in Bali. Your kids get their own turn.</p>
       <div class="resume" id="resumeBox" hidden>
         <b id="resumeTxt">You're halfway through.</b>
         <button class="btn small" id="resumeBtn" type="button">Pick up where you left off</button>
@@ -224,6 +249,11 @@ label.check input{width:22px;height:22px;margin-top:1px;accent-color:var(--sun);
       </div>
       <button class="btn" id="startBtn" type="button">Let's play</button>
       <p class="fine" style="text-align:center">About 3 minutes. Stop any time, it saves your place.</p>
+      <div class="why">
+        <div class="why-row rise"><span class="why-ic" aria-hidden="true">👋</span><div><p class="label">Who's asking</p><p>I'm Jayne, a mum of three. Endless Summer is our 4-bedroom family villa in Ungasan, Uluwatu. My daughter picked it.</p></div></div>
+        <div class="why-row rise"><span class="why-ic" aria-hidden="true">🗳️</span><div><p class="label">Why your vote counts</p><p>We're adding things for kids next year. I'd rather ask families who might come than guess. The ideas with the most votes get built.</p></div></div>
+        <div class="why-row rise"><span class="why-ic" aria-hidden="true">🎁</span><div><p class="label">What you get</p><p>Your family's holiday persona, a list of Uluwatu spots that fit it, and a shot at 3 free nights. My kids pick the winner.</p></div></div>
+      </div>
       <p class="fine" style="text-align:center"><a href="https://www.instagram.com/endless.summer.bali/" target="_blank" rel="noopener" id="introIg" style="color:inherit">See the villa on Instagram: @endless.summer.bali</a></p>
     </div>
   </section>
@@ -311,7 +341,22 @@ const ASSETS = {"LOGO": "/play/a/LOGO.png", "hero": "/play/a/hero.jpg", "r3": "/
 function $i(id){return document.getElementById(id);}
 const $ = s => document.querySelector(s);
 document.querySelectorAll(".logo-slot").forEach(el=>{ el.innerHTML = `<img src="${ASSETS.LOGO}" alt="Endless Summer Villa, Uluwatu, Bali">`; });
-$i("heroImg").src = ASSETS.hero;
+(function introReel(){
+  const slides=[["c4","Day 1. Nobody unpacks. Everyone's in the pool."],["r3","Day 2. She makes it to the top of the climbing wall."],["c2","Day 3. The cushion fort goes up and stays up."],["i2","Day 4. The kids make breakfast. Mostly."],["r1","Day 5. Water fight. The grown-ups lose."],["m3","Day 6. Someone draws the whole trip."],["c1","Day 7. One last bath. Nobody wants to go home."]].filter(([k])=>ASSETS[k]);
+  const box=$i("reelImgs"), cap=$i("reelCap"), dots=$i("reelDots"); if(!box) return;
+  dots.innerHTML=slides.map(()=>"<i></i>").join("");
+  const imgs=slides.map(([k],n)=>{ const im=new Image(); im.alt=""; im.decoding="async"; if(n<2) im.src=ASSETS[k]; box.appendChild(im); return im; });
+  let n=0, t=null;
+  const showN=i=>{ n=i; imgs.forEach((im,j)=>im.classList.toggle("on",j===i)); [...dots.children].forEach((d,j)=>d.classList.toggle("on",j===i)); cap.innerHTML="<span>"+slides[i][1]+"</span>"; const nx=imgs[(i+1)%imgs.length]; if(!nx.src) nx.src=ASSETS[slides[(i+1)%slides.length][0]]; };
+  showN(0);
+  const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const tick=()=>{ if(!$i("s-intro").hidden) showN((n+1)%imgs.length); };
+  if(!reduce) t=setInterval(tick,3200);
+  $i("introReel").addEventListener("click",()=>{ clearInterval(t); tick(); if(!reduce) t=setInterval(tick,3200); });
+  const rows=document.querySelectorAll(".rise");
+  if("IntersectionObserver" in window && !reduce){ const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }),{threshold:.2}); rows.forEach((r,i)=>{ r.style.transitionDelay=(i*120)+"ms"; io.observe(r); }); }
+  else rows.forEach(r=>r.classList.add("in"));
+})();
 
 const WORLDS = {
   b:{name:"Build", color:"var(--w-b)", hex:"#DCD6EE"}, m:{name:"Make", color:"var(--w-m)", hex:"#F3D7D2"}, r:{name:"Brave", color:"var(--w-r)", hex:"#CFE3DE"},
