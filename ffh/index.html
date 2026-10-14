@@ -164,6 +164,11 @@ p{margin:0}
 @keyframes pop{from{transform:scale(.4);opacity:0}}
 @keyframes spin{from{transform:rotate(-200deg) scale(.3)}}
 
+.holdsave{position:fixed;inset:0;z-index:50;background:rgba(30,26,22,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;color:#FAF6EE;text-align:center}
+.holdsave img{max-height:68vh;max-width:100%;border-radius:14px;-webkit-touch-callout:default;user-select:auto;-webkit-user-select:auto}
+.holdsave b{font-size:1.15rem}
+.holdsave .btn{max-width:320px}
+
 /* snack clickers */
 .clickers{display:grid;grid-template-columns:repeat(2,1fr);gap:18px 12px;justify-items:center}
 .clk{position:relative;width:140px;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;padding:0;user-select:none;-webkit-user-select:none;touch-action:manipulation}
@@ -1314,26 +1319,35 @@ function showResult(){
     try{ await navigator.clipboard.writeText(caption); S.shareCopied=true; }catch(e){}
     const blob = await new Promise(r=>canvas.toBlob(r,"image/png"));
     const slug = shareName().replace(/^@/,"").toLowerCase().replace(/[^a-z0-9]+/g,"-") || "our-family";
-    let saved=false;
-    if(downloads){ try{ await downloads.save({filename:`endless-summer-${slug}.png`, data:blob}); saved=true; }catch(e){} }
+    let saved=false, how="";
+    const fname=`endless-summer-${slug}.png`;
+    const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+    const isMobile=isIOS || /Android/i.test(navigator.userAgent);
+    const holdToSave=()=>{ // long-press on an image gives "Save to Photos" on iPhone and "Download image" on Android
+      const o=document.createElement("div"); o.className="holdsave"; o.setAttribute("role","dialog");
+      o.innerHTML=`<b>${isIOS?"Press and hold the card, then tap Save to Photos":"Press and hold the card, then tap Download image"}</b><img alt="Your family card" src="${canvas.toDataURL("image/png")}"><p>${S.shareCopied?"The caption is copied too. ":""}Post the card and tag @endless.summer.bali and the family you'd bring.</p><button class="btn" type="button">Done</button>`;
+      o.querySelector("button").addEventListener("click",()=>o.remove()); document.body.appendChild(o); track("card_hold_save",{inApp:INAPP});
+    };
+    if(downloads){ try{ await downloads.save({filename:fname, data:blob}); saved=true; how="file"; }catch(e){} }
     else if(!window.claude){
-      const file=new File([blob],`endless-summer-${slug}.png`,{type:"image/png"});
-      if(navigator.canShare && navigator.canShare({files:[file]})){
-        try{ await navigator.share({files:[file], text:caption}); saved=true; }
+      const file=new File([blob],fname,{type:"image/png"});
+      // share the image alone: adding text makes iPhone hide "Save Image" in the share sheet
+      const canFileShare = isMobile && !INAPP && navigator.canShare && navigator.canShare({files:[file]});
+      if(canFileShare){
+        try{ await navigator.share({files:[file]}); saved=true; how="share"; }
         catch(e){
-          if(e && e.name==="NotAllowedError"){ // phone wants a fresh tap before opening the share sheet
-            S.imageSaved=false; save();
-            msg.innerHTML=""; const again=document.createElement("button"); again.type="button"; again.className="btn"; again.textContent="Tap to save or share your card";
-            again.addEventListener("click",async()=>{ try{ await navigator.share({files:[file], text:caption}); S.imageSaved=true; save(); msg.textContent="Saved. Post it and tag @endless.summer.bali and the family you'd bring."; }catch(err){} });
-            msg.appendChild(again); burst(30); return;
-          }
+          if(e && e.name==="AbortError"){ holdToSave(); saved=true; how="hold"; }
+          else { holdToSave(); saved=true; how="hold"; }
         }
       }
-      else { try{ const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=file.name; document.body.appendChild(a); a.click(); a.remove(); saved=true; }catch(e){} }
+      else if(isMobile){ holdToSave(); saved=true; how="hold"; }
+      else { try{ const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=fname; document.body.appendChild(a); a.click(); a.remove(); saved=true; how="file"; }catch(e){} }
     }
     S.imageSaved=saved; save();
-    track(saved?"card_shared":"card_share_failed",{copied:!!S.shareCopied});
-    msg.textContent = saved ? (S.shareCopied ? "Saved, and the caption is copied. Post it and tag the family you'd bring." : "Saved. Post it and tag @endless.summer.bali and the family you'd bring.")
+    track(saved?"card_shared":"card_share_failed",{copied:!!S.shareCopied, how});
+    msg.textContent = how==="share" ? "Tap Save Image to put it in your Photos. The caption is copied, so just paste it when you post."
+                    : how==="hold" ? "Saved your entry. Press and hold the card to put it in your Photos."
+                    : saved ? (S.shareCopied ? "Saved, and the caption is copied. Post it and tag the family you'd bring." : "Saved. Post it and tag @endless.summer.bali and the family you'd bring.")
                             : "You're entered. Press and hold the card to save it, then post and tag us.";
     burst(30);
   });
