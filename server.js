@@ -164,6 +164,28 @@ app.get("/api/ffh/events.csv", requireAdmin, (req, res) => {
   res.send(toCsv(["at","session","play_id","event","round","card_no","seconds_in","details","source","campaign","ad"], rows));
 });
 
+// === PUBLIC aggregate for the intro-page test (counts only, no personal data) ===
+app.get("/api/ffh/ab.json", (req, res) => {
+  const evs = loadEvents(), testers = new Set(evs.filter(e => e.tester).map(e => e.device));
+  const since = req.query.since || "2026-10-17";
+  const sess = new Map();
+  for (const e of evs) {
+    if (e.at < since || testers.has(e.device)) continue;
+    let s = sess.get(e.session); if (!s) { s = { v: "", n: new Set(), last: null, parts: 0 }; sess.set(e.session, s); }
+    if (!s.v && e.props && (e.props.v === "intro" || e.props.v === "no-intro")) s.v = e.props.v;
+    s.n.add(e.name); if (e.name === "part_reached") s.parts++;
+    if (e.name === "screen" || e.name === "leave" || e.name === "card_view") s.last = e;
+  }
+  const out = {};
+  for (const v of ["intro", "no-intro"]) {
+    const a = [...sess.values()].filter(s => s.v === v), st = a.filter(s => s.n.has("game_start"));
+    out[v] = { opened: a.filter(s => s.n.has("landing")).length, started: st.length, reachedCards: a.filter(s => s.parts > 0).length,
+      finished: a.filter(s => s.n.has("game_complete")).length, prizeEntries: a.filter(s => s.n.has("lead")).length,
+      leftOnIntroPage: a.filter(s => !s.n.has("game_complete") && s.last && (s.last.props || {}).id === "s-section").length };
+  }
+  res.set("Cache-Control", "no-store").json({ since, test: "part intro pages on (intro) vs off (no-intro)", groups: out });
+});
+
 // === TEAM: funnel, drop-off and time-per-card page ===
 app.get("/play/stats", requireAdmin, (req, res) => {
   const evs = loadEvents();
