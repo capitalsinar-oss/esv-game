@@ -1344,13 +1344,6 @@ function showResult(){
       <button class="btn dim" id="saveShare" type="button">Save my card and share</button>
       <p class="fine" id="saveMsg" role="status">Post it, tag @endless.summer.bali and the family you'd bring.</p>
     </div>
-    <div class="panel" id="fbPanel">
-      <p class="label">One quick question</p>
-      <h2 style="font-size:1.25rem;margin:.2rem 0 .6rem">How was the game?</h2>
-      <div class="fbopts">${[["loved","Loved it"],["long","A bit long"],["confusing","Confusing in places"],["broken","Something didn't work"]].map(([k,t])=>`<button type="button" class="fbopt" data-fb="${k}">${t}</button>`).join("")}</div>
-      <input id="fbText" maxlength="300" placeholder="Anything to add? (optional)" style="display:none;width:100%;margin-top:.6rem">
-      <p class="fine" id="fbThanks" hidden>Thank you! That really helps.</p>
-    </div>
     <div class="panel">
       <p class="label">Your Uluwatu list</p>
       <p class="muted">Places near the villa that ${P.name.replace(/^The /,"the ")} would love. Our own picks.</p>
@@ -1374,14 +1367,6 @@ function showResult(){
   $i("contact").addEventListener("input",()=>{ check(); clearTimeout(tmr); tmr=setTimeout(render,450); });
   $i("consent").addEventListener("change",check);
   const na=$i("noAdsBtn"); if(na) na.addEventListener("click",()=>{ try{ localStorage.setItem("esv_ffh_noads","1"); }catch(e){} try{ if(window.fbq) fbq("consent","revoke"); }catch(e){} na.textContent="Ad tracking is off"; na.disabled=true; });
-  document.querySelectorAll("#fbPanel .fbopt").forEach(b=>b.addEventListener("click",()=>{
-    document.querySelectorAll("#fbPanel .fbopt").forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
-    S.feedback={answer:b.dataset.fb, text:(S.feedback&&S.feedback.text)||"", at:new Date().toISOString()};
-    $i("fbText").style.display="block"; $i("fbThanks").hidden=false;
-    if(b.dataset.fb==="broken") $i("fbText").placeholder="What didn't work? (e.g. saving the card)";
-    track("feedback",{answer:b.dataset.fb}); save();
-  }));
-  $i("fbText").addEventListener("change",()=>{ S.feedback=Object.assign(S.feedback||{}, {text:$i("fbText").value.slice(0,300)}); track("feedback_text",{answer:(S.feedback||{}).answer, len:$i("fbText").value.length}); save(); });
   $i("termsBtn").addEventListener("click",e=>{ e.preventDefault(); const t=$i("terms"); t.hidden=!t.hidden; });
   $i("saveShare").addEventListener("click",async()=>{
     const contact=normContact($i("contact").value), msg=$i("saveMsg");
