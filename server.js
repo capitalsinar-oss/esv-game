@@ -164,6 +164,26 @@ app.get("/api/ffh/events.csv", requireAdmin, (req, res) => {
   res.send(toCsv(["at","session","play_id","event","round","card_no","seconds_in","details","source","campaign","ad"], rows));
 });
 
+// === GAME: host a family's card image so it can be saved from in-app browsers (Instagram, FB) ===
+const CARD_DIR = path.join(DATA_DIR, "cards");
+app.post("/api/ffh/card", express.raw({ type: "image/png", limit: "4mb" }), (req, res) => {
+  try {
+    const id = String(req.query.id || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 60);
+    const buf = req.body;
+    if (!id || !Buffer.isBuffer(buf) || buf.length < 100 || buf.slice(1, 4).toString() !== "PNG") return res.status(400).json({ error: "bad card" });
+    if (!fs.existsSync(CARD_DIR)) fs.mkdirSync(CARD_DIR, { recursive: true });
+    fs.writeFileSync(path.join(CARD_DIR, id + ".png"), buf);
+    const base = process.env.PUBLIC_URL || (req.protocol + "://" + req.get("host"));
+    res.json({ url: base.replace(/\/$/, "") + "/play/card/" + id + ".png" });
+  } catch (e) { console.error(e); res.status(500).json({ error: e.message }); }
+});
+app.get("/play/card/:id.png", (req, res) => {
+  const id = String(req.params.id || "").replace(/[^A-Za-z0-9_-]/g, "");
+  const f = path.join(CARD_DIR, id + ".png");
+  if (!id || !fs.existsSync(f)) return res.status(404).send("Card not found");
+  res.set("Content-Disposition", 'inline; filename="endless-summer-family-card.png"').type("png").sendFile(f);
+});
+
 // === PUBLIC aggregate for the intro-page test (counts only, no personal data) ===
 app.get("/api/ffh/ab.json", (req, res) => {
   const evs = loadEvents(), testers = new Set(evs.filter(e => e.tester).map(e => e.device));
@@ -284,6 +304,7 @@ app.get("/play/stats", requireAdmin, (req, res) => {
 <h2>Funnel</h2><p class="m">Visits count every time the game is opened (one person can visit several times). Unique visitors count each phone or browser once. % is of unique visitors who opened the game.</p><table><tr><th>Step</th><th class="r">Visits</th><th class="r">Unique visitors</th><th class="r">%</th><th style="width:34%"></th></tr>${funnel.map(f => `<tr><td>${e(f.label)}</td><td class="r">${f.n}</td><td class="r">${f.u}</td><td class="r">${f.upct}%</td><td><div class="bar" style="width:${f.upct}%"></div></td></tr>`).join("")}</table>
 <h2>Test: part intro pages on vs off</h2><p class="m">Since 17 Oct each phone is put in one group for good. "intro" sees the "Part 1 of 4 · how the buttons work" pages; "no-intro" skips them and Sunny gives a one-line cue on the first card instead. Percentages are of people who tapped Let's play. Wait for about 100 starts per group before deciding; with fewer, a gap of under 10 points can be chance.</p><table><tr><th>Group</th><th class="r">Opened</th><th class="r">Started</th><th class="r">Reached cards</th><th class="r">Finished</th><th class="r">Prize entry</th><th class="r">Biggest-button answers</th><th class="r">Median time</th><th class="r">Left on an intro page</th></tr>${arms.map(a => `<tr><td>${e(a.v)}</td><td class="r">${a.open}</td><td class="r">${a.started}</td><td class="r">${a.cards} (${a.cardsPct})</td><td class="r">${a.done} (${a.donePct})</td><td class="r">${a.lead} (${a.leadPct})</td><td class="r">${a.topPct}</td><td class="r">${a.mins}</td><td class="r">${a.left}</td></tr>`).join("")}</table>
 <h2>Intro pages one by one</h2><p class="m">Only the "intro" group sees these. "Left" = shown but never tapped Start. Seconds = median time on the page before tapping Start.</p><table><tr><th>Page</th><th class="r">Shown</th><th class="r">Tapped Start</th><th class="r">Left</th><th class="r">Median sec</th></tr>${secList.map(r => `<tr><td>${e(r[0])}</td><td class="r">${r[1]}</td><td class="r">${r[2]}</td><td class="r">${r[3]}</td><td class="r">${r[4]}</td></tr>`).join("") || "<tr><td colspan=5>No data yet</td></tr>"}</table>
+<h2>Feedback: "How was the game?"</h2><p class="m">The one question on the results page (since 20 Oct). Free-text answers are in the plays CSV.</p><table><tr><th>Answer</th><th class="r">Count</th></tr>${(()=>{const f={};recent.filter(x=>x.name==="feedback").forEach(x=>{const k=x.props.answer||"?";f[k]=(f[k]||0)+1;});const L={loved:"Loved it",long:"A bit long",confusing:"Confusing in places",broken:"Something didn't work"};return Object.entries(f).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<tr><td>${e(L[k]||k)}</td><td class="r">${v}</td></tr>`).join("")||"<tr><td colspan=2>No answers yet</td></tr>";})()}</table>
 <h2>Where unfinished games stopped</h2><p class="m">The last screen or card before someone left without finishing.</p><table><tr><th>Last seen</th><th class="r">Visits</th></tr>${stopRows.map(([k, v]) => `<tr><td>${e(k)}</td><td class="r">${v}</td></tr>`).join("") || "<tr><td colspan=2>No data yet</td></tr>"}</table>
 <h2>Slowest cards</h2><p class="m">Median seconds people spent before answering. Long times can mean "interesting" or "confusing".</p><table><tr><th>Card · round</th><th class="r">Median sec</th><th class="r">Answers</th></tr>${timeRows.map(([k, m, n]) => `<tr><td>${e(k)}</td><td class="r">${m.toFixed(1)}</td><td class="r">${n}</td></tr>`).join("") || "<tr><td colspan=3>No data yet</td></tr>"}</table>
 <h2>By source / campaign / ad</h2><p class="m">From the utm_ tags on your links. DMs and bio links show as "direct" unless tagged.</p><table><tr><th>Source / campaign / ad</th><th class="r">Opened</th><th class="r">Started</th><th class="r">Finished</th><th class="r">Entered</th><th class="r">Shared</th></tr>${srcRows.map(([k, r]) => `<tr><td>${e(k)}</td><td class="r">${r.open}</td><td class="r">${r.start}</td><td class="r">${r.done}</td><td class="r">${r.lead}</td><td class="r">${r.share}</td></tr>`).join("")}</table>

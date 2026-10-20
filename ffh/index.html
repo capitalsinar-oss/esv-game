@@ -113,6 +113,7 @@ p{margin:0}
 .cp{position:absolute;top:50%;width:30px;height:30px;transform:translate(-50%,-50%);border-radius:50%;background:var(--paper);border:1.5px solid var(--ink);display:grid;place-items:center;filter:grayscale(1);opacity:.7;transition:transform .3s, filter .3s}
 .cp svg{width:24px;height:24px}
 .cp.got{filter:none;opacity:1;transform:translate(-50%,-50%) scale(1.12)}
+.fbopts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.fbopt{padding:12px 10px;border-radius:14px;border:2px solid var(--ink);background:#fff;font:inherit;font-weight:700}.fbopt[aria-pressed="true"]{background:var(--sun,#FF851B);color:#fff;border-color:var(--sun,#FF851B)}#fbText{padding:12px;border-radius:12px;border:1.5px solid #d8cebe;font:inherit}
 .count{font-weight:800;font-variant-numeric:tabular-nums;font-size:.85rem;min-width:40px;text-align:right}
 .buddy{display:flex;align-items:flex-end;gap:8px;height:64px}
 .buddy svg{width:58px;height:58px;flex:none;overflow:visible}
@@ -831,7 +832,7 @@ async function initCaps(){
 function runRecord(){
   return { playId:S.playId, variant:S.variant, mode:S.mode, ages:S.ages, city:S.city, startedAt:S.startedAt, finishedAt:S.finishedAt, completed:S.completed,
     ideaIds:S.ideaIds, players:S.players, beliefs:S.beliefs, ease:S.ease, picks:S.picks||{}, notes:S.notes, undos:S.undos, persona:S.persona, personaName:(PERSONAS[S.persona]||{}).name||"", secondary:S.secondary,
-    agreement:S.agreement, utm:UTM, villaClicked:S.villaClicked, shareCopied:S.shareCopied, imageSaved:S.imageSaved, lead:S.lead, music:MUSIC.on, readAloud:readOn };
+    agreement:S.agreement, feedback:S.feedback||null, utm:UTM, villaClicked:S.villaClicked, shareCopied:S.shareCopied, imageSaved:S.imageSaved, lead:S.lead, music:MUSIC.on, readAloud:readOn };
 }
 function deviceId(){ let d=null; try{ d=localStorage.getItem("esv_ffh_device"); if(!d){ d=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2)); localStorage.setItem("esv_ffh_device",d); } }catch(e){} return d||"anon"; }
 let hostSaveTmr=null;
@@ -1343,6 +1344,13 @@ function showResult(){
       <button class="btn dim" id="saveShare" type="button">Save my card and share</button>
       <p class="fine" id="saveMsg" role="status">Post it, tag @endless.summer.bali and the family you'd bring.</p>
     </div>
+    <div class="panel" id="fbPanel">
+      <p class="label">One quick question</p>
+      <h2 style="font-size:1.25rem;margin:.2rem 0 .6rem">How was the game?</h2>
+      <div class="fbopts">${[["loved","Loved it"],["long","A bit long"],["confusing","Confusing in places"],["broken","Something didn't work"]].map(([k,t])=>`<button type="button" class="fbopt" data-fb="${k}">${t}</button>`).join("")}</div>
+      <input id="fbText" maxlength="300" placeholder="Anything to add? (optional)" style="display:none;width:100%;margin-top:.6rem">
+      <p class="fine" id="fbThanks" hidden>Thank you! That really helps.</p>
+    </div>
     <div class="panel">
       <p class="label">Your Uluwatu list</p>
       <p class="muted">Places near the villa that ${P.name.replace(/^The /,"the ")} would love. Our own picks.</p>
@@ -1366,6 +1374,14 @@ function showResult(){
   $i("contact").addEventListener("input",()=>{ check(); clearTimeout(tmr); tmr=setTimeout(render,450); });
   $i("consent").addEventListener("change",check);
   const na=$i("noAdsBtn"); if(na) na.addEventListener("click",()=>{ try{ localStorage.setItem("esv_ffh_noads","1"); }catch(e){} try{ if(window.fbq) fbq("consent","revoke"); }catch(e){} na.textContent="Ad tracking is off"; na.disabled=true; });
+  document.querySelectorAll("#fbPanel .fbopt").forEach(b=>b.addEventListener("click",()=>{
+    document.querySelectorAll("#fbPanel .fbopt").forEach(x=>x.setAttribute("aria-pressed", String(x===b)));
+    S.feedback={answer:b.dataset.fb, text:(S.feedback&&S.feedback.text)||"", at:new Date().toISOString()};
+    $i("fbText").style.display="block"; $i("fbThanks").hidden=false;
+    if(b.dataset.fb==="broken") $i("fbText").placeholder="What didn't work? (e.g. saving the card)";
+    track("feedback",{answer:b.dataset.fb}); save();
+  }));
+  $i("fbText").addEventListener("change",()=>{ S.feedback=Object.assign(S.feedback||{}, {text:$i("fbText").value.slice(0,300)}); track("feedback_text",{answer:(S.feedback||{}).answer, len:$i("fbText").value.length}); save(); });
   $i("termsBtn").addEventListener("click",e=>{ e.preventDefault(); const t=$i("terms"); t.hidden=!t.hidden; });
   $i("saveShare").addEventListener("click",async()=>{
     const contact=normContact($i("contact").value), msg=$i("saveMsg");
@@ -1382,9 +1398,12 @@ function showResult(){
     const fname=`endless-summer-${slug}.png`;
     const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
     const isMobile=isIOS || /Android/i.test(navigator.userAgent);
+    let hostedURL=null;
+    if(!window.claude){ try{ const r=await fetch("/api/ffh/card?id="+encodeURIComponent(S.playId),{method:"POST",headers:{"Content-Type":"image/png"},body:blob}); if(r.ok){ hostedURL=(await r.json()).url; S.cardURL=hostedURL; } }catch(e){} }
     const holdToSave=()=>{ // long-press on an image gives "Save to Photos" on iPhone and "Download image" on Android
       const o=document.createElement("div"); o.className="holdsave"; o.setAttribute("role","dialog");
-      o.innerHTML=`<b>${isIOS?"Press and hold the card, then tap Save to Photos":"Press and hold the card, then tap Download image"}</b><img alt="Your family card" src="${canvas.toDataURL("image/png")}"><p>${S.shareCopied?"The caption is copied too. ":""}Post the card and tag @endless.summer.bali and the family you'd bring.</p><button class="btn" type="button">Done</button>`;
+      const inAppTip = INAPP && hostedURL ? `<p style="font-size:.9rem">Not saving? Instagram's browser sometimes blocks it. <a href="${hostedURL}" target="_blank" rel="noopener"><b>Open your card here</b></a>, tap <b>•••</b> at the top right and choose <b>Open in external browser</b>, then press and hold the card to save it.</p>` : "";
+      o.innerHTML=`<b>${isIOS?"Press and hold the card, then tap Save to Photos":"Press and hold the card, then tap Download image"}</b><img alt="Your family card" src="${hostedURL||canvas.toDataURL("image/png")}"><p>${S.shareCopied?"The caption is copied too. ":""}Post the card and tag @endless.summer.bali and the family you'd bring.</p>${inAppTip}<button class="btn" type="button">Done</button>`;
       o.querySelector("button").addEventListener("click",()=>o.remove()); document.body.appendChild(o); track("card_hold_save",{inApp:INAPP});
     };
     if(downloads){ try{ await downloads.save({filename:fname, data:blob}); saved=true; how="file"; }catch(e){} }
