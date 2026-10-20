@@ -896,7 +896,7 @@ const META = {  // our event -> Meta pixel event (grown-up milestones only)
 function track(name, props){
   if(!TRACK_ON) return;
   const st = (typeof S!=="undefined" && S) ? S : {};
-  const ev = {name, t:Date.now()-T0, at:new Date().toISOString(), playId:st.playId||null, phase:st.phase||null, idx:(typeof st.idx==="number"?st.idx:null), props:Object.assign({}, props||{}, {v: st.variant || (typeof pickVariant==="function" ? pickVariant() : "")})};
+  const ev = {name, t:Date.now()-T0, at:new Date().toISOString(), playId:st.playId||null, phase:st.phase||null, idx:(typeof st.idx==="number"?st.idx:null), props:Object.assign({}, props||{}, {v: st.variant || (typeof pickVariant==="function" ? pickVariant() : ""), land: window.__LAND || ""})};
   ev.eventId = (st.playId||SESSION)+"-"+name+(props&&props.part?"-"+props.part:"");
   evQ.push(ev);
   const m = META[name];
@@ -1044,12 +1044,12 @@ function next(){
   if(S.idx>=S.deck.length){ finishPhase(); return; }
   const k = kindOf(S.deck[S.idx]);
   if(!S.seenSection[S.phase+":"+k]){
-    if(S.variant==="no-intro" && k!=="ideaKid"){
+    if((S.variant==="no-intro" || S.quick) && k!=="ideaKid"){
       const sec=SECTIONS[k];
       S.seenSection[S.phase+":"+k]=true; track("part_reached",{part:k, round:S.phase, intro:false}); checkpointSave();
       show("s-deck"); renderProgressMarks(); renderStack();
       const cue={idea:"12 ideas", ideaKid:"", pick:"pick as many, then Next", pickKid:"Tap every one you like!", belief:"3 about you", ease:"the little things"}[k];
-      if(cue) $i("bubble").textContent = (sec.part.startsWith("Part")? sec.part.replace(", last one","")+": ":"") + cue;
+      if(cue && !(S.quick && k==="idea")) $i("bubble").textContent = (sec.part.startsWith("Part")? sec.part.replace(", last one","")+": ":"") + cue;
       return;
     }
     showSection(k); return;
@@ -1454,6 +1454,24 @@ if(saved && !saved.completed && saved.deck && saved.deck.length){
 }
 (()=>{ let loadMs=null; try{ const nav=performance.getEntriesByType("navigation")[0]; loadMs=Math.round(nav ? (nav.domContentLoadedEventEnd||nav.responseEnd) : performance.now()); }catch(e){ loadMs=Math.round(performance.now()); }
   track("landing",{resumable:!$i("resumeBox").hidden, source:UTM.utm_source||UTM.ref||"", campaign:UTM.utm_campaign||"", loadMs, inApp:INAPP, mobile:/Mobi|Android|iPhone/i.test(navigator.userAgent)}); })();
+// A/B test (20 Oct 2026): ad clickers land straight on the first card ("quick") vs the welcome page ("classic").
+// Only for visitors from Meta ads, one group per phone for good. Override with ?land=quick or ?land=classic.
+(()=>{
+  const q=new URLSearchParams(location.search).get("land");
+  const fromAd = (UTM.utm_source||"")==="meta" || !!UTM.fbclid;
+  if(!q && !fromAd) return;
+  if(!$i("resumeBox").hidden) return;
+  let arm = q==="quick"||q==="classic" ? q : lsGet("esv_ab_land", null);
+  if(arm!=="quick" && arm!=="classic"){ arm = Math.random()<0.5 ? "quick" : "classic"; lsSet("esv_ab_land", arm); }
+  window.__LAND = arm;
+  if(arm!=="quick") return;
+  newState(); S.mode="parent"; S.quick=true; renderChips();
+  track("game_start",{quick:true});
+  const once=()=>{ document.removeEventListener("pointerdown",once,true); try{ unlockAll(); const pref=lsGet("esv_ffh_music", null); setMusic(pref===null ? true : pref); }catch(e){} };
+  document.addEventListener("pointerdown",once,true);
+  $i("agesNext").click();
+  $i("bubble").textContent="Your votes decide what we build!";
+})();
 if(TESTER) window.__ffh={buildCard,showResult,PERSONAS,get S(){ return S; }};
 })();
 </script>
