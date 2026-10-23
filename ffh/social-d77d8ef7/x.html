@@ -1,5 +1,0 @@
-<!doctype html><meta charset="utf-8"><title>xfer</title><body style="font:16px sans-serif">Sending…<pre id=l></pre><script>
-const files=["08-full.mp4","09-full.mp4"];
-(async()=>{const out={};for(const f of files){const b=await (await fetch(f)).blob();out[f]=b;document.getElementById('l').textContent+=f+" "+b.size+"\n";}
-if(window.opener){window.opener.postMessage({ffh:out},"https://business.facebook.com");document.body.append("Sent.");setTimeout(()=>window.close(),500);}else document.body.append("No opener");})();
-</script>
