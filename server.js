@@ -106,12 +106,24 @@ app.get("/api/ffh/export.csv", requireAdmin, (req, res) => {
       source: (r.utm || {}).utm_source || (r.utm || {}).ref || "", campaign: (r.utm || {}).utm_campaign || "", ad: (r.utm || {}).utm_content || "", from_meta_ad: (r.utm || {}).fbclid ? "yes" : "",
       villa_click: r.villaClicked ? "yes" : "",
       card_saved: r.imageSaved ? "yes" : "", caption_copied: r.shareCopied ? "yes" : "", music: r.music ? "on" : "off", read_aloud: r.readAloud ? "on" : "off",
+      game: r.game || "v1", adults: r.adults || "", market: r.market || "", travel_window: r.when || "", cards_yes: j(r.yes), cards_no: j(r.no), toys: j(r.toys), pool_hour_pick: r.rest || "", extras: j(r.extras),
+      draw_entered: r.drawEntered ? "yes" : "", draw_answers: j(r.draw), snack_taps: j(r.snackTaps), pdf_saved: r.pdfSaved ? "yes" : "",
     };
   }).sort((a, b) => String(b.started).localeCompare(String(a.started)));
-  const headers = ["started","last_update","finished","completed","play_id","device","mode","kids_ages","city","persona","second_persona","agreement","instagram_or_email","is_email","prize_entry","picks","votes","beliefs","sorted_items","comments","source","campaign","ad","from_meta_ad","villa_click","card_saved","caption_copied","music","read_aloud"];
+  const headers = ["started","last_update","finished","completed","game","play_id","device","mode","adults","kids_ages","city","market","travel_window","persona","second_persona","agreement","instagram_or_email","is_email","prize_entry","draw_entered","draw_answers","cards_yes","cards_no","toys","pool_hour_pick","extras","picks","votes","beliefs","sorted_items","comments","snack_taps","pdf_saved","source","campaign","ad","from_meta_ad","villa_click","card_saved","caption_copied","music","read_aloud"];
   res.setHeader("Content-Type", "text/csv");
   res.setHeader("Content-Disposition", 'attachment; filename="future_family_holidays_plays.csv"');
   res.send(toCsv(headers, rows));
+});
+// === TEAM: everyone in the 3-nights draw (old game prize entries + new game draw entries) ===
+app.get("/api/ffh/draw.csv", requireAdmin, (req, res) => {
+  const plays = loadPlays(), j = v => (v === undefined || v === null) ? "" : (typeof v === "string" ? v : JSON.stringify(v));
+  const rows = Object.entries(plays).map(([id, p]) => ({ id, p, r: p.run || {} }))
+    .filter(x => x.r.drawEntered || (x.r.lead && x.r.lead.consent))
+    .map(({ id, p, r }) => ({ entered: r.finishedAt || p.updatedAt, game: r.game || "v1", instagram_or_email: (r.lead || {}).contact || "", adults: r.adults || "", kids_ages: j(r.ages), market: r.market || r.city || "", travel_window: r.when || "", draw_answers: j(r.draw), play_id: id }))
+    .sort((a, b) => String(b.entered).localeCompare(String(a.entered)));
+  res.setHeader("Content-Type", "text/csv"); res.setHeader("Content-Disposition", 'attachment; filename="ffh_draw_entries.csv"');
+  res.send(toCsv(["entered","game","instagram_or_email","adults","kids_ages","market","travel_window","draw_answers","play_id"], rows));
 });
 app.get("/api/ffh/export.json", requireAdmin, (req, res) => res.json(loadPlays()));
 
@@ -284,6 +296,7 @@ app.get("/play/stats", requireAdmin, (req, res) => {
     let s = sess.get(e.session);
     if (!s) { s = { device: e.device || e.session, names: new Set(), parts: new Set(), utm: e.utm || {}, last: null, cards: 0, v: "", first: null, answers: 0, top: 0, secView: {}, secGo: {} }; sess.set(e.session, s); }
     if (!s.v && e.props && (e.props.v === "intro" || e.props.v === "no-intro")) s.v = e.props.v;
+    if (e.props && e.props.v === "v2") s.v2 = true;
     if (e.name === "card_answer") { s.answers++; if (!s.first) s.first = e.t; if (/^(book|so|delight)$/i.test(String(e.props.answer || "")) ) s.top++; }
     if (e.name === "section_view") s.secView[(e.phase || "") + ":" + e.props.part] = e.t;
     if (e.name === "part_reached" && e.props.intro !== false) s.secGo[(e.props.round || "") + ":" + e.props.part] = e.t;
@@ -293,9 +306,26 @@ app.get("/play/stats", requireAdmin, (req, res) => {
     if (e.name === "leave" || e.name === "card_view" || e.name === "screen") s.last = e;
     if (e.utm && Object.keys(e.utm).length) s.utm = e.utm;
   }
-  const all = [...sess.values()];
+  // ?game=v2 shows the new 4-day-plan game; without it, the original game
+  const V2 = req.query.game === "v2";
+  const all = [...sess.values()].filter(s => V2 ? s.v2 : !s.v2);
   const has = (s, n) => s.names.has(n);
-  const steps = [
+  const stepsV2 = [
+    ["Opened the game", s => has(s, "landing")],
+    ["Answered card 1", s => has(s, "game_start")],
+    ["Answered 3 cards", s => s.cards >= 3],
+    ["Filled in who's coming", s => has(s, "who_done")],
+    ["Saw 'You're in good company'", s => has(s, "proof_view")],
+    ["Answered all 12 cards", s => s.cards >= 12],
+    ["Filled the toy box", s => has(s, "toys_done")],
+    ["Answered the last screen (when)", s => has(s, "final_done")],
+    ["Got their plan", s => has(s, "game_complete")],
+    ["Gave email or Instagram", s => has(s, "lead")],
+    ["Saved or shared the PDF", s => has(s, "pdf_save")],
+    ["Entered the draw", s => has(s, "draw_entry")],
+    ["Kids tapped the snacks", s => has(s, "snack_taps")],
+  ];
+  const steps = V2 ? stepsV2 : [
     ["Opened the game", s => has(s, "landing")],
     ["Tapped Let's play", s => has(s, "game_start")],
     ["Finished setup (who's playing, ages)", s => has(s, "ages_done")],
@@ -319,7 +349,9 @@ app.get("/play/stats", requireAdmin, (req, res) => {
     const l = s.last, p = l.props || {};
     const SCREENS = { "s-intro": "Landing page", "s-pass": "Pass-the-phone page", "s-who": "Who's playing", "s-ages": "Ages & city", "s-section": "Part intro page", "s-deck": "Cards", "s-result": "Results page" };
     const cardName = `${p.title || p.card} (${l.phase === "kid" ? "kid round" : l.phase || ""})`;
-    const key = (l.name === "leave" || l.name === "card_view") && p.card ? cardName : (SCREENS[p.screen || p.id] || p.screen || p.id);
+    const V2SCREENS = { card: "Cards", who: "Who's coming", proof: "Good company page", toys: "Toy box", rest: "Pool hour pick", final: "When + extras", load: "Building the plan", plan: "Plan page" };
+    const key = V2 ? ((l.name === "leave" || l.name === "card_view") && p.card ? "Card: " + p.card : (V2SCREENS[p.screen] || p.screen || "?"))
+      : ((l.name === "leave" || l.name === "card_view") && p.card ? cardName : (SCREENS[p.screen || p.id] || p.screen || p.id));
     stops[key] = (stops[key] || 0) + 1;
   }
   const stopRows = Object.entries(stops).sort((a, b) => b[1] - a[1]).slice(0, 25);
@@ -329,7 +361,7 @@ app.get("/play/stats", requireAdmin, (req, res) => {
   const med = a => { const b = a.slice().sort((x, y) => x - y); return b[Math.floor(b.length / 2)]; };
   const timeRows = Object.entries(times).map(([k, a]) => [k, med(a) / 1000, a.length]).sort((a, b) => b[1] - a[1]).slice(0, 30);
   const durs = recent.filter(e => e.name === "game_complete" && e.props.secs).map(e => e.props.secs);
-  const fin = funnel.find(f => f.label.startsWith("Finished (")), ent = funnel.find(f => f.label === "Entered the prize");
+  const fin = funnel.find(f => f.label.startsWith("Finished (") || f.label === "Got their plan"), ent = funnel.find(f => f.label === "Entered the prize" || f.label === "Entered the draw");
   const lands = recent.filter(e => e.name === "landing");
   const loads = lands.map(e => e.props.loadMs).filter(v => v > 0 && v < 120000);
   const inApp = lands.length ? Math.round(lands.filter(e => e.props.inApp).length * 100 / lands.length) : 0;
@@ -373,7 +405,7 @@ app.get("/play/stats", requireAdmin, (req, res) => {
   const e = escapeHtml, tok = encodeURIComponent(req.query.token || "");
   res.type("html").send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Game stats · Future Family Holidays</title>
 <style>body{font:15px/1.45 -apple-system,system-ui,sans-serif;margin:0;background:#FAF6EE;color:#1E1A16}main{max-width:860px;margin:0 auto;padding:20px 16px 60px}h1{font-size:24px;margin:0 0 4px}h2{font-size:17px;margin:28px 0 8px}p.m{color:#6B5F53;margin:0 0 14px}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #E2D6C2;border-radius:10px;overflow:hidden}td,th{padding:7px 10px;border-bottom:1px solid #EFE6D6;text-align:left;font-variant-numeric:tabular-nums}th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:#6B5F53;background:#FAF6EE}.bar{height:10px;background:#FF851B;border-radius:5px}.r{text-align:right}a{color:#C45F0E}.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.tile{background:#fff;border:1px solid #E2D6C2;border-radius:10px;padding:12px}.tile b{display:block;font-size:24px}</style></head><body><main>
-<h1>Future Family Holidays · game stats</h1><p class="m">Last ${days} days · ${all.length} visits · ${uniq(all)} unique visitors · <a href="?token=${tok}&days=7">7d</a> · <a href="?token=${tok}&days=30">30d</a> · <a href="?token=${tok}&days=90">90d</a> · <a href="/api/ffh/export.csv?token=${tok}">plays CSV</a> · <a href="/api/ffh/events.csv?token=${tok}">events CSV</a> · ${testers.size ? (showTesters ? `<a href="?token=${tok}&days=${days}">hide tester plays</a>` : `${testers.size} tester device(s) hidden · <a href="?token=${tok}&days=${days}&testers=1">show</a>`) : `mark your phone as a tester: open the game once with <b>?tester=1</b>`}</p>
+<h1>Future Family Holidays · game stats</h1><p class="m"><b>${V2 ? "New game (4-day plan)" : "Original game"}</b> · <a href="?token=${tok}&game=v2">new game</a> · <a href="?token=${tok}">original game</a> · <a href="/api/ffh/draw.csv?token=${tok}">draw entries (CSV)</a> · <a href="/api/ffh/plan-queue.json?token=${tok}">plans to DM</a><br>Last ${days} days · ${all.length} visits · ${uniq(all)} unique visitors · <a href="?token=${tok}&days=7">7d</a> · <a href="?token=${tok}&days=30">30d</a> · <a href="?token=${tok}&days=90">90d</a> · <a href="/api/ffh/export.csv?token=${tok}">plays CSV</a> · <a href="/api/ffh/events.csv?token=${tok}">events CSV</a> · ${testers.size ? (showTesters ? `<a href="?token=${tok}&days=${days}">hide tester plays</a>` : `${testers.size} tester device(s) hidden · <a href="?token=${tok}&days=${days}&testers=1">show</a>`) : `mark your phone as a tester: open the game once with <b>?tester=1</b>`}</p>
 <div class="tiles"><div class="tile">Finished<b>${fin.u}</b>${fin.upct}% of unique visitors</div><div class="tile">Prize entries<b>${ent.u}</b>${ent.upct}% of unique visitors</div><div class="tile">Page ready in<b>${loads.length ? (med(loads)/1000).toFixed(1) + " s" : "–"}</b>median · ${inApp}% inside Instagram/FB</div><div class="tile">Median time to finish<b>${durs.length ? Math.round(med(durs) / 60 * 10) / 10 + " min" : "–"}</b>${durs.length} finished games</div><div class="tile">Who played<b style="font-size:15px;margin-top:6px">${Object.entries(modes).map(([k, v]) => e(k) + " " + v).join(" · ") || "–"}</b></div></div>
 <h2>Funnel</h2><p class="m">Visits count every time the game is opened (one person can visit several times). Unique visitors count each phone or browser once. % is of unique visitors who opened the game.</p><table><tr><th>Step</th><th class="r">Visits</th><th class="r">Unique visitors</th><th class="r">%</th><th style="width:34%"></th></tr>${funnel.map(f => `<tr><td>${e(f.label)}</td><td class="r">${f.n}</td><td class="r">${f.u}</td><td class="r">${f.upct}%</td><td><div class="bar" style="width:${f.upct}%"></div></td></tr>`).join("")}</table>
 <h2>Test: welcome page vs straight to the first card (ad clickers only)</h2><p class="m">Since 20 Oct, people arriving from Meta ads are split 50/50 for good: "classic" sees the welcome page and setup; "quick" lands on the first card (parent mode, no setup). Percentages are of people who opened the game.</p><table><tr><th>Group</th><th class="r">Opened</th><th class="r">Answered 1+ card</th><th class="r">Finished</th><th class="r">Prize entry</th></tr>${lands2.map(a => `<tr><td>${e(a.v)}</td><td class="r">${a.open}</td><td class="r">${a.ans1} (${a.ans1Pct})</td><td class="r">${a.done} (${a.donePct})</td><td class="r">${a.lead} (${a.leadPct})</td></tr>`).join("")}</table>
