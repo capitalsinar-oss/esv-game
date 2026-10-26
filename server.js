@@ -52,17 +52,25 @@ app.set("trust proxy", true);
 const FFH_DIR   = path.join(__dirname, "ffh");
 const FFH_FILE  = path.join(DATA_DIR, "ffh-plays.json");
 const PIXEL_ID  = (process.env.META_PIXEL_ID || "").replace(/[^0-9]/g, "");
-let ffhPage = null;
-function ffhHtml(req) {
-  if (!ffhPage) ffhPage = fs.readFileSync(path.join(FFH_DIR, "index.html"), "utf8");
+// The new 4-day-plan game (ffh2/) is the live game at /play since 26 Oct 2026; the original game stays at /play/v1.
+const FFH2_DIR = path.join(__dirname, "ffh2");
+const pages = {};
+function ffhHtml(req, dir) {
+  dir = dir || FFH2_DIR;
+  if (!pages[dir]) pages[dir] = fs.readFileSync(path.join(dir, "index.html"), "utf8");
   const base = (process.env.PUBLIC_URL || (req.protocol + "://" + req.get("host"))).replace(/\/$/, "");
   const pixel = PIXEL_ID ? `<script>(function(){try{if(localStorage.getItem('esv_ffh_noads'))return}catch(e){}!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${PIXEL_ID}');fbq('track','PageView');})();</script>` : "";
-  return ffhPage.split("{{BASE}}").join(base).replace("<!--PIXEL-->", pixel);
+  return pages[dir].split("{{BASE}}").join(base).replace("<!--PIXEL-->", pixel);
 }
 app.get(["/play", "/play/", "/play/index.html"], (req, res) => {
-  try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req)); }
+  try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, FFH2_DIR)); }
   catch (e) { console.error(e); res.status(500).send("Game not found"); }
 });
+app.get(["/play/v1", "/play/v1/"], (req, res) => {
+  try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, FFH_DIR)); }
+  catch (e) { console.error(e); res.status(500).send("Game not found"); }
+});
+app.use("/play/v2", express.static(path.join(FFH2_DIR, "v"), { maxAge: "7d", index: false, acceptRanges: true }));
 app.use("/play", express.static(FFH_DIR, { maxAge: "7d", index: false }));
 
 function loadPlays() { try { return JSON.parse(fs.readFileSync(FFH_FILE, "utf8")); } catch (e) { return {}; } }
