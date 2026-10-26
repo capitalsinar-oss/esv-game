@@ -62,11 +62,18 @@ function ffhHtml(req, dir) {
   const pixel = PIXEL_ID ? `<script>(function(){try{if(localStorage.getItem('esv_ffh_noads'))return}catch(e){}!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${PIXEL_ID}');fbq('track','PageView');})();</script>` : "";
   return pages[dir].split("{{BASE}}").join(base).replace("<!--PIXEL-->", pixel);
 }
+// Which game is live at /play. Roll back by setting GAME_VERSION=v1 in Render (Environment) — no code change needed.
+//   v2 = "Plan Game" (4-day plan, live from 26 Oct 2026)   v1 = "Vote Game" (original persona game, 9–26 Oct 2026)
+const LIVE_GAME = () => (process.env.GAME_VERSION || "v2").toLowerCase() === "v1" ? FFH_DIR : FFH2_DIR;
 app.get(["/play", "/play/", "/play/index.html"], (req, res) => {
+  try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, LIVE_GAME())); }
+  catch (e) { console.error(e); res.status(500).send("Game not found"); }
+});
+app.get(["/play/v2", "/play/plan-game"], (req, res) => {
   try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, FFH2_DIR)); }
   catch (e) { console.error(e); res.status(500).send("Game not found"); }
 });
-app.get(["/play/v1", "/play/v1/"], (req, res) => {
+app.get(["/play/v1", "/play/v1/", "/play/vote-game"], (req, res) => {
   try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, FFH_DIR)); }
   catch (e) { console.error(e); res.status(500).send("Game not found"); }
 });
@@ -220,6 +227,60 @@ function getMailer() {
   return mailer;
 }
 function readJson(f, d) { try { return JSON.parse(fs.readFileSync(f, "utf8")); } catch (e) { return d; } }
+// The plan email: Endless Summer branding, Jayne's voice, plan link + PDF attached, 20% via Instagram DM or email
+function planEmailText(url) {
+  return `Hi there,
+
+Thank you for playing with your kids. Here's the 4-day plan your family built: every stop is a place we know on the Bukit, timed for your kids' ages and priced for your family. It's attached as a PDF, and you can also open it here: ${url}
+
+Welcome to Bali (almost)
+I'm Jayne, a mum of three from Singapore. Endless Summer is our family's home in Ungasan, the quiet, kid-friendly end of Uluwatu, and we share it with other families when we're back in Singapore.
+- 4 bedrooms, all en-suite, sleeps 8
+- A kids' pool, 1 metre deep, with a ledge little ones can stand on
+- A climbing wall in the living room
+- Filtered water for the whole house, pool included, gentle on skin and hair
+- Ohana's kids' playground restaurant right next door; Melasti Beach 10 minutes away
+
+Your player price: 20% off our Airbnb price, whenever you're ready
+Message us on Instagram @endless.summer.bali (https://ig.me/m/endless.summer.bali) or reply to this email with your dates, and we'll send the exact price.
+
+Photos of the house: https://endlesssummerbali.com/photos
+Our Uluwatu-with-kids favourites: https://endlesssummerbali.com/uluwatukidsitinerary
+
+See you in Bali,
+Jayne
+Mum of three · Endless Summer Villa, Ungasan, Bali`;
+}
+function planEmailHtml(url, base) {
+  const O = "#FF851B", INK = "#2B2118", MUTED = "#7A6A5A", CREAM = "#F3EBDD", CARD = "#FFFBF4";
+  const btn = (href, label, bg, fg) => `<a href="${href}" style="display:inline-block;background:${bg};color:${fg};text-decoration:none;font-weight:700;font-size:15px;padding:13px 22px;border-radius:999px;margin:4px 6px 4px 0">${label}</a>`;
+  const li = t => `<tr><td style="padding:4px 10px 4px 0;vertical-align:top;color:${O};font-size:16px">&#9679;</td><td style="padding:4px 0;font-size:15px;line-height:1.5;color:${INK}">${t}</td></tr>`;
+  return `<!doctype html><html><body style="margin:0;padding:0;background:${CREAM}">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${CREAM}"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:${CARD};border-radius:20px;overflow:hidden;font-family:Helvetica,Arial,sans-serif;color:${INK}">
+<tr><td style="padding:22px 28px 10px"><img src="${base}/play/a/LOGO.png" width="150" alt="Endless Summer Villa" style="display:block;border:0"></td></tr>
+<tr><td><img src="${base}/play/v2/email-hero.jpg" width="600" alt="Our girls in the kids' pool at Endless Summer" style="display:block;width:100%;height:auto;border:0"></td></tr>
+<tr><td style="padding:26px 28px 6px">
+  <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:28px;line-height:1.2">Your family's 4 days in Uluwatu</p>
+  <p style="margin:0 0 16px;font-size:15px;line-height:1.6">Hi there,<br><br>Thank you for playing with your kids. Here's the 4-day plan your family built: every stop is a place we know on the Bukit, timed for your kids' ages and priced for your family. It's attached as a PDF too.</p>
+  ${btn(url, "Open our 4-day plan", O, "#fff")}
+</td></tr>
+<tr><td style="padding:22px 28px 4px">
+  <p style="margin:0 0 8px;font-family:Georgia,serif;font-size:22px">Welcome to Bali (almost)</p>
+  <p style="margin:0 0 10px;font-size:15px;line-height:1.6">I'm Jayne, a mum of three from Singapore. Endless Summer is our family's home in Ungasan, the quiet, kid-friendly end of Uluwatu, and we share it with other families when we're back in Singapore.</p>
+  <table role="presentation" cellpadding="0" cellspacing="0">${li("4 bedrooms, all en-suite, sleeps 8")}${li("A kids' pool, 1 metre deep, with a ledge little ones can stand on")}${li("A climbing wall in the living room")}${li("Filtered water for the whole house, pool included, gentle on skin and hair")}${li("Ohana's kids' playground restaurant right next door; Melasti Beach 10 minutes away")}</table>
+  <p style="margin:12px 0 0;font-size:14px"><a href="https://endlesssummerbali.com/photos" style="color:#C45F0E">See the house</a> &nbsp;·&nbsp; <a href="https://endlesssummerbali.com/uluwatukidsitinerary" style="color:#C45F0E">Our Uluwatu-with-kids favourites</a></p>
+</td></tr>
+<tr><td style="padding:22px 28px 6px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFE7D1;border-radius:16px"><tr><td style="padding:18px 20px">
+  <p style="margin:0 0 6px;font-family:Georgia,serif;font-size:21px">Your player price: 20% off</p>
+  <p style="margin:0 0 12px;font-size:15px;line-height:1.6">20% off our Airbnb price, whenever you're ready to book. Send us your dates and we'll reply with the exact price.</p>
+  ${btn("https://ig.me/m/endless.summer.bali", "Message us on Instagram", INK, "#fff")}${btn("mailto:" + (process.env.GMAIL_USER || "endless.summer.ulu@gmail.com") + "?subject=Our%20dates%20for%20Endless%20Summer", "Email us", "#fff", INK)}
+</td></tr></table></td></tr>
+<tr><td style="padding:22px 28px 26px;font-size:15px;line-height:1.6">See you in Bali,<br><span style="font-family:Georgia,serif;font-size:20px">Jayne</span><br><span style="color:${MUTED};font-size:13px">Mum of three · Endless Summer Villa, Ungasan, Bali · <a href="https://www.instagram.com/endless.summer.bali/" style="color:${MUTED}">@endless.summer.bali</a></span></td></tr>
+</table>
+<p style="font-family:Helvetica,Arial,sans-serif;font-size:12px;color:${MUTED};margin:14px 0 0">You're getting this because you asked for your plan in our Future Family Holidays game.</p>
+</td></tr></table></body></html>`;
+}
 app.post("/api/ffh/plan", express.raw({ type: "application/pdf", limit: "8mb" }), async (req, res) => {
   try {
     const ip = req.ip || "x", now = Date.now();
@@ -244,8 +305,9 @@ app.post("/api/ffh/plan", express.raw({ type: "application/pdf", limit: "8mb" })
       await m.sendMail({
         from: `"Jayne at Endless Summer" <${process.env.GMAIL_USER}>`,
         to: contact,
-        subject: "Your family's 4 days in Uluwatu",
-        text: `Hi!\n\nHere's the 4-day plan your family built in our game. It's attached, and you can also open it here: ${url}\n\nThe 20% player price is yours whenever you'd like to come. Just reply to this email or message us on Instagram @endless.summer.bali with your dates.\n\nJayne\nEndless Summer Villa, Ungasan, Bali`,
+        subject: "Welcome to Bali: your family's 4 days in Uluwatu",
+        text: planEmailText(url),
+        html: planEmailHtml(url, base),
         attachments: [{ filename: "Our-4-days-in-Uluwatu.pdf", content: buf, contentType: "application/pdf" }]
       });
       return res.json({ ok: true, via: "email", url });

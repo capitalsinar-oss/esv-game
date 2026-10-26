@@ -160,6 +160,8 @@ tr.t td{font-weight:700;border-bottom:none}
 .prow2{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:.92rem}
 .prow2 .v{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
 .prow2.was .v{text-decoration:line-through;color:var(--muted);font-weight:600}
+.prow2 .v small{font-size:.8rem;font-weight:600}
+.prow2 > span:first-child{max-width:55%}
 .prow2.now{font-size:1rem}
 .pending{font-size:.8rem;color:var(--muted);font-style:italic}
 .btn-ig{display:block;text-align:center;text-decoration:none;background:var(--ink);color:var(--screen);border-radius:99px;padding:12px;font-weight:700}
@@ -316,6 +318,16 @@ const WHEN = {
  AU:['Summer holidays · Dec–Jan','Easter & April holidays','June–July holidays','Sept–Oct holidays','Not sure yet'],
  X:['Christmas & New Year','Chinese New Year','March–April','June–August','September–October','Not sure yet']};
 
+// Villa prices: Airbnb totals for 3 nights, checked once on 26 Oct 2026 (Campaign Brain 'Villa Prices' tab). Fixed numbers, no live Airbnb calls.
+const VP=(t,dates,next)=>({t,dates,next});
+const VILLA={
+ 'December school holidays':VP(19915920,'17–20 Dec 2027',true),'New Year long weekend · 1–3 Jan':VP(21488511,'1–4 Jan 2027'),'CNY long weekend · 6–8 Feb':VP(14778480,'6–9 Feb 2027'),
+ 'March holidays · 13–21 Mar':VP(17547360,'13–16 Mar 2027'),'Good Friday · 26–28 Mar':VP(19904800,'26–29 Mar 2027'),'Hari Raya Haji · 15–17 May':VP(18614880,'15–18 May 2027'),
+ 'June holidays · 29 May–27 Jun':VP(18436960,'5–8 Jun 2027'),'National Day · 7–9 Aug':VP(21488511,'7–10 Aug 2027'),'September holidays · 4–12 Sep':VP(19015200,'4–7 Sep 2027'),
+ 'Year-end holidays · from 20 Nov':VP(15768160,'19–22 Nov 2027',true),
+ 'Summer holidays · Dec–Jan':VP(18448080,'8–11 Jan 2027'),'Easter & April holidays':VP(19159760,'9–12 Apr 2027'),'June–July holidays':VP(21488511,'2–5 Jul 2027'),'Sept–Oct holidays':VP(18926240,'24–27 Sep 2027'),
+ 'Christmas & New Year':VP(21488511,'26–29 Dec 2026'),'Chinese New Year':VP(14778480,'6–9 Feb 2027'),'March–April':VP(17547360,'13–16 Mar 2027'),'June–August':VP(21488511,'2–5 Jul 2027'),'September–October':VP(18926240,'24–27 Sep 2027')};
+const VMIN=14778480, VMAX=21488511;
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function deck(){ if(!S.deck){ S.deck = AD.concat(shuffle(ROT).slice(0,5)); } return S.deck; }
 const app = document.getElementById('app');
@@ -708,8 +720,12 @@ function planScreen(){
       <div class="dayblk cost"><h2>What it costs</h2>
         <span class="label">${nightsNote}</span>
         <div class="pricebox">
-          <div class="prow2 now"><span><b>Your player price: 20% off our Airbnb price</b></span></div>
-          <span class="sub" style="font-size:.88rem">Send us your dates on Instagram and we'll reply with the exact total and the price per night${f.s==='Rp'?'':', in '+f.s}.</span>
+          ${(()=>{ const v=VILLA[S.when]; if(!v) return `<div class="prow2 was"><span>On Airbnb, 3 nights</span><span class="v">${money(VMIN)} to ${money(VMAX)}</span></div>
+            <div class="prow2 now"><span><b>Your price: 20% off</b></span><span class="v">${money(VMIN*.8)} to ${money(VMAX*.8)}</span></div>
+            <span class="pending">Depends on your dates. Tell us when and we'll send the exact price.</span>`;
+            return `<div class="prow2 was"><span>On Airbnb, 3 nights</span><span class="v">${money(v.t)} total<br><small>${money(v.t/3)} a night</small></span></div>
+            <div class="prow2 now"><span><b>Your price: 20% off</b></span><span class="v">${money(v.t*.8)} total<br><small>${money(v.t*.8/3)} a night</small></span></div>
+            <span class="pending">${v.next?'This year\'s dates are already taken, so this is next year\'s price, ':'Airbnb price '}for ${v.dates}, checked 26 Oct 2026. Prices move a little; we'll confirm for your exact dates.</span>`; })()}
         </div>
         <a class="btn-ig" href="https://ig.me/m/endless.summer.bali" target="_blank" rel="noopener">Message us on Instagram to book</a>
         <div><span class="label">Activities for your family</span>
