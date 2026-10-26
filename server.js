@@ -184,6 +184,71 @@ app.get("/play/card/:id.png", (req, res) => {
   res.set("Content-Disposition", 'inline; filename="endless-summer-family-card.png"').type("png").sendFile(f);
 });
 
+// === NEW GAME: save a family's 4-day plan PDF and send it ===
+// Email addresses get it straight away from Gmail (GMAIL_USER + GMAIL_APP_PASSWORD).
+// Instagram handles are queued for the daily DM run (the game tells them "within 24 hours").
+// Team view of the DM queue: /api/ffh/plan-queue.json?token=ADMIN_TOKEN
+const PLAN_DIR = path.join(DATA_DIR, "plans");
+const PLAN_QUEUE = path.join(DATA_DIR, "plan-dm-queue.json");
+const planHits = new Map(); // ip -> [timestamps], max 5 an hour
+let mailer = null;
+function getMailer() {
+  if (mailer !== null) return mailer;
+  if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) { mailer = false; return mailer; }
+  const nodemailer = require("nodemailer");
+  mailer = nodemailer.createTransport({ service: "gmail", auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD.replace(/\s/g, "") } });
+  return mailer;
+}
+function readJson(f, d) { try { return JSON.parse(fs.readFileSync(f, "utf8")); } catch (e) { return d; } }
+app.post("/api/ffh/plan", express.raw({ type: "application/pdf", limit: "8mb" }), async (req, res) => {
+  try {
+    const ip = req.ip || "x", now = Date.now();
+    const hits = (planHits.get(ip) || []).filter(t => now - t < 3600e3);
+    if (hits.length >= 5) return res.status(429).json({ error: "Too many plans from here. Try again in an hour." });
+    hits.push(now); planHits.set(ip, hits);
+    const contact = String(req.query.to || "").trim().slice(0, 120);
+    const playId = String(req.query.play || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 60);
+    const buf = req.body;
+    if (!Buffer.isBuffer(buf) || buf.length < 500 || buf.slice(0, 4).toString() !== "%PDF") return res.status(400).json({ error: "bad pdf" });
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(contact);
+    const handle = contact.replace(/^@/, "");
+    if (!isEmail && !/^[A-Za-z0-9._]{1,30}$/.test(handle)) return res.status(400).json({ error: "Please enter an email address or an Instagram handle." });
+    const id = crypto.randomBytes(9).toString("base64url");
+    if (!fs.existsSync(PLAN_DIR)) fs.mkdirSync(PLAN_DIR, { recursive: true });
+    fs.writeFileSync(path.join(PLAN_DIR, id + ".pdf"), buf);
+    const base = (process.env.PUBLIC_URL || (req.protocol + "://" + req.get("host"))).replace(/\/$/, "");
+    const url = base + "/play/plan/" + id + ".pdf";
+    if (isEmail) {
+      const m = getMailer();
+      if (!m) return res.json({ ok: true, via: "none", url, note: "Email isn't set up on the server yet." });
+      await m.sendMail({
+        from: `"Jayne at Endless Summer" <${process.env.GMAIL_USER}>`,
+        to: contact,
+        subject: "Your family's 4 days in Uluwatu",
+        text: `Hi!\n\nHere's the 4-day plan your family built in our game. It's attached, and you can also open it here: ${url}\n\nThe 20% player price is yours whenever you'd like to come. Just reply to this email or message us on Instagram @endless.summer.bali with your dates.\n\nJayne\nEndless Summer Villa, Ungasan, Bali`,
+        attachments: [{ filename: "Our-4-days-in-Uluwatu.pdf", content: buf, contentType: "application/pdf" }]
+      });
+      return res.json({ ok: true, via: "email", url });
+    }
+    const q = readJson(PLAN_QUEUE, []);
+    q.push({ handle, url, playId, at: new Date().toISOString(), status: "to send" });
+    fs.writeFileSync(PLAN_QUEUE, JSON.stringify(q, null, 1));
+    res.json({ ok: true, via: "instagram", url });
+  } catch (e) { console.error("plan send failed", e.message); res.status(500).json({ error: "Couldn't send it just now. Please use Download instead." }); }
+});
+app.get("/play/plan/:id.pdf", (req, res) => {
+  const id = String(req.params.id || "").replace(/[^A-Za-z0-9_-]/g, "");
+  const f = path.join(PLAN_DIR, id + ".pdf");
+  if (!id || !fs.existsSync(f)) return res.status(404).send("Plan not found");
+  res.set("Content-Disposition", 'inline; filename="Our-4-days-in-Uluwatu.pdf"').type("pdf").sendFile(f);
+});
+app.get("/api/ffh/plan-queue.json", requireAdmin, (req, res) => res.json(readJson(PLAN_QUEUE, [])));
+app.post("/api/ffh/plan-queue/:i/sent", requireAdmin, (req, res) => {
+  const q = readJson(PLAN_QUEUE, []); const i = +req.params.i;
+  if (!q[i]) return res.status(404).json({ error: "no such row" });
+  q[i].status = "sent"; q[i].sentAt = new Date().toISOString(); fs.writeFileSync(PLAN_QUEUE, JSON.stringify(q, null, 1)); res.json(q[i]);
+});
+
 // === PUBLIC aggregate for the intro-page test (counts only, no personal data) ===
 app.get("/api/ffh/ab.json", (req, res) => {
   const evs = loadEvents(), testers = new Set(evs.filter(e => e.tester).map(e => e.device));
