@@ -269,6 +269,24 @@ app.post("/api/ffh/plan-queue/:i/sent", requireAdmin, (req, res) => {
   q[i].status = "sent"; q[i].sentAt = new Date().toISOString(); fs.writeFileSync(PLAN_QUEUE, JSON.stringify(q, null, 1)); res.json(q[i]);
 });
 
+// === PUBLIC counts for the new game (counts only, no personal data), read by the daily Game Counts refresh ===
+app.get("/api/ffh/v2.json", (req, res) => {
+  const evs = loadEvents(), testers = new Set(evs.filter(e => e.tester).map(e => e.device));
+  const since = req.query.since || "2026-10-26";
+  const sess = new Map();
+  for (const e of evs) {
+    if (e.at < since || testers.has(e.device) || !(e.props && e.props.v === "v2")) continue;
+    let s = sess.get(e.session); if (!s) { s = { d: e.device, n: new Set(), cards: 0, last: null }; sess.set(e.session, s); }
+    s.n.add(e.name); if (e.name === "card_answer") s.cards++; if (e.name === "leave" || e.name === "card_view") s.last = e;
+  }
+  const a = [...sess.values()], c = f => a.filter(f).length, h = n => s => s.n.has(n);
+  const stops = {};
+  for (const s of a) { if (s.n.has("game_complete") || !s.last) continue; const p = s.last.props || {}; const k = p.card ? "card " + p.card : (p.screen || "?"); stops[k] = (stops[k] || 0) + 1; }
+  res.json({ since, opened: c(h("landing")), answeredCard1: c(h("game_start")), answered3: c(s => s.cards >= 3), whoDone: c(h("who_done")), proof: c(h("proof_view")), answered12: c(s => s.cards >= 12),
+    toys: c(h("toys_done")), lastScreen: c(h("final_done")), gotPlan: c(h("game_complete")), gaveContact: c(h("lead")), planSent: c(h("plan_sent")), savedPdf: c(h("pdf_save")), draw: c(h("draw_entry")), snacks: c(h("snack_taps")),
+    topStops: Object.entries(stops).sort((x, y) => y[1] - x[1]).slice(0, 8) });
+});
+
 // === PUBLIC aggregate for the intro-page test (counts only, no personal data) ===
 app.get("/api/ffh/ab.json", (req, res) => {
   const evs = loadEvents(), testers = new Set(evs.filter(e => e.tester).map(e => e.device));
