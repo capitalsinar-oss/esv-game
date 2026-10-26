@@ -69,6 +69,12 @@ app.get(["/play", "/play/", "/play/index.html"], (req, res) => {
   try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, LIVE_GAME())); }
   catch (e) { console.error(e); res.status(500).send("Game not found"); }
 });
+// TEST LINK: /play/next shows the next version before it goes live (same tracking, but open it with ?tester=1)
+app.get(["/play/next", "/play/next/"], (req, res) => {
+  const dir = fs.existsSync(path.join(__dirname, "ffh2next", "index.html")) ? path.join(__dirname, "ffh2next") : FFH2_DIR;
+  try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, dir).replace("<head>", '<head><meta name="robots" content="noindex">')); }
+  catch (e) { console.error(e); res.status(500).send("Game not found"); }
+});
 app.get(["/play/v2", "/play/plan-game"], (req, res) => {
   try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, FFH2_DIR)); }
   catch (e) { console.error(e); res.status(500).send("Game not found"); }
