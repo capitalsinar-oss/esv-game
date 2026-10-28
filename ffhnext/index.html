@@ -96,14 +96,14 @@ p{margin:0}
 .intro-h1{font-size:1.4rem}
 @media (max-height:620px){.reel{width:auto;height:31vh;align-self:center}.intro-h1{font-size:1.25rem}.why li{font-size:.86rem}}
 .intro-cta{position:sticky;bottom:10px;z-index:5;padding-top:4px}
-/* Inside Instagram / Facebook the link opens in a sheet showing only the top third: put the button first */
-html.inapp .intro-stack .intro-h1{order:1;font-size:1.35rem}
-html.inapp .intro-stack .intro-cta{order:2;position:static}
-html.inapp .intro-stack .resume{order:2}
-html.inapp .intro-stack .fine{order:3}
-html.inapp .intro-stack .reel{order:4}
-html.inapp .intro-stack .reel-cap{order:5}
-html.inapp .intro-stack .why{order:6}
+/* Inside Instagram / Facebook the link opens in a sheet showing only the top third: headline first; buttons stay at the bottom */
+html.inapp .intro-stack .intro-h1{order:1}
+html.inapp .intro-stack .reel{order:2}
+html.inapp .intro-stack .reel-cap{order:3}
+html.inapp .intro-stack .why{order:4}
+html.inapp .intro-stack .resume{order:5}
+html.inapp .intro-stack .intro-cta{order:6}
+html.inapp .intro-stack .fine{order:7}
 html.inapp #s-who h2::after{content:" Tap one to start.";font-size:.75em;opacity:.7}
 .intro-cta:before{content:"";position:absolute;inset:-14px -16px -10px;background:linear-gradient(180deg,rgba(250,246,238,0),var(--cream) 45%);z-index:-1}
 .why{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}

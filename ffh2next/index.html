@@ -158,23 +158,21 @@ tr.t td{font-weight:700;border-bottom:none}
 .intro .who{font-size:.8rem;opacity:.88;text-align:center;margin:-4px 0 0}
 @media (max-height:700px){.intro h1{font-size:2.1rem}.intro .in{gap:10px}.intro li{font-size:.86rem}}
 /* Inside Instagram / Facebook: links open in a sheet that shows only the top third of the page.
-   Put the question and the buttons first so they are visible without dragging the sheet up. */
+   Put the question and the photo at the top so the visible part makes sense; the buttons stay where they
+   always are (bottom, under the thumb) on every screen. */
 html.inapp .tray{display:none}
-html.inapp .body{gap:10px}
-html.inapp .body>h1{order:1;font-size:1.7rem;margin-top:2px}
-html.inapp .body>.price{order:2;margin-top:-4px}
-html.inapp .body>.btns{order:3;position:static;box-shadow:none;padding:2px 0 4px;margin-top:0}
+html.inapp .body>h1{order:1;margin-top:2px}
+html.inapp .body>.price{order:2;margin-top:-6px}
+html.inapp .body>.photo{order:3}
 html.inapp .body>.kid{order:4}
 html.inapp .body>.promise{order:5;margin:0}
-html.inapp .body>.photo{order:6}
-html.inapp .body>.sub{order:7}
-html.inapp .body>.votes{order:8}
-html.inapp .intro{justify-content:flex-start}
-html.inapp .intro .shade{background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.3) 45%,rgba(0,0,0,.15) 65%,rgba(0,0,0,.55))}
-html.inapp .intro .in{padding-top:14px;gap:8px}
-html.inapp .intro h1{font-size:1.75rem}
-html.inapp .intro .eyebrow{order:1}html.inapp .intro h1{order:2}html.inapp .intro .lede{order:5}
-html.inapp .intro .b.yes{order:4;margin:0 0 6px;padding:14px}html.inapp .intro .getlbl{order:5}html.inapp .intro ul{order:6}html.inapp .intro .who{order:7}
+html.inapp .body>.sub{order:6}
+html.inapp .body>.votes{order:7}
+html.inapp .body>.btns{order:9}
+html.inapp .intro{justify-content:space-between}
+html.inapp .intro .shade{background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.25) 40%,rgba(0,0,0,.15) 55%,rgba(0,0,0,.6))}
+html.inapp .intro .in{flex:1;padding-top:16px}
+html.inapp .intro .lede{margin-bottom:auto}
 .proof{display:flex;flex-direction:column;gap:10px}
 .pcard{border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .big{font-family:var(--display);font-size:2.3rem;font-weight:700;line-height:1;color:var(--orange-ink)}
