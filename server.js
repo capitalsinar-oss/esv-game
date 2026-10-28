@@ -60,8 +60,10 @@ function ffhHtml(req, dir) {
   if (!pages[dir]) pages[dir] = fs.readFileSync(path.join(dir, "index.html"), "utf8");
   const base = (process.env.PUBLIC_URL || (req.protocol + "://" + req.get("host"))).replace(/\/$/, "");
   const pixel = PIXEL_ID ? `<script>(function(){try{if(localStorage.getItem('esv_ffh_noads'))return}catch(e){}!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${PIXEL_ID}');fbq('track','PageView');})();</script>` : "";
-  return pages[dir].split("{{BASE}}").join(base).replace("<!--PIXEL-->", pixel);
+  if (TAPS_JS === null) { try { TAPS_JS = fs.readFileSync(path.join(__dirname, "taps.js"), "utf8"); } catch (e) { TAPS_JS = ""; } }
+  return pages[dir].split("{{BASE}}").join(base).replace("<!--PIXEL-->", pixel + (TAPS_JS ? "<script>" + TAPS_JS + "</script>" : ""));
 }
+let TAPS_JS = null;
 // Which game is live at /play. Roll back by setting GAME_VERSION=v1 in Render (Environment) — no code change needed.
 //   v2 = "Plan Game" (4-day plan, live from 26 Oct 2026)   v1 = "Vote Game" (original persona game, 9–26 Oct 2026)
 const LIVE_GAME = () => (process.env.GAME_VERSION || "v2").toLowerCase() === "v1" ? FFH_DIR : FFH2_DIR;
@@ -370,6 +372,53 @@ app.get("/api/ffh/v2.json", (req, res) => {
   res.json({ since, variant: variant || "all", botsExcluded: nobots ? bots : null, opened: c(h("landing")), tappedIntro: c(h("intro_start")), answeredCard1: c(h("game_start")), answered3: c(s => s.cards >= 3), whoDone: c(h("who_done")), proof: c(h("proof_view")), answered12: c(s => s.cards >= 12),
     toys: c(h("toys_done")), lastScreen: c(h("final_done")), gotPlan: c(h("game_complete")), gaveContact: c(h("lead")), planSent: c(h("plan_sent")), savedPdf: c(h("pdf_save")), draw: c(h("draw_entry")), snacks: c(h("snack_taps")),
     topStops: Object.entries(stops).sort((x, y) => y[1] - x[1]).slice(0, 8) });
+});
+
+// === PUBLIC tap map (anonymous positions only): where people tap, dead taps, swipe attempts, rage taps ===
+// ?game=v1|v2|v2intro  ?since=ISO  Testers and Meta review-bot bursts (3+ landings in one minute) are dropped.
+function botSessions(evs, since) {
+  const perMin = {}, landMin = {};
+  for (const e of evs) if (e.name === "landing" && e.at >= since && !landMin[e.session]) { landMin[e.session] = e.at.slice(0, 16); perMin[landMin[e.session]] = (perMin[landMin[e.session]] || 0) + 1; }
+  return new Set(Object.keys(landMin).filter(k => perMin[landMin[k]] >= 3));
+}
+function tapData(req) {
+  const evs = loadEvents(), since = req.query.since || "2026-10-28T07:40", want = req.query.game || "";
+  const testers = new Set(evs.filter(e => e.tester).map(e => e.device)), bots = req.query.bots === "1" ? new Set() : botSessions(evs, since);
+  const screens = {}, sessions = new Set();
+  for (const e of evs) {
+    if (e.at < since || testers.has(e.device) || bots.has(e.session)) continue;
+    if (!["tap", "swipe_try", "rage_tap"].includes(e.name)) continue;
+    const p = e.props || {}; if (want && p.game !== want) continue;
+    sessions.add(e.session);
+    const key = (p.game || "?") + " | " + (p.scr || "?") + " | " + (p.h || "");
+    const sc = screens[key] || (screens[key] = { game: p.game, screen: p.scr, heading: p.h, taps: 0, dead: 0, swipes: 0, rage: 0, deadOn: {}, hits: {}, points: [] });
+    if (e.name === "tap") { sc.taps++; if (p.dead) { sc.dead++; sc.deadOn[p.on] = (sc.deadOn[p.on] || 0) + 1; } else sc.hits[p.hit] = (sc.hits[p.hit] || 0) + 1;
+      if (sc.points.length < 400) sc.points.push([p.x, p.y, p.dead ? 1 : 0]); }
+    if (e.name === "swipe_try") { sc.swipes++; if (sc.points.length < 400) sc.points.push([p.x, p.y, 2]); }
+    if (e.name === "rage_tap") sc.rage++;
+  }
+  const top = o => Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const list = Object.values(screens).map(s => ({ ...s, deadOn: top(s.deadOn), hits: top(s.hits) })).sort((a, b) => b.taps + b.swipes - a.taps - a.swipes);
+  return { since, sessions: sessions.size, botSessionsDropped: bots.size, screens: list };
+}
+app.get("/api/ffh/taps.json", (req, res) => res.set("Cache-Control", "no-store").json(tapData(req)));
+app.get("/play/heat", (req, res) => {
+  res.set("Cache-Control", "no-store").type("html").send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Tap map</title>
+<style>body{font:14px system-ui,sans-serif;background:#F3EBDD;color:#2B2118;margin:0;padding:16px}h1{font-size:20px;margin:0 0 4px}.sub{color:#7A6A5A;margin:0 0 14px}
+.grid{display:flex;flex-wrap:wrap;gap:16px}.card{background:#FFFBF4;border-radius:14px;padding:12px;width:300px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.ph{position:relative;width:180px;height:390px;border:2px solid #E8DCC8;border-radius:18px;margin:8px auto;background:#fff;overflow:hidden}
+.d{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;opacity:.6}.k{font-size:12px;color:#7A6A5A}.k b{color:#2B2118}
+.leg span{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 4px 0 10px}select{font:inherit;padding:4px}</style></head><body>
+<h1>Tap map</h1><p class="sub">Every tap, by screen. <span class="leg"><span style="background:#2E9E6A"></span>hit a button <span style="background:#E0452E"></span>dead tap (nothing happens) <span style="background:#3B6FD8"></span>tried to swipe</span><br>
+Game <select id="g"><option value="">all</option><option value="v2">new game</option><option value="v2intro">new + opening page</option><option value="v1">old game</option></select> · testers and Meta review bots removed</p><div id="o" class="grid"></div>
+<script>const esc=s=>String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+async function load(){const g=document.getElementById('g').value;const d=await (await fetch('/api/ffh/taps.json'+(g?'?game='+g:''))).json();
+document.querySelector('.sub').firstChild.textContent='Every tap since '+d.since.replace('T',' ')+' UTC, by screen · '+d.sessions+' visitors. ';
+document.getElementById('o').innerHTML=d.screens.map(s=>'<div class="card"><b>'+({v2:'New game',v2intro:'New + opening page',v1:'Old game'}[s.game]||esc(s.game))+'</b><div class="k">'+esc(s.heading)+'</div>'+
+'<div class="ph">'+s.points.map(p=>'<i class="d" style="left:'+(p[0]*100)+'%;top:'+(p[1]*100)+'%;background:'+(p[2]==2?'#3B6FD8':p[2]?'#E0452E':'#2E9E6A')+'"></i>').join('')+'</div>'+
+'<div class="k"><b>'+s.taps+'</b> taps · <b>'+s.dead+'</b> dead · <b>'+s.swipes+'</b> swipe tries · <b>'+s.rage+'</b> rage taps</div>'+
+(s.deadOn.length?'<div class="k">Dead taps on: '+s.deadOn.map(x=>esc(x[0])+' ('+x[1]+')').join(', ')+'</div>':'')+'</div>').join('')||'<p>No taps yet.</p>';}
+document.getElementById('g').onchange=load;load();</script></body></html>`);
 });
 
 // === PUBLIC aggregate for the intro-page test (counts only, no personal data) ===
