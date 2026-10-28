@@ -143,6 +143,20 @@ tr.t td{font-weight:700;border-bottom:none}
 .votes{font-size:.85rem;font-weight:700;color:var(--new);background:var(--new-soft);border-radius:10px;padding:7px 10px;opacity:0;transform:translateY(4px);transition:.25s}
 .votes.on{opacity:1;transform:none}
 .promise{font-size:.9rem;margin:-10px 0 0;color:var(--ink)}
+.intro{position:relative;flex:1;display:flex;flex-direction:column;justify-content:flex-end;color:#fff;min-height:min(820px,calc(100vh - 80px));min-height:min(820px,calc(100svh - 80px));background:#2b6f7a url('/play/v2/intro-poster.jpg') center/cover no-repeat}
+.intro video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.intro .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 22%,rgba(0,0,0,.18) 45%,rgba(0,0,0,.62) 78%,rgba(0,0,0,.72))}
+.intro .in{position:relative;padding:0 24px max(22px,env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;text-shadow:0 1px 12px rgba(0,0,0,.35)}
+.intro .eyebrow{font-size:.68rem;letter-spacing:.13em;white-space:nowrap;text-transform:uppercase;font-weight:600;opacity:.95}
+.intro h1{font-family:var(--display);font-weight:500;font-size:2.45rem;line-height:1.04;color:#fff;text-wrap:pretty}
+.intro .lede{font-size:1.02rem;margin:0}
+.intro ul{list-style:none;margin:2px 0 0;padding:14px 16px;display:flex;flex-direction:column;gap:9px;background:rgba(255,251,244,.14);border:1px solid rgba(255,255,255,.28);border-radius:16px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.intro li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:.93rem;line-height:1.3}
+.intro li b{font-weight:700}
+.intro .getlbl{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin:4px 0 -6px;opacity:.9}
+.intro .b.yes{width:100%;font-size:1.08rem;padding:16px;text-shadow:none}
+.intro .who{font-size:.8rem;opacity:.88;text-align:center;margin:-4px 0 0}
+@media (max-height:700px){.intro h1{font-size:2.1rem}.intro .in{gap:10px}.intro li{font-size:.86rem}}
 .proof{display:flex;flex-direction:column;gap:10px}
 .pcard{border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .big{font-family:var(--display);font-size:2.3rem;font-weight:700;line-height:1;color:var(--orange-ink)}
@@ -220,7 +234,8 @@ const FX = {SG:{s:'S$',r:14170,name:'Singapore'},AU:{s:'A$',r:12720,name:'Austra
 const GUESS = (()=>{ try{ const m=(new URLSearchParams(location.search).get('m')||'').toUpperCase(); if(FX[m]) return m; }catch(e){}
   try{ const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; if(/^Australia\//.test(tz)) return 'AU'; const T={'Asia/Jakarta':'ID','Asia/Makassar':'ID','Asia/Jayapura':'ID','Asia/Pontianak':'ID','Asia/Singapore':'SG','Asia/Hong_Kong':'HK','Asia/Kuala_Lumpur':'MY','Asia/Kuching':'MY'}; if(T[tz]) return T[tz]; }catch(e){} return 'SG'; })();
 const BPOS={climb:'center 40%',pony:'center 62%',surf:'center 55%'};
-const S0 = () => ({playId:'p'+Math.random().toString(36).slice(2,10)+Date.now().toString(36), startedAt:new Date().toISOString(), snackTaps:{}, toyOrder:null, extraOrder:null, i:0, yes:[], adults:2, kids:[], market:null, toys:[], rest:null, extras:[], when:null, unlocked:false, deck:null, screen:'card'});
+const INTRO = /\/play\/(go|start)/.test(location.pathname) || /[?&]intro=1/.test(location.search);
+const S0 = () => ({playId:'p'+Math.random().toString(36).slice(2,10)+Date.now().toString(36), startedAt:new Date().toISOString(), snackTaps:{}, toyOrder:null, extraOrder:null, i:0, yes:[], adults:2, kids:[], market:null, toys:[], rest:null, extras:[], when:null, unlocked:false, deck:null, screen:(INTRO?'intro':'card')});
 let S = S0();
 
 // ---------- tracking (only on our own site, never inside claude.ai) ----------
@@ -239,7 +254,7 @@ const META_EV={landing:['track','ViewContent',{content_name:'Future Family Holid
 function flushEvents(beacon){ if(!TRACK_ON||!evQ.length) return; const body=JSON.stringify({device:deviceId(),session:SESSION,utm:UTM,tester:TESTER,fbp:cookie('_fbp'),fbc:cookie('_fbc')||(UTM.fbclid?'fb.1.'+T0+'.'+UTM.fbclid:''),page:location.href.split('#')[0],events:evQ.splice(0,50)});
   try{ if(beacon&&navigator.sendBeacon) navigator.sendBeacon('/api/ffh/events',new Blob([body],{type:'application/json'})); else fetch('/api/ffh/events',{method:'POST',headers:{'Content-Type':'application/json'},body,keepalive:true}).catch(()=>{}); }catch(e){} if(evQ.length) flushEvents(beacon); }
 function track(name,props){ const st=(typeof S!=='undefined'&&S)?S:{};
-  const ev={name,t:Date.now()-T0,at:new Date().toISOString(),playId:st.playId||null,phase:'v2',idx:(st.screen==='card'?st.i:null),props:Object.assign({},props||{},{v:'v2',screen:st.screen||''})};
+  const ev={name,t:Date.now()-T0,at:new Date().toISOString(),playId:st.playId||null,phase:'v2',idx:(st.screen==='card'?st.i:null),props:Object.assign({},props||{},{v:'v2',intro:INTRO?1:0,screen:st.screen||''})};
   ev.eventId=(st.playId||SESSION)+'-'+name; if(!TRACK_ON){ try{ (window.__ffhLog=window.__ffhLog||[]).push(ev); }catch(e){} return; }
   evQ.push(ev); const m=META_EV[name]; if(m&&window.fbq&&!TESTER){ try{ fbq(m[0],m[1],m[2]||{},{eventID:ev.eventId}); }catch(e){} }
   clearTimeout(evTmr); if(m) flushEvents(false); else evTmr=setTimeout(()=>flushEvents(false),4000); }
@@ -447,6 +462,7 @@ document.addEventListener('click',unlockClip,true); document.addEventListener('t
 function kickVideos(){ document.querySelectorAll('video').forEach(v=>{ v.muted=true; v.defaultMuted=true; v.playsInline=true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); const p=v.play(); if(p&&p.catch) p.catch(()=>{}); }); }
 function render(){ _render(); kickVideos(); if(gestured) nudge(); }
 function _render(){
+  if(S.screen==='intro') return introScreen();
   if(S.screen==='card') return cardScreen();
   ({who:whoScreen,proof:proofScreen,toys:toyScreen,rest:restScreen,final:finalScreen,load:loadScreen,plan:planScreen})[S.screen]();
 }
@@ -471,13 +487,30 @@ document.addEventListener('click',e=>{ if(e.target.closest('#back')) goBack(); }
 function top(label,frac){ return `<div class="top"><span class="day">${label}</span><div class="bar"><i style="width:${Math.round(frac*100)}%"></i></div><button class="mute" type="button" aria-label="Music" aria-pressed="${musicOn}">${musicOn?'🎵':'🔇'}</button></div>`; }
 document.addEventListener('click',e=>{ if(e.target.closest('.mute')) toggleMusic(); });
 
+function introScreen(){
+  app.innerHTML = `<div class="intro"><video src="/play/v2/intro-loop.mp4" poster="/play/v2/intro-poster.jpg" autoplay muted loop playsinline preload="auto"></video><div class="shade"></div>
+  <div class="in">
+    <span class="eyebrow">A game for families · Uluwatu, Bali</span>
+    <h1>Build your family's 4&nbsp;days in Uluwatu.<br>The kids decide.</h1>
+    <p class="lede">Swipe 12 ideas together. 2 minutes.</p>
+    <p class="getlbl">You get</p>
+    <ul>
+      <li><span>🗺️</span><span><b>Your family's 4-day itinerary</b>, built from your kids' yes and no</span></li>
+      <li><span>📍</span><span><b>Real places and prices</b> for beaches, cafés and things to do</span></li>
+      <li><span>🎁</span><span><b>A shot at 3 free nights</b> at our family villa</span></li>
+    </ul>
+    <button class="b yes" id="start" type="button">Build our itinerary →</button>
+    <p class="who">From Jayne, mum of three · Endless Summer Villa, Ungasan</p>
+  </div></div>`;
+  document.getElementById('start').onclick=()=>{ play('pos'); track('intro_start',{secs:Math.round((Date.now()-T0)/1000)}); go(()=>{ S.screen='card'; }); };
+}
 function cardScreen(){
   const d=deck(); const id=d[S.i]; const c=CARDS[id]; S.shownAt=performance.now(); stopClip(); if(CLIPS[id]) setTimeout(()=>playClip(id),250); track('card_view',{card:id,n:S.i+1,of:d.length});
   const dayN = Math.min(4, Math.floor(S.i/3)+1);
   const priced = `<span class="price">${esc(priceTag(id))}</span>`;
   app.innerHTML = progress() + `<div class="body">
     <div class="photo enter" id="ph">${img(c.img)}${c.isNew?'<span class="badge">Not here yet · your vote decides</span>':''}<span class="toast" id="toast">✓ Added to your week</span><span class="bubble" id="bubble"></span>${SUNNY}</div>
-    ${S.i===0?'<p class="kid" style="margin:0">4 days in Uluwatu. The kids decide!</p><p class="promise"><b>Swipe 12 ideas, get your family\'s 4-day plan</b> with real places and prices. About 2 minutes.</p>':''}
+    ${S.i===0&&!INTRO?'<p class="kid" style="margin:0">4 days in Uluwatu. The kids decide!</p><p class="promise"><b>Swipe 12 ideas, get your family\'s 4-day plan</b> with real places and prices. About 2 minutes.</p>':''}
     <h1>${esc(c.q)}</h1><p class="sub">${esc(c.sub)}</p>${priced}
     ${R1[id]?`<p class="votes" id="votes">${R1[id][0]} of ${R1[id][1]} families ${R1[id][2]||'said yes'} in round one</p>`:''}
     <div class="btns"><button class="b no" id="no" type="button">✕ Not for us</button><button class="b yes" id="yes" type="button">♥ Yes, please</button></div></div>`;

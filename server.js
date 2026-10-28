@@ -75,6 +75,11 @@ app.get(["/play/next", "/play/next/"], (req, res) => {
   try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, dir).replace("<head>", '<head><meta name="robots" content="noindex">')); }
   catch (e) { console.error(e); res.status(500).send("Game not found"); }
 });
+// /play/go = the Plan Game with the opening page (intro A/B arm, from 28 Oct 2026)
+app.get(["/play/go", "/play/go/", "/play/start"], (req, res) => {
+  try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, FFH2_DIR)); }
+  catch (e) { console.error(e); res.status(500).send("Game not found"); }
+});
 app.get(["/play/v2", "/play/plan-game"], (req, res) => {
   try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, FFH2_DIR)); }
   catch (e) { console.error(e); res.status(500).send("Game not found"); }
@@ -341,16 +346,26 @@ app.post("/api/ffh/plan-queue/:i/sent", requireAdmin, (req, res) => {
 app.get("/api/ffh/v2.json", (req, res) => {
   const evs = loadEvents(), testers = new Set(evs.filter(e => e.tester).map(e => e.device));
   const since = req.query.since || "2026-10-26";
+  // ?variant=intro | nointro splits the opening-page test; ?nobots=1 drops Meta ad-review bursts
+  // (3+ new sessions landing in the same minute = bots checking a new or edited ad)
+  const variant = req.query.variant || "", nobots = req.query.nobots === "1";
+  const perMin = {}, landMin = {};
+  for (const e of evs) if (e.name === "landing" && e.at >= since) { const m = e.at.slice(0, 16); if (!landMin[e.session]) { landMin[e.session] = m; perMin[m] = (perMin[m] || 0) + 1; } }
+  const isBot = sid => landMin[sid] && perMin[landMin[sid]] >= 3;
+  let bots = 0; const botSeen = new Set();
   const sess = new Map();
   for (const e of evs) {
     if (e.at < since || testers.has(e.device) || !(e.props && e.props.v === "v2")) continue;
+    if (variant === "intro" && e.props.intro !== 1) continue;
+    if (variant === "nointro" && e.props.intro === 1) continue;
+    if (nobots && isBot(e.session)) { if (!botSeen.has(e.session)) { botSeen.add(e.session); bots++; } continue; }
     let s = sess.get(e.session); if (!s) { s = { d: e.device, n: new Set(), cards: 0, last: null }; sess.set(e.session, s); }
     s.n.add(e.name); if (e.name === "card_answer") s.cards++; if (e.name === "leave" || e.name === "card_view") s.last = e;
   }
   const a = [...sess.values()], c = f => a.filter(f).length, h = n => s => s.n.has(n);
   const stops = {};
   for (const s of a) { if (s.n.has("game_complete") || !s.last) continue; const p = s.last.props || {}; const k = p.card ? "card " + p.card : (p.screen || "?"); stops[k] = (stops[k] || 0) + 1; }
-  res.json({ since, opened: c(h("landing")), answeredCard1: c(h("game_start")), answered3: c(s => s.cards >= 3), whoDone: c(h("who_done")), proof: c(h("proof_view")), answered12: c(s => s.cards >= 12),
+  res.json({ since, variant: variant || "all", botsExcluded: nobots ? bots : null, opened: c(h("landing")), tappedIntro: c(h("intro_start")), answeredCard1: c(h("game_start")), answered3: c(s => s.cards >= 3), whoDone: c(h("who_done")), proof: c(h("proof_view")), answered12: c(s => s.cards >= 12),
     toys: c(h("toys_done")), lastScreen: c(h("final_done")), gotPlan: c(h("game_complete")), gaveContact: c(h("lead")), planSent: c(h("plan_sent")), savedPdf: c(h("pdf_save")), draw: c(h("draw_entry")), snacks: c(h("snack_taps")),
     topStops: Object.entries(stops).sort((x, y) => y[1] - x[1]).slice(0, 8) });
 });
