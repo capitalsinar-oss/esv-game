@@ -15,7 +15,7 @@
     for (var i = 0; i < hs.length; i++) { var r = hs[i].getBoundingClientRect(); if (r.width && r.height && r.bottom > 0 && r.top < innerHeight && getComputedStyle(hs[i]).visibility !== 'hidden') { h = hs[i]; break; } }
     return { s: s, h: h ? h.textContent.trim().slice(0, 40) : '' };
   }
-  function box(){ var a = document.querySelector('.app') || document.body; return a.getBoundingClientRect(); }
+  function box(){ var a = document.querySelector('.app') || document.getElementById('app') || document.body; return a.getBoundingClientRect(); }
   function desc(el){
     if (!el || el.nodeType !== 1) return '';
     var d = el.tagName.toLowerCase();

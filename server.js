@@ -405,17 +405,20 @@ app.get("/api/ffh/taps.json", (req, res) => res.set("Cache-Control", "no-store")
 app.get("/play/heat", (req, res) => {
   res.set("Cache-Control", "no-store").type("html").send(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Tap map</title>
 <style>body{font:14px system-ui,sans-serif;background:#F3EBDD;color:#2B2118;margin:0;padding:16px}h1{font-size:20px;margin:0 0 4px}.sub{color:#7A6A5A;margin:0 0 14px}
-.grid{display:flex;flex-wrap:wrap;gap:16px}.card{background:#FFFBF4;border-radius:14px;padding:12px;width:300px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
-.ph{position:relative;width:180px;height:390px;border:2px solid #E8DCC8;border-radius:18px;margin:8px auto;background:#fff;overflow:hidden}
-.d{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;opacity:.6}.k{font-size:12px;color:#7A6A5A}.k b{color:#2B2118}
+.grid{display:flex;flex-wrap:wrap;gap:16px}.card{background:#FFFBF4;border-radius:14px;padding:12px;width:290px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.ph{position:relative;width:260px;border:2px solid #E8DCC8;border-radius:18px;margin:8px auto;background:#fff center/100% 100% no-repeat;overflow:hidden}
+.ph.none{height:520px}.ph.none::after{content:'No picture of this screen yet';position:absolute;inset:auto 0 45% 0;text-align:center;color:#bbb;font-size:12px}
+.d{position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;opacity:.75;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.35)}.k{font-size:12px;color:#7A6A5A}.k b{color:#2B2118}
 .leg span{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 4px 0 10px}select{font:inherit;padding:4px}</style></head><body>
 <h1>Tap map</h1><p class="sub">Every tap, by screen. <span class="leg"><span style="background:#2E9E6A"></span>hit a button <span style="background:#E0452E"></span>dead tap (nothing happens) <span style="background:#3B6FD8"></span>tried to swipe</span><br>
 Game <select id="g"><option value="">all</option><option value="v2">new game</option><option value="v2intro">new + opening page</option><option value="v1">old game</option></select> · testers and Meta review bots removed</p><div id="o" class="grid"></div>
 <script>const esc=s=>String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-async function load(){const g=document.getElementById('g').value;const d=await (await fetch('/api/ffh/taps.json'+(g?'?game='+g:''))).json();
+let MAN=null;async function load(){if(!MAN){try{MAN=await (await fetch('/play/v2/heat/index.json',{cache:'no-store'})).json();}catch(e){MAN={};}}
+const pic=s=>{let m=MAN[s.game+'|'+s.heading];if(!m){const k=Object.keys(MAN).find(k=>k.split('|').slice(1).join('|')===s.heading);m=k&&MAN[k];}return m;};
+const g=document.getElementById('g').value;const d=await (await fetch('/api/ffh/taps.json'+(g?'?game='+g:''))).json();
 document.querySelector('.sub').firstChild.textContent='Every tap since '+d.since.replace('T',' ')+' UTC, by screen · '+d.sessions+' visitors. ';
 document.getElementById('o').innerHTML=d.screens.map(s=>'<div class="card"><b>'+({v2:'New game',v2intro:'New + opening page',v1:'Old game'}[s.game]||esc(s.game))+'</b><div class="k">'+esc(s.heading)+'</div>'+
-'<div class="ph">'+s.points.map(p=>'<i class="d" style="left:'+(p[0]*100)+'%;top:'+(p[1]*100)+'%;background:'+(p[2]==2?'#3B6FD8':p[2]?'#E0452E':'#2E9E6A')+'"></i>').join('')+'</div>'+
+(m=>m?'<div class="ph" style="height:'+Math.round(260*m.h/m.w)+'px;background-image:url(/play/v2/heat/'+m.f+')">':'<div class="ph none">')(pic(s))+s.points.map(p=>'<i class="d" style="left:'+(p[0]*100)+'%;top:'+(p[1]*100)+'%;background:'+(p[2]==2?'#3B6FD8':p[2]?'#E0452E':'#2E9E6A')+'"></i>').join('')+'</div>'+
 '<div class="k"><b>'+s.taps+'</b> taps · <b>'+s.dead+'</b> dead · <b>'+s.swipes+'</b> swipe tries · <b>'+s.rage+'</b> rage taps</div>'+
 (s.deadOn.length?'<div class="k">Dead taps on: '+s.deadOn.map(x=>esc(x[0])+' ('+x[1]+')').join(', ')+'</div>':'')+'</div>').join('')||'<p>No taps yet.</p>';}
 document.getElementById('g').onchange=load;load();</script></body></html>`);
