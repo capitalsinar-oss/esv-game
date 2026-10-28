@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Future Family Holidays · Endless Summer Bali</title>
+<meta name="description" content="Help my kids design our next family holiday. Play with your kids, vote on what we build next at Endless Summer Villa, and win 3 nights in Uluwatu.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Endless Summer Bali">
+<meta property="og:title" content="Future Family Holidays · Endless Summer Bali">
+<meta property="og:description" content="Help my kids design our next family holiday. Play, vote, and win 3 nights in Uluwatu.">
+<meta property="og:url" content="{{BASE}}/play">
+<meta property="og:image" content="{{BASE}}/play/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Two girls playing by the pool at Endless Summer Villa, Uluwatu">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{BASE}}/play/og.jpg">
+<meta name="theme-color" content="#FAF6EE">
+<link rel="icon" href="/play/og.jpg">
+<style>html,body{margin:0;padding:0}[hidden]{display:none!important}</style>
+<!--PIXEL-->
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Belleza&family=Caveat:wght@500;700&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: one phone-height stage. Top bar, mascot strip, card, then a fixed control zone at the thumb:
+   tools row, four answer buttons that never move, comment line. Brand look from the villa: cream, teak, sage, the logo's orange sun. Single light theme by choice. */
+:root{
+  --sun:#FF851B; --sun-deep:#C45F0E; --cream:#FAF6EE; --sand:#EFE6D6; --paper:#FFFFFF; --teak:#B07A4C; --sage:#8E9B7E;
+  --ink:#1E1A16; --ink-soft:#6B5F53; --line:#E2D6C2;
+  --neg:#F4DAD4; --mid:#EFE6D6; --pos:#DCEBDD;
+  --w-b:#DCD6EE; --w-m:#F3D7D2; --w-r:#CFE3DE; --w-n:#F1E4BC; --w-l:#D9E4C3; --w-i:#F2DCC6; --w-f:#D3E0EC; --w-e:#EDE2CD; --w-c:#CDE5E9; --w-q:#F6DFC8;
+  --display:"Belleza", "Optima", "Candara", system-ui, sans-serif;
+  --hand:"Caveat", "Bradley Hand", cursive;
+  --body:"Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--cream);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+#app{max-width:460px;margin:0 auto;height:100%;display:flex;flex-direction:column;padding-inline:16px;padding-block:8px}
+.screen{flex:1;display:flex;flex-direction:column;min-height:0}
+.scroll{overflow-y:auto;padding-bottom:24px}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.08;text-wrap:balance;margin:0}
+h1{font-size:1.85rem}
+h2{font-size:1.6rem}
+h3{font-size:1.2rem}
+p{margin:0}
+.muted{color:var(--ink-soft)}
+.label{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--sun-deep)}
+.hand{font-family:var(--hand);font-weight:700;font-size:1.35rem;line-height:1.1;color:var(--sun-deep)}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.fine{font-size:.8rem;color:var(--ink-soft)}
+
+.brand{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-block:14px 12px}
+.logo-slot img{height:50px;width:auto;display:block}
+.back{border:1.5px solid var(--ink);background:var(--paper);border-radius:99px;padding:5px 12px;font-weight:800;font-size:.88rem}
+.iconbtn{border:1.5px solid var(--ink);background:var(--paper);border-radius:99px;padding:4px 10px;font-weight:800;font-size:.85rem;white-space:nowrap}
+.iconbtn[aria-pressed="false"]{opacity:.6;border-style:dashed}
+
+.btn{border:2px solid var(--ink);border-radius:99px;background:var(--sun);color:var(--ink);font-weight:800;font-size:1.1rem;padding:15px 20px;box-shadow:0 4px 0 var(--ink);transition:transform .08s, box-shadow .08s;text-align:center;width:100%}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.ghost{background:var(--paper)}
+.btn.small{font-size:.95rem;padding:10px 16px;box-shadow:0 3px 0 var(--ink);width:auto}
+.btn:disabled,.btn.dim{background:var(--sand);color:var(--ink-soft);border-color:var(--ink-soft);box-shadow:0 3px 0 var(--ink-soft)}
+.linkbtn{background:none;border:0;color:var(--ink-soft);text-decoration:underline;font-weight:700;padding:4px}
+.choice[aria-pressed="true"]{background:var(--sun-tint,#FFE7D2);box-shadow:0 0 0 3px var(--sun) inset,0 3px 0 var(--ink)}
+.choice{border:1.5px solid var(--ink);border-radius:20px;background:var(--paper);padding:14px 16px;display:flex;align-items:center;gap:14px;text-align:left;box-shadow:0 3px 0 var(--ink)}
+.choice:active{transform:translateY(2px)}
+.choice .ic{font-size:2rem;width:44px;text-align:center}
+.choice b{font-family:var(--display);font-weight:400;font-size:1.3rem;display:block}
+.choice small{color:var(--ink-soft);font-size:.9rem}
+.chip{border:1.5px solid var(--ink);border-radius:99px;background:var(--paper);padding:8px 14px;font-weight:800;font-size:.95rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--cream)}
+
+/* landing */
+.intro-brand{padding-block:10px 6px}
+.intro-brand .logo-slot img{height:40px;width:auto}
+.intro-stack{gap:10px}
+.reel{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:3/2;width:100%;background:#E8DFD0}
+.reel-imgs img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity 1.1s ease}
+.reel-imgs img.on{opacity:1}
+.reel-dots{position:absolute;z-index:2;right:10px;bottom:9px;display:flex;gap:4px;background:rgba(30,26,22,.28);padding:4px 6px;border-radius:9px}
+.reel-dots i{width:6px;height:6px;border-radius:9px;background:rgba(255,255,255,.55);transition:width .3s}
+.reel-dots i.on{width:14px;background:#fff}
+.reel-cap{margin:0;font-family:var(--hand);font-weight:700;font-size:1.3rem;line-height:1.1;color:var(--sun-deep);min-height:2.2em}
+.reel-cap span{display:block;animation:capin .6s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes capin{from{opacity:0;transform:translateY(8px)}}
+.intro-h1{font-size:1.4rem}
+@media (max-height:620px){.reel{width:auto;height:31vh;align-self:center}.intro-h1{font-size:1.25rem}.why li{font-size:.86rem}}
+.intro-cta{position:sticky;bottom:10px;z-index:5;padding-top:4px}
+/* Inside Instagram / Facebook the link opens in a sheet showing only the top third: put the button first */
+html.inapp .intro-stack .intro-h1{order:1;font-size:1.35rem}
+html.inapp .intro-stack .intro-cta{order:2;position:static}
+html.inapp .intro-stack .resume{order:2}
+html.inapp .intro-stack .fine{order:3}
+html.inapp .intro-stack .reel{order:4}
+html.inapp .intro-stack .reel-cap{order:5}
+html.inapp .intro-stack .why{order:6}
+html.inapp #s-who h2::after{content:" Tap one to start.";font-size:.75em;opacity:.7}
+.intro-cta:before{content:"";position:absolute;inset:-14px -16px -10px;background:linear-gradient(180deg,rgba(250,246,238,0),var(--cream) 45%);z-index:-1}
+.why{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.why li{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;line-height:1.35}
+.why-ic{font-size:1.15rem;line-height:1.2;flex:none}
+.hero{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:4/3;max-width:100%}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.prize{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,.94);border-radius:99px;padding:6px 12px;font-weight:800;font-size:.85rem;display:flex;gap:6px;align-items:center}
+.prize i{font-style:normal;color:var(--sun-deep)}
+.resume{border:1.5px dashed var(--ink-soft);border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--paper)}
+
+/* deck */
+.topbar{display:flex;align-items:center;gap:8px;padding-block:6px}
+.prog{position:relative;flex:1;height:10px;border:1.5px solid var(--ink);border-radius:99px;background:var(--paper);margin-inline:6px 16px}
+.prog i{display:block;height:100%;width:0;background:var(--sun);border-radius:99px;transition:width .25s}
+.cp{position:absolute;top:50%;width:30px;height:30px;transform:translate(-50%,-50%);border-radius:50%;background:var(--paper);border:1.5px solid var(--ink);display:grid;place-items:center;filter:grayscale(1);opacity:.7;transition:transform .3s, filter .3s}
+.cp svg{width:24px;height:24px}
+.cp.got{filter:none;opacity:1;transform:translate(-50%,-50%) scale(1.12)}
+.fbopts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.fbopt{padding:12px 10px;border-radius:14px;border:2px solid var(--ink);background:#fff;font:inherit;font-weight:700}.fbopt[aria-pressed="true"]{background:var(--sun,#FF851B);color:#fff;border-color:var(--sun,#FF851B)}#fbText{padding:12px;border-radius:12px;border:1.5px solid #d8cebe;font:inherit}
+.count{font-weight:800;font-variant-numeric:tabular-nums;font-size:.85rem;min-width:40px;text-align:right}
+.buddy{display:flex;align-items:flex-end;gap:8px;height:64px}
+.buddy svg{width:58px;height:58px;flex:none;overflow:visible}
+.bubble{position:relative;background:var(--paper);border:1.5px solid var(--ink);border-radius:16px;padding:5px 12px;font-family:var(--hand);font-weight:700;font-size:1.25rem;line-height:1.1;margin-bottom:12px;max-width:70%}
+.bubble:before{content:"";position:absolute;left:-8px;bottom:9px;width:13px;height:13px;background:var(--paper);border-left:1.5px solid var(--ink);border-bottom:1.5px solid var(--ink);transform:rotate(45deg)}
+.combo{margin-left:auto;margin-bottom:16px;font-weight:800;font-size:.9rem;background:var(--ink);color:var(--cream);border-radius:99px;padding:4px 10px;transform:scale(0);transition:transform .2s cubic-bezier(.3,1.6,.6,1);white-space:nowrap}
+.combo.on{transform:scale(1)}
+.stage{position:relative;flex:1;min-height:260px;margin-block:4px 10px;touch-action:pan-y}
+.card{position:absolute;inset:0;background:var(--paper);border:1.5px solid var(--ink);border-radius:24px;box-shadow:0 5px 0 var(--ink);display:flex;flex-direction:column;overflow:hidden;user-select:none;-webkit-user-select:none}
+.card.back{transform:translateY(9px) scale(.95);filter:saturate(.6);box-shadow:0 3px 0 var(--ink)}
+.card.fly{transition:transform .32s ease-in}
+.card.snap{transition:transform .25s cubic-bezier(.3,1.5,.6,1)}
+.card.enter{animation:enter .28s cubic-bezier(.3,1.4,.6,1)}
+@keyframes enter{from{transform:translateY(9px) scale(.95)}}
+.art{position:relative;flex:1.2;min-height:0;display:grid;place-items:center;overflow:hidden}
+.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;-webkit-user-drag:none}
+.card{container-type:inline-size}
+.art.photo{max-height:78cqw}
+.art img.phbg{filter:blur(22px) brightness(1.05);transform:scale(1.2)}
+.art img.ph{max-width:none}
+.art img.illus{object-fit:cover;object-position:50% 55%;transform-origin:50% 60%}
+.art video.vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 55%;pointer-events:none}
+.card:not(.back) .art img.illus{animation:floaty 3.4s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:scale(1.04)}50%{transform:scale(1.08)}}
+.sticker{font-size:5rem;line-height:1;transform:rotate(-6deg);filter:drop-shadow(0 3px 0 rgba(30,26,22,.35))}
+.card:not(.back) .sticker{animation:wob 3.2s ease-in-out infinite}
+@keyframes wob{50%{transform:rotate(5deg) scale(1.04)}}
+.world{position:absolute;top:12px;left:12px;background:var(--paper);border:1.5px solid var(--ink);border-radius:99px;padding:3px 10px;font-weight:800;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;z-index:2}
+.copy{padding:12px 18px 14px;display:flex;flex-direction:column;gap:4px;border-top:1.5px solid var(--ink)}
+.copy h2{font-size:1.5rem}
+.copy p{font-size:.95rem;color:var(--ink-soft)}
+.card.kid .copy h2{font-size:1.65rem}
+.card.kid .copy p{font-size:1.02rem;color:var(--ink);font-weight:700}
+.card.belief .art{flex:.45}
+.card.belief .copy{border-top:0}
+.card.belief .copy h2{font-size:1.5rem}
+.card.belief .copy h2:before{content:"\201C"}
+.card.belief .copy h2:after{content:"\201D"}
+.tools{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-bottom:8px;min-height:34px}
+.tools .iconbtn:disabled{visibility:hidden}
+.answers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding-bottom:8px}
+.ans{border:1.5px solid var(--ink);border-radius:16px;font-weight:800;font-size:.98rem;padding:12px 4px;box-shadow:0 3px 0 var(--ink);line-height:1.1;min-height:50px}
+.ans:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.ans.neg{background:var(--neg)}.ans.mid{background:var(--mid)}.ans.pos{background:var(--pos)}
+.ans.top{grid-column:1 / -1;background:var(--sun);font-size:1.05rem}
+.comment{display:flex;align-items:center;gap:8px;border:1.5px dashed var(--ink-soft);border-radius:14px;background:var(--paper);padding:2px 4px 2px 12px}
+.comment input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:.95rem;padding:9px 4px}
+.comment input:focus{outline:none}
+.comment:focus-within{border-style:solid;border-color:var(--sun-deep)}
+
+.card.pick .copy{border-top:0;border-bottom:1.5px solid var(--ink)}
+.pickgrid{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;align-content:start}
+.opt{border:1.5px solid var(--ink);border-radius:14px;background:var(--cream);padding:8px 4px;font-weight:800;font-size:.78rem;line-height:1.15;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:72px;justify-content:center;text-align:center}
+.opt span{font-size:1.6rem;line-height:1}
+.opt[aria-pressed="true"]{background:var(--sun);box-shadow:0 2px 0 var(--ink)}
+.answers .ans.gone{visibility:hidden}
+/* section intro */
+.legend{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.keybox{border:1.5px dashed var(--ink-soft);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.legend .ans{text-align:center;pointer-events:none;box-shadow:none;min-height:40px;border:1.5px solid var(--ink-soft);font-size:.88rem;padding:8px 4px}
+.legend .ans.top{background:var(--paper);border:1.5px solid var(--sun-deep);color:var(--sun-deep)}
+.legend .ans small{display:block;font-weight:700;font-size:.72rem;color:var(--ink-soft);margin-top:3px}
+
+/* overlays */
+.levelup{position:fixed;inset:0;z-index:45;display:grid;place-items:center;background:rgba(250,246,238,.88);padding:16px}
+.levelup .box{background:var(--paper);border:1.5px solid var(--ink);border-radius:26px;box-shadow:0 6px 0 var(--ink);padding:20px 22px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;max-width:330px;animation:pop .45s cubic-bezier(.3,1.6,.6,1)}
+.levelup svg{width:116px;height:116px;animation:spin 1.1s ease-out}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+@keyframes spin{from{transform:rotate(-200deg) scale(.3)}}
+
+.holdsave{position:fixed;inset:0;z-index:50;background:rgba(30,26,22,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;color:#FAF6EE;text-align:center}
+.holdsave img{max-height:68vh;max-width:100%;border-radius:14px;-webkit-touch-callout:default;user-select:auto;-webkit-user-select:auto}
+.holdsave b{font-size:1.15rem}
+.holdsave .btn{max-width:320px}
+
+/* snack clickers */
+.clickers{display:grid;grid-template-columns:repeat(2,1fr);gap:18px 12px;justify-items:center}
+.clk{position:relative;width:140px;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;padding:0;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.clk .ring{width:24px;height:24px;border:4px solid #A89A88;border-radius:50%;margin-bottom:-8px;position:relative;z-index:0}
+.clk .base{position:relative;width:116px;height:116px;border:2px solid var(--ink);border-radius:34px;background:var(--c);box-shadow:0 8px 0 var(--ink);display:grid;place-items:center;transition:transform .06s, box-shadow .06s}
+.clk .base svg{width:94px;height:94px;transition:transform .08s}
+.clk.down .base{transform:translateY(6px);box-shadow:0 2px 0 var(--ink)}
+.clk.down .base svg{transform:scale(.9,.84)}
+.clk .n{font-weight:800;font-variant-numeric:tabular-nums;font-size:1.05rem;margin-top:8px}
+.clk .nm{font-family:var(--display);font-size:1.05rem;line-height:1.1}
+.clk .en{font-size:.74rem;color:var(--ink-soft);line-height:1.2;text-align:center;max-width:136px}
+.clk .snd{font-size:.72rem;font-weight:800;color:var(--sun-deep)}
+.plus{position:absolute;top:30px;left:50%;font-weight:800;color:var(--sun-deep);pointer-events:none;animation:rise .6s ease-out forwards}
+@keyframes rise{to{transform:translate(-50%,-50px);opacity:0}}
+.dots{display:flex;gap:6px;justify-content:center}
+.dots i{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ink);background:var(--paper)}
+.dots i.on{background:var(--sun)}
+
+/* result */
+.panel{border:1.5px solid var(--ink);border-radius:22px;background:var(--paper);padding:16px;display:flex;flex-direction:column;gap:12px}
+.cardimg{width:100%;max-width:300px;align-self:center;border-radius:14px;border:1.5px solid var(--line);display:block;background:var(--cream)}
+label.field{display:flex;flex-direction:column;gap:4px;font-weight:800;font-size:.9rem}
+label.field input{border:1.5px solid var(--ink);border-radius:12px;padding:11px 12px;font:inherit;background:var(--cream)}
+label.check{display:flex;gap:10px;align-items:flex-start;font-size:.92rem}
+label.check input{width:22px;height:22px;margin-top:1px;accent-color:var(--sun);flex:none}
+.terms{background:var(--cream);border-radius:14px;padding:12px 14px;font-size:.85rem;display:flex;flex-direction:column;gap:6px}
+.terms mark{background:#FFE2C2;padding:0 3px;border-radius:3px}
+.places{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.places li{display:flex;gap:12px;align-items:flex-start}
+.places .pin{flex:none;width:34px;height:34px;border-radius:50%;background:var(--w-q);display:grid;place-items:center;font-size:1.1rem}
+.places div{min-width:0}
+.places b{display:block}
+.places span{font-size:.9rem;color:var(--ink-soft)}
+.vs{display:flex;align-items:baseline;gap:8px}
+.vs .big{font-family:var(--display);font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+
+@media (prefers-reduced-motion: reduce){ *,*:before,*:after{animation:none!important;transition:none!important} }
+</style>
+
+<div id="app">
+
+  <section class="screen scroll" id="s-intro">
+    <div class="brand intro-brand"><div class="logo-slot"></div></div>
+    <div class="stack intro-stack">
+      <div class="reel" id="introReel" aria-label="Photos from Endless Summer Villa">
+        <div class="reel-imgs" id="reelImgs"></div>
+        <div class="reel-dots" id="reelDots"></div>
+      </div>
+      <p class="reel-cap" id="reelCap" aria-live="polite"></p>
+      <h1 class="intro-h1">Picture your next family holiday. Then tell us what's in it.</h1>
+      <ul class="why">
+        <li><span class="why-ic" aria-hidden="true">👋</span><span><b>Who's asking.</b> I'm Jayne, mum of three. This is our family villa in Ungasan, Bali.</span></li>
+        <li><span class="why-ic" aria-hidden="true">🗳️</span><span><b>Why it matters.</b> We're adding things for kids. The most-loved ideas get built.</span></li>
+        <li><span class="why-ic" aria-hidden="true">🎁</span><span><b>What you get.</b> Your holiday persona, a Uluwatu list and a shot at 3 free nights.</span></li>
+      </ul>
+      <div class="resume" id="resumeBox" hidden>
+        <b id="resumeTxt">You're halfway through.</b>
+        <button class="btn small" id="resumeBtn" type="button">Pick up where you left off</button>
+        <button class="linkbtn" id="restartBtn" type="button" style="align-self:flex-start">Start over</button>
+      </div>
+      <div class="intro-cta"><button class="btn" id="startBtn" type="button">Let's play</button></div>
+      <p class="fine" style="text-align:center">About 3 minutes, and your kids get their own turn. <a href="https://www.instagram.com/endless.summer.bali/" target="_blank" rel="noopener" id="introIg" style="color:inherit">@endless.summer.bali</a></p>
+    </div>
+  </section>
+
+  <section class="screen scroll" id="s-who" hidden>
+    <div class="brand"><button class="back" data-back="s-intro">‹ Back</button><div class="logo-slot"></div></div>
+    <div class="stack">
+      <h2>Who's playing?</h2>
+      <button class="choice" data-mode="parent"><span class="ic">🙋‍♀️</span><span><b>Me, the parent</b><small>I'll vote on my own</small></span></button>
+      <button class="choice" data-mode="kid"><span class="ic">🧒</span><span><b>My kid</b><small>They hold the phone. Sunny reads it out loud.</small></span></button>
+      <button class="choice" data-mode="turns"><span class="ic">🔁</span><span><b>Both of us, taking turns</b><small>Same cards, then we see who agreed</small></span></button>
+      <button class="choice" data-mode="together"><span class="ic">🛋️</span><span><b>Together, one vote</b><small>Squashed on the sofa, arguing</small></span></button>
+      <h3 style="margin-top:12px">How old are the kids? <small class="fine">Optional, tap all that apply</small></h3>
+      <div class="row" id="ageChips"></div>
+      <h3 style="margin-top:6px">Where's home? <small class="fine">Optional</small></h3>
+      <div class="row" id="cityChips"></div>
+      <button class="btn" id="agesNext" type="button">Start</button>
+    </div>
+  </section>
+
+  <section class="screen scroll" id="s-ages" hidden>
+    <div class="brand"><button class="back" data-back="s-who">‹ Back</button><div class="logo-slot"></div></div>
+    <div class="stack">
+
+    </div>
+  </section>
+
+  <section class="screen scroll" id="s-section" hidden>
+    <div class="brand"><div class="logo-slot"></div><button class="iconbtn" id="musicBtn2" type="button" aria-pressed="true">🎵 Music on</button></div>
+    <div class="stack" id="sectionBody"></div>
+  </section>
+
+  <section class="screen" id="s-deck" hidden>
+    <div class="topbar">
+      <button class="iconbtn" id="deckBack" type="button">‹ Back</button>
+      <div class="prog" id="prog"><i id="progFill"></i></div>
+      <span class="count" id="countTxt">0/0</span>
+      <button class="iconbtn" id="musicBtn" type="button" aria-pressed="true" aria-label="Music">🎵</button>
+    </div>
+    <div class="buddy">
+      <svg id="buddy" viewBox="0 0 100 100" aria-hidden="true"></svg>
+      <div class="bubble" id="bubble">Ready?</div>
+      <div class="combo" id="combo">x3 combo</div>
+    </div>
+    <div class="stage" id="stage"></div>
+    <div class="tools">
+      <button class="iconbtn" id="undoBtn" type="button">‹ Undo</button>
+      <button class="iconbtn" id="readBtn" type="button" aria-pressed="false">🔊 Read to me</button>
+    </div>
+    <div class="answers" id="answers">
+      <button class="ans neg" type="button" data-pos="neg"></button>
+      <button class="ans mid" type="button" data-pos="mid"></button>
+      <button class="ans pos" type="button" data-pos="pos"></button>
+      <button class="ans top" type="button" data-pos="top"></button>
+    </div>
+    <label class="comment" for="cmt"><span aria-hidden="true">💬</span><input id="cmt" maxlength="300" autocomplete="off" placeholder="Comment on this one (optional)"></label>
+  </section>
+
+  <section class="screen scroll" id="s-pass" hidden>
+    <div class="brand"><div class="logo-slot"></div></div>
+    <div class="stack" style="text-align:center">
+      <p class="label">Your turn is done</p>
+      <h2>Pass the phone to your kid</h2>
+      <p class="muted">No peeking at what you picked. Kid: click the snacks 10 times to start.</p>
+      <p class="hand">They do nothing. That's the point.</p>
+      <div class="clickers" id="gateClickers"></div>
+      <div class="dots" id="gateDots"></div>
+      <button class="linkbtn" id="gateSkip" type="button">Start without clicking</button>
+    </div>
+  </section>
+
+  <section class="screen scroll" id="s-result" hidden>
+    <div class="brand"><div class="logo-slot"></div><button class="iconbtn" id="musicBtn3" type="button" aria-pressed="true">🎵 Music on</button></div>
+    <div class="stack" id="resultBody"></div>
+  </section>
+
+</div>
+<div class="levelup" id="levelUp" hidden><div class="box" id="levelBox"></div></div>
+<canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+
+<script>
+const ASSETS = {"LOGO": "/play/a/LOGO.png", "hero": "/play/a/hero.jpg", "r3": "/play/a/r3.jpg", "m3": "/play/a/m3.jpg", "r1": "/play/a/r1.jpg", "i2": "/play/a/i2.jpg", "c2": "/play/a/c2.jpg", "c4": "/play/a/c4.jpg", "c3": "/play/a/c3.jpg", "c1": "/play/a/c1.jpg", "n5": "/play/a/n5.jpg", "b5": "/play/a/b5.jpg", "c5": "/play/a/c5.jpg", "e2": "/play/a/e2.jpg", "p_e4": "/play/a/p_e4.jpg", "p_e5": "/play/a/p_e5.jpg", "p_m4": "/play/a/p_m4.jpg", "p_n4": "/play/a/p_n4.jpg", "p_r2": "/play/a/p_r2.jpg", "p_f3": "/play/a/p_f3.jpg", "p_m2": "/play/a/p_m2.jpg", "p_f1": "/play/a/p_f1.jpg", "p_l5": "/play/a/p_l5.jpg", "p_l1": "/play/a/p_l1.jpg", "p_l3": "/play/a/p_l3.jpg", "p_m1": "/play/a/p_m1.jpg", "p_r4": "/play/a/p_r4.jpg", "p_f4": "/play/a/p_f4.jpg", "p_i5": "/play/a/p_i5.jpg", "p_i1": "/play/a/p_i1.jpg", "p_b1": "/play/a/p_b1.jpg", "p_e3": "/play/a/p_e3.jpg", "p_b3": "/play/a/p_b3.jpg", "p_l2": "/play/a/p_l2.jpg", "p_i3": "/play/a/p_i3.jpg", "p_f2": "/play/a/p_f2.jpg", "p_n3": "/play/a/p_n3.jpg", "p_r5": "/play/a/p_r5.jpg", "p_l4": "/play/a/p_l4.jpg", "p_f5": "/play/a/p_f5.jpg", "p_i4": "/play/a/p_i4.jpg", "p_m5": "/play/a/p_m5.jpg", "p_b4": "/play/a/p_b4.jpg", "p_b2": "/play/a/p_b2.jpg", "p_e1": "/play/a/p_e1.jpg", "p_e2": "/play/a/p_e2.jpg", "p_n1": "/play/a/p_n1.jpg", "p_n2": "/play/a/p_n2.jpg"};
+(function(){
+"use strict";
+function $i(id){return document.getElementById(id);}
+const $ = s => document.querySelector(s);
+document.querySelectorAll(".logo-slot").forEach(el=>{ el.innerHTML = `<img src="${ASSETS.LOGO}" alt="Endless Summer Villa, Uluwatu, Bali">`; });
+(function introReel(){
+  // landscape 3:2 photos only, same shape as the banner, so nobody gets cropped
+  const slides=[["c4","Day 1. Nobody unpacks. Everyone's in the pool."],["r1","Day 2. Water fight. The grown-ups lose."],["i2","Day 3. The kids make breakfast. Mostly."],["m3","Day 4. Someone draws the whole trip."],["hero","Day 5. A whole afternoon in the play room."],["c1","Day 6. One last bath. Nobody wants to go home."]].filter(([k])=>ASSETS[k]);
+  const box=$i("reelImgs"), cap=$i("reelCap"), dots=$i("reelDots"); if(!box) return;
+  dots.innerHTML=slides.map(()=>"<i></i>").join("");
+  const imgs=slides.map(([k],n)=>{ const im=new Image(); im.alt=""; im.decoding="async"; if(n<2) im.src=ASSETS[k]; box.appendChild(im); return im; });
+  let n=0, t=null;
+  const showN=i=>{ n=i; imgs.forEach((im,j)=>im.classList.toggle("on",j===i)); [...dots.children].forEach((d,j)=>d.classList.toggle("on",j===i)); cap.innerHTML="<span>"+slides[i][1]+"</span>"; const nx=imgs[(i+1)%imgs.length]; if(!nx.src) nx.src=ASSETS[slides[(i+1)%slides.length][0]]; };
+  showN(0);
+  const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const tick=()=>{ if(!$i("s-intro").hidden) showN((n+1)%imgs.length); };
+  if(!reduce) t=setInterval(tick,3200);
+  $i("introReel").addEventListener("click",()=>{ clearInterval(t); tick(); if(!reduce) t=setInterval(tick,3200); });
+})();
+
+const WORLDS = {
+  b:{name:"Build", color:"var(--w-b)", hex:"#DCD6EE"}, m:{name:"Make", color:"var(--w-m)", hex:"#F3D7D2"}, r:{name:"Brave", color:"var(--w-r)", hex:"#CFE3DE"},
+  n:{name:"Brainy", color:"var(--w-n)", hex:"#F1E4BC"}, l:{name:"Bali", color:"var(--w-l)", hex:"#D9E4C3"}, i:{name:"All by myself", color:"var(--w-i)", hex:"#F2DCC6"},
+  f:{name:"Friends", color:"var(--w-f)", hex:"#D3E0EC"}, c:{name:"Chill", color:"var(--w-c)", hex:"#CDE5E9"}, e:{name:"Sorted", color:"var(--w-e)", hex:"#EDE2CD"}
+};
+// Real villa photos on the cards they honestly show.
+const PHOTO = {r3:ASSETS.r3, m3:ASSETS.m3, r1:ASSETS.r1, i2:ASSETS.i2, c2:ASSETS.c2, c4:ASSETS.c4, c3:ASSETS.c3, c1:ASSETS.c1, n5:ASSETS.n5, b5:ASSETS.b5, c5:ASSETS.c5, e2:ASSETS.e2};
+
+const IDEAS = [
+  {id:"b1",w:"b",e:"🤖",t:"Ask the robot anything",s:"An AI corner made for kids, with a grown-up in the room. I'd rather mine learn how it works than be scared of it.",k:"Talk to a robot helper",kd:"Ask it anything. Make it tell you jokes."},
+  {id:"b2",w:"b",e:"🖨️",t:"Design it. Print it. Take it home.",s:"A 3D printer. Their souvenir is something they drew on day one and held on day four.",k:"Draw a toy, then print it for real",kd:"A 3D printer turns your drawing into a toy you keep."},
+  {id:"b3",w:"b",e:"🤖",t:"Build a robot after lunch",s:"One box, one afternoon, a lot of shouting about which wire goes where.",k:"Build your own robot",kd:"Wires, wheels, beeps. Then make it move."},
+  {id:"b4",w:"b",e:"🔬",t:"What lives in Bali sand?",s:"A digital microscope and a bucket of sand from Melasti Beach. Nobody comes out until dinner.",k:"Find tiny sea creatures in the sand",kd:"A super-zoom microscope shows what's hiding in beach sand."},
+  {id:"b5",w:"b",e:"🎬",t:"Make a Lego movie",s:"Phone on a stand, a box of figures, and the premiere on the lounge TV after dinner. Popcorn is mandatory.",k:"Make your own Lego movie",kd:"Then watch it on the big TV with popcorn."},
+
+  {id:"m1",w:"m",e:"👑",t:"A whole closet of costumes",s:"Pirate on Monday, mermaid by Wednesday. Dress-up is the first thing my kids reach for, every single trip.",k:"A closet full of dress-up costumes",kd:"Pirate, mermaid, dinosaur, queen. You choose."},
+  {id:"m2",w:"m",e:"📸",t:"Kids take the holiday photos",s:"Give them an instant camera and you see the whole trip from knee height. Their photos go on the wall.",k:"Your own camera for the holiday",kd:"Take the photos yourself. They go up on the wall."},
+  {id:"m3",w:"m",e:"🎨",t:"A real art studio",s:"Not restaurant crayons. Proper paint and big paper. Our easel by the window never gets a day off.",k:"Your own art studio",kd:"Big paper, real paint, the easel by the window."},
+  {id:"m4",w:"m",e:"🏺",t:"Make your souvenir in clay",s:"Make it instead of buying it. The pottery studio is five minutes from the house.",k:"Make a cup out of clay",kd:"Squish it, shape it, paint it, take it home."},
+  {id:"m5",w:"m",e:"🎭",t:"Kids' puppet show after dinner",s:"The kids make the puppets and write the show. We're the audience, and nobody is allowed to look at their phone.",k:"Put on a puppet show for your family",kd:"You make the puppets and the story. Grown-ups sit and watch."},
+
+  {id:"r1",w:"r",e:"💦",t:"Family water war",s:"Super Soakers for everyone. Parents are not safe. I've made peace with that.",k:"Water gun battle with the grown-ups",kd:"Everyone gets soaked. Even Mum."},
+  {id:"r2",w:"r",e:"🏄",t:"Surf legs before breakfast",s:"A balance board and a pop-up mat at home, so the first surf lesson isn't the first time they try to stand.",k:"Practise surfing on a wobble board",kd:"Get your balance before the real waves."},
+  {id:"r3",w:"r",e:"🧗",t:"Make the climbing wall harder",s:"Our wall is 2.4 m. New routes? A stopwatch? A bell at the top you have to ring?",k:"Harder climbing wall challenges",kd:"New routes, a stopwatch, and a bell to ring at the top."},
+  {id:"r4",w:"r",e:"🗺️",t:"Treasure hunt all over the house",s:"Clues in the fridge, under the hammock, inside someone's shoe. A whole morning, gone.",k:"Treasure hunt all around the house",kd:"Follow the clues. Find the treasure."},
+  {id:"r5",w:"r",e:"🏅",t:"Beach Olympics",s:"Sack race, crab walk, sandcastle judging. Medals are flip-flops sprayed gold.",k:"Beach Olympics",kd:"Sack races, crab walks, sandcastle contest. Win a medal."},
+
+  {id:"n1",w:"n",e:"♟️",t:"Chess so big you walk on it",s:"Pieces up to your knees, out on the grass. Losing is louder at this size.",k:"Giant chess on the grass",kd:"The pieces are as tall as your knees."},
+  {id:"n2",w:"n",e:"⚫",t:"Learn Go, a 2,500-year-old game",s:"Black stones, white stones. Simple rules and a lifetime to get good. Perfect for long dinners.",k:"Learn Go, a game with stones",kd:"Black stones, white stones. Surround the other player to win."},
+  {id:"n3",w:"n",e:"🔐",t:"Escape-room night",s:"A locked treasure box, five puzzles, and the whole family on the same side for once.",k:"Crack the codes to open a treasure box",kd:"Like an escape room. Solve the puzzles together to open it."},
+  {id:"n4",w:"n",e:"🏆",t:"Beat the house record",s:"Fastest pool length, tallest block tower, longest handstand. Names go on the wall for the next family to beat.",k:"Beat the house record",kd:"Fastest swim, tallest tower. Your name goes on the wall."},
+  {id:"n5",w:"n",e:"❓",t:"If you had one superpower, what would it be?",s:"My daughter's favourite dinner question. Beats \"how was your day\" every time.",k:"Superpower question at dinner",kd:"If you had one superpower, what would it be?"},
+
+  {id:"l1",w:"l",e:"🍛",t:"Pick up a little Indonesian",s:"Learn a few words of Bahasa on holiday. By day three they're ordering their own nasi goreng. Pointing counts on day one.",k:"Learn to speak a little Indonesian",kd:"Then order your own nasi goreng, all by yourself!"},
+  {id:"l2",w:"l",e:"🍲",t:"Cook something Balinese",s:"Go to the market with a local cook, then make it together instead of just ordering it.",k:"Cook Balinese food with a real cook",kd:"Go to the market, then cook it together."},
+  {id:"l3",w:"l",e:"💃",t:"Balinese dance class at home",s:"Wherever we travel, my kids take a local dance class. Fingers, eyes, feet. Much harder than it looks.",k:"Learn a Balinese dance",kd:"Wiggle your fingers, move your eyes. It's tricky!"},
+  {id:"l4",w:"l",e:"🌏",t:"A world map: pin where you're from",s:"A big map on the wall. Every family who stays adds a pin. Which kid came the furthest?",k:"Stick a pin where you live on a giant map",kd:"See which family came from furthest away."},
+  {id:"l5",w:"l",e:"🌺",t:"Make a canang sari, the Balinese offering",s:"The little palm-leaf trays of flowers on every doorstep are Hindu offerings, made fresh every morning. Learn to make one from someone who does it daily.",k:"Make a Balinese temple offering",kd:"A tiny flower basket Balinese people make every day for their gods."},
+
+  {id:"i1",w:"i",e:"🍌",t:"Your own snack shelf",s:"At kid height. They choose, they reach, they put it back. Mostly.",k:"Your own snack shelf",kd:"You choose. You can reach it yourself."},
+  {id:"i2",w:"i",e:"🥣",t:"Kids in charge of breakfast",s:"Mine make their own oatmeal at home. Here too, with a kid-sized knife for the fruit and a coconut each.",k:"Make your own breakfast",kd:"Oatmeal, fruit, and a knife just for kids."},
+  {id:"i3",w:"i",e:"🎒",t:"They pack their own beach bag",s:"A checklist on the door: hat, rash guard, water, spade. Forget it and you go without.",parentOnly:true},
+  {id:"i4",w:"i",e:"☕",t:"Kids run the café for one night",s:"Menu, apron, notepad, a bell. Grown-ups order. Service may be slow.",k:"Run a pretend café for dinner",kd:"You take the orders. Grown-ups are the customers."},
+  {id:"i5",w:"i",e:"📘",t:"Collect skills, not stickers",s:"A little passport. A stamp when you swim a length, order in Bahasa, cook something by yourself.",k:"A passport you fill with stamps",kd:"Get a stamp every time you learn something new."},
+
+  {id:"f1",w:"f",e:"🌅",t:"Meet another family at sunset",s:"Only if both families want to. Kids play, parents talk, nobody has to organise anything.",k:"Play with kids from another family",kd:"Meet at sunset and make new friends."},
+  {id:"f2",w:"f",e:"🏆",t:"Chess ladder with kids from other villas",s:"Kids staying nearby challenge each other. Opt in, of course.",k:"Chess battles with kids from other villas",kd:"Win games to climb up and become champion."},
+  {id:"f3",w:"f",e:"🧰",t:"Build something with kids you just met",s:"One morning, a table of materials, and kids from three different countries.",k:"Build stuff with kids you just met",kd:"Make something together, even if you speak different languages."},
+  {id:"f4",w:"f",e:"🔫",t:"Water battle hour with the neighbours",s:"Fastest way I know to make a holiday friend.",k:"Big water fight with other kids",kd:"The fastest way to make a new friend."},
+  {id:"f5",w:"f",e:"🎟️",t:"Come back for the next stamp",s:"A kids' passport that only fills up if you visit again.",k:"Come back to get the next stamp",kd:"Your passport fills up a bit more every visit."},
+
+  {id:"c1",w:"c",e:"🛁",t:"A whole day with no plans",s:"Swim, eat, nap, swim again. We do one of these every trip and it's always someone's favourite day.",k:"A day with NO plans",kd:"Swim, snack, nap, swim again."},
+  {id:"c2",w:"c",e:"🏕️",t:"Cushion-fort movie night",s:"Every one of our big green block cushions on the floor, popcorn, one film, everyone asleep before the end.",k:"Build a cushion fort for movie night",kd:"Use all the big green cushions. Popcorn inside."},
+  {id:"c3",w:"c",e:"🍨",t:"Ice cream for breakfast, once",s:"One morning only. They never forget it.",k:"Ice cream for breakfast!",kd:"Just once. That's the rule."},
+  {id:"c4",w:"c",e:"🐊",t:"Pool floats",s:"Our crocodile, the dolphin, and a lot of arguing over who gets which.",k:"Giant pool floats",kd:"Crocodile or dolphin? Which one is yours?"},
+  {id:"c5",w:"c",e:"🛌",t:"Pyjama day",s:"Nobody gets dressed. Breakfast at eleven.",k:"Pyjama day",kd:"Stay in your pyjamas all day long."}
+];
+
+const EASE = [
+  {id:"e1",w:"e",e:"🧴",t:"Sun and skin basket",s:"Kids' SPF 50, mozzie spray, calamine, after-sun. The things I always pack and still forget one of."},
+  {id:"e2",w:"e",e:"🦕",t:"Dinosaur plasters",s:"Tiny thing. Huge deal to a six-year-old with a scraped knee."},
+  {id:"e3",w:"e",e:"🧺",t:"The \"oops, we forgot\" basket",s:"Toothbrush, hair ties, swim nappies, a spare hat."},
+  {id:"e4",w:"e",e:"🍼",t:"Baby box, ready when you land",s:"Bottle steriliser, bibs, night light, white noise. Could you pack a whole bag lighter?"},
+  {id:"e5",w:"e",e:"🏖️",t:"Beach rescue basket",s:"Ponchos, a car towel, a big bottle of water to rinse sandy feet. Beaches here have no showers."}
+];
+
+const BELIEFS = [
+  {id:"q1",w:"b",t:"I want my kids comfortable around AI, not afraid of it."},
+  {id:"q2",w:"r",t:"The best holiday memories happen away from screens."},
+  {id:"q3",w:"n",t:"Holidays are a good time to learn something, as long as nobody calls it learning."},
+  {id:"q4",w:"i",t:"I want my kids to come home able to do one more thing by themselves."},
+  {id:"q5",w:"f",t:"I'd love my kids to make a friend from another country."},
+  {id:"q6",w:"c",t:"Kids need to be bored sometimes."},
+  {id:"q7",w:"l",t:"I'd book a whole week around one thing, like surf or cooking."},
+  {id:"q8",w:"m",t:"I'd rather they built something than watched something."},
+  {id:"q9",w:"c",t:"I worry holidays are turning into another enrichment schedule."},
+  {id:"q10",w:"e",t:"The best luxury is not having to think about logistics."},
+  {id:"q11",w:"c",t:"Sometimes the best holiday is doing absolutely nothing."}
+];
+
+const PERSONAS = {
+  b:{name:"The Tinkerers", line:"You'd rather your kids took the remote apart than stared at it. Put a 3D printer in the corner and you won't see them until dinner."},
+  m:{name:"The Glitter-in-the-Grout Family", line:"Your house is never quite clean and that's the point. You want them making things, wearing things, putting on shows nobody asked for."},
+  r:{name:"The Scraped-Knee Crew", line:"You let them climb the thing. You watch through your fingers, then you film it. A little bit scary is a little bit great."},
+  n:{name:"The Rematch Family", line:"Nobody goes to bed until someone wins. Board games, puzzles, records on the wall. Bring snacks."},
+  l:{name:"The Say-It-In-Bahasa Family", line:"You don't want souvenirs, you want your kid ordering nasi goreng by day three and dancing with their fingers by day five."},
+  i:{name:"The Make-Your-Own-Oatmeal Family", line:"Your kids can do more than they're allowed to at home. On holiday you hand over breakfast and the café apron."},
+  f:{name:"The Open-Gate Family", line:"Two kids arrive, five leave. For you a holiday is partly about who you meet, and the kids are the icebreakers."},
+  c:{name:"The Lazy-Day Family", line:"No plan is the plan. Pool, snacks, nap, pool again, and nobody gets dressed before eleven."},
+  e:{name:"The Thank-Goodness Family", line:"You want joy without the packing list. If the sunscreen is already there and nobody's hunting for plasters, everyone's happy."}
+};
+
+const AGES = ["0–2","3–5","6–8","9–12","13+"];
+/* cards taken out of the game (kept here so older saved plays still read correctly) */
+const RETIRED = ["l4","n4","i5","f1","f2","f3","f4","f5","q5"];
+const GAME_WORLDS = ["b","m","r","n","l","i","c"];
+/* which age groups a card suits, as [youngest, oldest] index into AGES; cards not listed suit everyone */
+const AGE_FIT = { e4:[0,0], e2:[0,3], n2:[2,4], n3:[2,4], r3:[2,4], b2:[2,4], b3:[2,4], i4:[2,4], b1:[2,4], i3:[1,4], m2:[1,4], l1:[1,4], i2:[1,4] };
+function fitsAges(id){
+  const r=AGE_FIT[id]; if(!r) return true;
+  if(!S || !S.ages || !S.ages.length) return id!=="e4"; // baby box only when a baby is actually coming
+  return S.ages.some(a=>{ const i=AGES.indexOf(a); return i>=r[0] && i<=r[1]; });
+}
+const CITIES = ["Singapore","Jakarta","Kuala Lumpur","Perth","Gold Coast","Sydney / Melbourne","Somewhere else"];
+const POINTS = {book:3,love:2,maybe:1,nope:0};
+const BPOINTS = {so:2,agree:1,unsure:0,not:0};
+const EPOINTS = {delight:3,expected:1.5,own:.5,wont:0};
+
+
+
+const VIDDATA = {};
+const CLIPSND = {};
+const HOSTED_MEDIA = "/play/";
+const _vurl={};
+const MEDIA_BASE = typeof HOSTED_MEDIA!=="undefined" ? HOSTED_MEDIA : "";
+let prefetching=false;
+async function prefetchMedia(deck){
+  if(!MEDIA_BASE || prefetching) return; prefetching=true;
+  try{
+    deck.forEach(it=>{ const src=PHOTO[it.id]||ASSETS["p_"+it.id]; if(src && !/^data:/.test(src)){ const im=new Image(); im.src=src; } });
+    for(const it of deck){
+      if(!VIDEO[it.id] || _vurl[it.id]) continue;
+      try{ const r=await fetch(MEDIA_BASE+VIDEO[it.id]); if(r.ok) _vurl[it.id]=URL.createObjectURL(await r.blob()); }catch(e){}
+      try{ const r=await fetch(MEDIA_BASE+"s/"+it.id+".m4a"); if(r.ok) _surl[it.id]=URL.createObjectURL(await r.blob()); }catch(e){}
+    }
+  } finally { prefetching=false; }
+}
+function vidURL(id){ if(_vurl[id]) return _vurl[id]; const b=typeof VIDDATA!=="undefined"&&VIDDATA[id]; if(!b) return MEDIA_BASE+VIDEO[id]; try{ const bin=atob(b), u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); _vurl[id]=URL.createObjectURL(new Blob([u],{type:"video/mp4"})); }catch(e){ _vurl[id]="data:video/mp4;base64,"+b; } return _vurl[id]; }
+const VIDEO = {b1:"v/b1.mp4",b2:"v/b2.mp4",b3:"v/b3.mp4",b4:"v/b4.mp4",e1:"v/e1.mp4",e2:"v/e2.mp4",e3:"v/e3.mp4",e4:"v/e4.mp4",e5:"v/e5.mp4",f1:"v/f1.mp4",f2:"v/f2.mp4",f3:"v/f3.mp4",f4:"v/f4.mp4",f5:"v/f5.mp4",i1:"v/i1.mp4",i3:"v/i3.mp4",i4:"v/i4.mp4",i5:"v/i5.mp4",l1:"v/l1.mp4",l2:"v/l2.mp4",l3:"v/l3.mp4",l4:"v/l4.mp4",l5:"v/l5.mp4",m1:"v/m1.mp4",m2:"v/m2.mp4",m4:"v/m4.mp4",m5:"v/m5.mp4",n1:"v/n1.mp4",n2:"v/n2.mp4",n3:"v/n3.mp4",n4:"v/n4.mp4",r2:"v/r2.mp4",r4:"v/r4.mp4",r5:"v/r5.mp4"};
+const ILLUS = {b1:"#f5e5ce",b2:"#f0e0c9",b3:"#f0e1ca",b4:"#eedec5",e1:"#f2e3d0",e2:"#f6e6cf",e3:"#f5e6d1",e4:"#e7d8c1",e5:"#f1e4d3",f1:"#eedec4",f2:"#f5e6d3",f3:"#f5e5d2",f4:"#f3e3ca",f5:"#f3e6d6",i1:"#f5e5cc",i3:"#f1e1ce",i4:"#f2e3d2",i5:"#f1e2cd",l1:"#f4e4cb",l2:"#f7e8d1",l3:"#eedfc8",l4:"#edd9c0",l5:"#e6d6bf",m1:"#eedec7",m2:"#f4e4cd",m4:"#f3e4cf",m5:"#cab89b",n1:"#f4e7d5",n2:"#f5e6d1",n3:"#f6e6cd",n4:"#f0e0c6",r2:"#f4e4cd",r4:"#f3e3c9",r5:"#e7d7bd"};
+/* the part of each photo that must stay in shot: [left, top, right, bottom] as fractions of the photo */
+const SUBJ = {r1:[.28,.40,.84,.93], c2:[.47,.55,.88,.91], c4:[.10,.06,.82,.86], c1:[.22,.28,.78,.68], i2:[.10,.14,.86,.80], r3:[.28,.21,.60,.74], m3:[.08,.26,.78,.82], c3:[.01,.26,.58,.76]};
+const CLIPBG = {"e2": "#f9ebd3", "e4": "#eddfc8", "e5": "#f6e9d6", "m4": "#f5e7d3", "n4": "#f5e7cf", "r2": "#f8ebd3", "f3": "#f9ecd5", "m2": "#f7e9d1", "f1": "#ecd8bb", "l5": "#f0e3d0", "l1": "#f5e7d0", "l3": "#f1e4cd", "m1": "#f0e4ce", "r4": "#f8ebd3", "f4": "#f7e6ce", "i5": "#f6e9d2", "i1": "#f7e7ce", "b1": "#f9ebd3", "e3": "#f9ebd4", "b3": "#f4e6cf", "l2": "#f7ebd6", "i3": "#f5e7d1", "f2": "#f8ead2", "n3": "#f9ebd2", "r5": "#eadcc9", "l4": "#f5e8d1", "f5": "#f6ebd9", "i4": "#f7ead5", "m5": "#d0bca0", "b4": "#f4e5cc", "b2": "#f6e8d1", "e1": "#f4e6cf", "n1": "#f7ecd9", "n2": "#f9ecd7"};
+const CLIPBOX = {"e2": [0.16, 0.12, 1, 0.88], "e4": [0.13, 0.11, 1, 0.98], "e5": [0.04, 0.06, 1, 0.92], "m4": [0.24, 0.09, 0.98, 0.94], "n4": [0.14, 0.01, 1, 0.98], "r2": [0.02, 0.04, 1, 0.92], "f3": [0.18, 0.11, 0.88, 0.93], "m2": [0, 0.08, 1, 0.92], "f1": [0, 0, 1, 1], "l5": [0, 0.1, 1, 0.96], "l1": [0.12, 0.11, 1, 0.96], "l3": [0, 0.04, 0.96, 0.94], "m1": [0, 0.03, 0.97, 0.92], "r4": [0, 0.08, 1, 0.91], "f4": [0.04, 0.12, 1, 0.84], "i5": [0.18, 0.12, 0.99, 0.91], "i1": [0.01, 0.01, 1, 1], "b1": [0.16, 0.12, 1, 0.88], "e3": [0.12, 0.11, 1, 0.94], "b3": [0.06, 0.09, 1, 0.92], "l2": [0.14, 0.07, 0.99, 0.9], "i3": [0.14, 0.06, 1, 0.95], "f2": [0.16, 0.05, 0.98, 0.92], "n3": [0.18, 0.08, 1, 0.88], "r5": [0, 0.01, 1, 1], "l4": [0.04, 0.08, 1, 0.91], "f5": [0.12, 0.12, 0.99, 0.93], "i4": [0.14, 0.12, 1, 0.92], "m5": [0, 0.05, 1, 1], "b4": [0.04, 0.11, 0.97, 0.94], "b2": [0.17, 0.11, 0.95, 0.92], "e1": [0.1, 0.04, 1, 0.97], "n1": [0.04, 0.12, 1, 0.92], "n2": [0.06, 0.11, 1, 0.86]};
+function fitPhoto(img){
+  const art=img.parentElement, W=art.clientWidth, H=art.clientHeight, isVid=img.tagName==="VIDEO", clip=!!img.dataset.clip, w=isVid?1000:img.naturalWidth, h=isVid?1000:img.naturalHeight;
+  if(!W||!H||!w||!h) return;
+  let r=SUBJ[img.dataset.id] || (clip ? (CLIPBOX[img.dataset.id]||[.06,.04,.94,.96]) : null);
+  if(!r){ const p=(POS[img.dataset.id]||"50% 50%").split(" ").map(v=>parseFloat(v)/100); r=[Math.max(0,p[0]-.25),Math.max(0,p[1]-.25),Math.min(1,p[0]+.25),Math.min(1,p[1]+.25)]; }
+  const sw=(r[2]-r[0])*w, sh=(r[3]-r[1])*h;
+  const s=Math.min(Math.max(W/w,H/h), W/sw, H/sh);
+  const dw=w*s, dh=h*s;
+  let left=W/2-(r[0]+r[2])/2*dw, top=H/2-(r[1]+r[3])/2*dh;
+  left = dw>=W ? Math.min(0,Math.max(W-dw,left)) : (W-dw)/2;
+  top  = dh>=H ? Math.min(0,Math.max(H-dh,top))  : (H-dh)/2;
+  Object.assign(img.style,{inset:"auto",objectFit:"fill",width:dw+"px",height:dh+"px",left:left+"px",top:top+"px",animation:"none"});
+  if(clip){ // fade the clip's edges into the matching background colour, so spare space has no seam
+    const m = dw<W-1 ? "linear-gradient(to right,transparent,#000 7%,#000 93%,transparent)" : dh<H-1 ? "linear-gradient(to bottom,transparent,#000 7%,#000 93%,transparent)" : "none";
+    img.style.webkitMaskImage=m; img.style.maskImage=m;
+  }
+}
+function fitPhotos(root){ (root||document).querySelectorAll(".art img.ph, .art video.vid, .art img[data-clip]").forEach(img=>{ if(img.tagName==="VIDEO" || img.complete) fitPhoto(img); else img.addEventListener("load",()=>fitPhoto(img),{once:true}); }); }
+addEventListener("resize",()=>fitPhotos());
+window.__ffhTest={cardHTML:(...a)=>cardHTML(...a),fitPhotos};
+const POS = {c2:"50% 85%", r3:"50% 35%", m3:"50% 60%", r1:"50% 45%", i2:"50% 45%", c4:"50% 40%", c3:"50% 35%", c1:"50% 50%", n5:"50% 55%", b5:"50% 50%", c5:"50% 55%"};
+const LBL = {
+  idea:{neg:"Nope",mid:"Maybe",pos:"Love it",top:"I'd book a holiday for this"},
+  ideaKid:{neg:"Nope",mid:"Hmm",pos:"Yes!",top:"Best holiday EVER"},
+  belief:{neg:"Not me",mid:"Not sure",pos:"Agree",top:"So me!"},
+  ease:{neg:"Wouldn't use",mid:"I'd bring my own",pos:"Expected",top:"Delight!"}
+};
+const VAL = {
+  idea:{neg:"nope",mid:"maybe",pos:"love",top:"book"},
+  belief:{neg:"not",mid:"unsure",pos:"agree",top:"so"},
+  ease:{neg:"wont",mid:"own",pos:"expected",top:"delight"}
+};
+const GROWN_WORD = {nope:"nope",maybe:"maybe",love:"love it",book:"I'd book for this"};
+const KID_WORD = {nope:"nope",maybe:"hmm",love:"yes",book:"best holiday ever"};
+
+/* Things to do near the villa, matched to each persona. Jayne's own picks. */
+const BALI = {
+  b:[["Uluwatu Silver Class","They make their own silver ring and wear it home."],["Waves of Clay","Kids' pottery with proper small-hands kit. Five minutes from us."],["Jenggala, Jimbaran","Paint-your-own ceramics. Fired and ready a few days later."],["Suluban Beach at low tide","Bring a magnifying glass for the rock pools."]],
+  m:[["Dedari Dance at the villa","They come to the house: Balinese dance, gamelan, costumes and all."],["Waves of Clay","Kids' pottery class five minutes away."],["Jenggala, Jimbaran","Paint-your-own ceramics."],["Uluwatu Silver Class","Make your own silver jewellery."]],
+  r:[["Surf and skate with Pak Made","He teaches little ones. Calm, firm, has all the small gear. Message us for his number."],["Bradhas Surf","For older kids, with pro coach Diki Dachi."],["The skate rink at Pandawa","Wheels, ramps and a lot of falling over."],["Waterbom Bali","Water park in Kuta, about 40 minutes away. Worth a full day."]],
+  n:[["Padel at OLA Socials","In Ungasan. Kids and parents can both play."],["Waterbom Bali","Race each other down the slides."],["The skate rink at Pandawa","Set a lap record."]],
+  l:[["Dedari Dance at the villa","Balinese dance, gamelan or a cooking class, at the house."],["Kecak at Uluwatu Temple","The fire dance at sunset. Watch your sunglasses, the monkeys are quick."],["Gunung Payung Beach","Our hidden gem. Quiet and unspoilt, steep steps down."]],
+  i:[["Fresh Mart","Five-minute walk. Let the kids choose the breakfast shopping."],["Balinese cooking with Dedari","At the villa. Kids do the chopping."],["Surf and skate with Pak Made","He teaches little ones. Message us for his number."]],
+  f:[["Ohana","Ten-minute walk, big playground, other families. 10% off for our guests."],["Tarabelle","Café with a covered playground. 10% off for our guests."],["Sundays at Mana","The pool at Uluwatu Surf Villas is open to diners. Families stay till sunset."],["Sundays Beach Club","At Melasti Beach. The cliff funicular alone gets kids hyped. Entrance fee."]],
+  c:[["Sundays Beach Club, Melasti Beach","Clean white sand, ride the funicular down. Entrance fee and minimum spend."],["Melasti Beach at low tide","Pram-friendly, shells everywhere, tide pools."],["Sundays at Mana","Pool, lunch, nobody needs to move."],["Pura Geger Beach","My personal favourite, on the Nusa Dua side."]],
+  e:[["Ohana","Ten-minute walk, playground, 10% off for our guests."],["Tarabelle","Covered playground for rainy days. 10% off for our guests."],["Unicare Medical","Our kids' clinic. WhatsApp them and a doctor comes to the villa."],["Bali Bubs","Toys and eco nappies, five minutes away."]]
+};
+
+/* "Pick your favourites": tap-all-that-apply cards everyone sees */
+const PICKS = [
+  {id:"g", w:"n", e:"🎲", t:"We have Monopoly and Uno. What else goes on the games shelf?", s:"Tap every game your family would actually play on holiday.", k:"Which games should we get?", kd:"Tap all the ones you'd play!",
+   opts:[["battleship","🚢","Battleship"],["jenga","🧱","Jenga"],["connect4","🔴","Connect 4"],["guesswho","🕵️","Guess Who?"],["kittens","🐱","Exploding Kittens"],["spotit","👀","Spot It!"],["ticket","🚂","Ticket to Ride"],["catanjr","🏝️","Catan Junior"],["sushigo","🍣","Sushi Go!"],["rummikub","🔢","Rummikub"],["pictionary","✏️","Pictionary"],["snakes","🐍","Snakes & Ladders"]]},
+  {id:"d", w:"m", e:"👑", t:"If we fill a dress-up closet, what goes in it?", s:"Tap everything your kids would actually put on.", k:"What would you dress up as?", kd:"Tap all the ones you love!",
+   opts:[["pirate","🏴‍☠️","Pirates"],["princess","👸","Princess dresses"],["balinese","🌺","Balinese dress & gold crowns"],["hero","🦸","Superheroes"],["dino","🦖","Dinosaurs"],["mermaid","🧜","Mermaids"],["fairy","🧚","Fairy wings"],["animal","🐯","Animals"],["astro","🚀","Astronauts"],["knight","🐉","Knights & dragons"],["chef","👩‍🍳","Chef & café"],["doctor","🩺","Doctors & vets"]]},
+  {id:"s", w:"r", e:"⚽", t:"Besides surfing and the balance board, what would you play here?", s:"Tap the sports and outdoor games your family would actually do.", k:"What do you want to play?", kd:"Tap all your favourites!",
+   opts:[["boogie","🌊","Boogie boards"],["snorkel","🤿","Snorkelling"],["hoop","🏀","Basketball hoop"],["football","⚽","Mini football goals"],["badminton","🏸","Badminton"],["frisbee","🥏","Frisbee"],["skate","🛹","Skateboard & scooter"],["kite","🪁","Kite flying"],["racing","🏊","Pool races"],["yoga","🧘","Kids' yoga"],["padel","🎾","Padel"],["trampoline","🤸","Trampoline"]]}
+];
+
+/* ---------- caricatures (family holiday personas) ---------- */
+const INK="#1E1A16";
+function person(x,y,s,o){
+  o=o||{};
+  const skin=o.skin||"#E9BE96", hair=o.hair||"#2A211B", top=o.top||"#FF851B", pose=o.pose||"down";
+  const arm = (x1,y1,x2,y2)=>`<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${INK}" stroke-width="4" stroke-linecap="round"/><circle cx="${x2}" cy="${y2}" r="3.2" fill="${skin}" stroke="${INK}" stroke-width="1.5"/>`;
+  let arms="";
+  if(pose==="up") arms=arm(-11,7,-21,-15)+arm(11,7,21,-15);
+  else if(pose==="wave") arms=arm(-11,7,-17,27)+arm(11,7,22,-14);
+  else if(pose==="hold") arms=arm(-11,7,-4,20)+arm(11,7,4,20);
+  else if(pose==="hips") arms=`<path d="M-11 7 L-20 17 L-12 25" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 7 L20 17 L12 25" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  else arms=arm(-11,7,-17,27)+arm(11,7,17,27);
+  const legs = o.noLegs ? "" : `<path d="M-5 30 L-7 50" stroke="${INK}" stroke-width="4.5" stroke-linecap="round"/><path d="M5 30 L7 50" stroke="${INK}" stroke-width="4.5" stroke-linecap="round"/>`;
+  const pig = o.pigtails ? `<circle cx="-15" cy="-16" r="5" fill="${hair}" stroke="${INK}" stroke-width="1.5"/><circle cx="15" cy="-16" r="5" fill="${hair}" stroke="${INK}" stroke-width="1.5"/>` : "";
+  const face = o.shades
+    ? `<rect x="-10" y="-15" width="8" height="5" rx="2" fill="${INK}"/><rect x="2" y="-15" width="8" height="5" rx="2" fill="${INK}"/><path d="M-2 -13 h4" stroke="${INK}" stroke-width="1.5"/>`
+    : `<circle cx="-4.5" cy="-12" r="1.8" fill="${INK}"/><circle cx="4.5" cy="-12" r="1.8" fill="${INK}"/>`;
+  const mouth = o.wow ? `<ellipse cx="0" cy="-5" rx="2.6" ry="3" fill="${INK}"/>` : `<path d="M-4.5 -6 Q0 -1 4.5 -6" fill="none" stroke="${INK}" stroke-width="1.8" stroke-linecap="round"/>`;
+  let hat="";
+  if(o.hat==="crown") hat=`<path d="M-11 -24 L-11 -34 L-5 -28 L0 -36 L5 -28 L11 -34 L11 -24 Z" fill="#F4C542" stroke="${INK}" stroke-width="1.5"/>`;
+  if(o.hat==="pirate") hat=`<path d="M-16 -22 Q0 -40 16 -22 Z" fill="${INK}"/><circle cx="0" cy="-28" r="2.2" fill="#fff"/>`;
+  if(o.hat==="chef") hat=`<path d="M-10 -22 L-10 -28 Q-16 -36 -6 -38 Q0 -46 6 -38 Q16 -36 10 -28 L10 -22 Z" fill="#fff" stroke="${INK}" stroke-width="1.5"/>`;
+  if(o.hat==="sun") hat=`<path d="M-20 -21 Q0 -27 20 -21 Q12 -18 0 -18 Q-12 -18 -20 -21Z" fill="#E7C98F" stroke="${INK}" stroke-width="1.5"/><path d="M-10 -21 Q0 -38 10 -21Z" fill="#E7C98F" stroke="${INK}" stroke-width="1.5"/>`;
+  if(o.hat==="helmet") hat=`<path d="M-14 -16 Q-14 -32 0 -32 Q14 -32 14 -16 Z" fill="#5BA4C9" stroke="${INK}" stroke-width="1.5"/>`;
+  return `<g transform="translate(${x} ${y}) scale(${s})">${legs}<path d="M-13 32 Q-14 1 0 1 Q14 1 13 32 Z" fill="${top}" stroke="${INK}" stroke-width="2"/>${arms}${pig}<circle cx="0" cy="-12" r="13" fill="${skin}" stroke="${INK}" stroke-width="2"/><path d="M-13 -13 Q-12 -28 0 -27 Q12 -28 13 -13 Q6 -20 0 -19 Q-6 -20 -13 -13Z" fill="${hair}"/>${face}${mouth}<circle cx="-8.5" cy="-6.5" r="2.4" fill="#F2A3A3" opacity=".8"/><circle cx="8.5" cy="-6.5" r="2.4" fill="#F2A3A3" opacity=".8"/>${hat}${o.extra||""}</g>`;
+}
+function scene(bg, inner){
+  return `<svg viewBox="0 0 320 210" xmlns="http://www.w3.org/2000/svg"><rect width="320" height="210" fill="${bg}"/><circle cx="268" cy="44" r="26" fill="#FF851B"/><rect y="176" width="320" height="34" fill="#E6D8BF"/><path d="M0 176 H320" stroke="${INK}" stroke-width="2"/>${inner}</svg>`;
+}
+const DRAW = {
+  b:()=>scene("#DCD6EE",
+    `<g stroke="${INK}" stroke-width="2"><rect x="138" y="96" width="44" height="40" rx="8" fill="#BFC6CF"/><rect x="144" y="62" width="32" height="28" rx="6" fill="#D6DCE3"/><path d="M160 62 V50" /><circle cx="160" cy="47" r="4" fill="#FF851B"/><rect x="141" y="136" width="10" height="38" fill="#9AA3AD"/><rect x="169" y="136" width="10" height="38" fill="#9AA3AD"/></g><circle cx="153" cy="76" r="3.5" fill="#53C1E8" stroke="${INK}" stroke-width="1.5"/><circle cx="167" cy="76" r="3.5" fill="#53C1E8" stroke="${INK}" stroke-width="1.5"/><path d="M153 84 h14" stroke="${INK}" stroke-width="2"/><g stroke="#F4C542" stroke-width="3" stroke-linecap="round"><path d="M196 74 l10 -8"/><path d="M198 88 l13 0"/><path d="M196 102 l10 8"/></g>`+
+    person(90,126,1.15,{top:"#6E8FB8",pose:"hold",extra:`<g transform="translate(0 20)"><rect x="-3" y="-2" width="22" height="5" rx="2" fill="#9AA3AD" stroke="${INK}" stroke-width="1.5"/><circle cx="21" cy="0.5" r="5" fill="none" stroke="${INK}" stroke-width="3"/></g>`})+
+    person(234,140,.85,{top:"#FF851B",pose:"up",pigtails:true,wow:true})),
+  m:()=>scene("#F3D7D2",
+    `<g stroke="${INK}" stroke-width="2"><path d="M40 176 L62 70 L84 176" fill="none"/><rect x="44" y="76" width="40" height="52" fill="#fff"/></g><circle cx="58" cy="94" r="7" fill="#FF851B"/><circle cx="70" cy="108" r="6" fill="#6FB3A0"/><circle cx="56" cy="114" r="4" fill="#E86F8C"/><g opacity=".9"><circle cx="210" cy="170" r="6" fill="#E86F8C"/><circle cx="280" cy="168" r="5" fill="#6FB3A0"/><circle cx="120" cy="172" r="5" fill="#F4C542"/></g>`+
+    person(140,140,.85,{top:"#E86F8C",pose:"up",hat:"crown",pigtails:true})+
+    person(196,140,.85,{top:"#3E3A36",pose:"wave",hat:"pirate"})+
+    person(262,126,1.15,{top:"#F4C542",pose:"up",wow:true})),
+  r:()=>scene("#CFE3DE",
+    `<rect x="176" y="22" width="92" height="154" fill="#FFFFFF" stroke="${INK}" stroke-width="2"/>${[[190,40],[230,52],[252,36],[200,78],[244,92],[188,116],[226,128],[258,150],[204,158]].map(([x,y])=>`<path d="M${x} ${y} q6 -6 11 0 q-3 6 -11 0z" fill="#E7DCCB" stroke="${INK}" stroke-width="1.5"/>`).join("")}`+
+    person(222,84,.8,{top:"#E9C3D9",pose:"up",pigtails:true})+
+    person(96,126,1.15,{top:"#6FB3A0",pose:"wave",extra:`<rect x="16" y="-26" width="11" height="17" rx="2" fill="${INK}"/><rect x="18" y="-24" width="7" height="12" rx="1" fill="#9FD3E6"/>`})+
+    `<rect x="214" y="122" width="10" height="5" rx="2" fill="#F4C9A1" stroke="${INK}" stroke-width="1"/>`),
+  n:()=>scene("#F1E4BC",
+    `${[0,1,2,3,4,5,6,7].map(i=>`<rect x="${40+i*30}" y="176" width="30" height="34" fill="${i%2?"#F8F2E6":"#B08A62"}"/>`).join("")}<path d="M0 176 H320" stroke="${INK}" stroke-width="2"/><g stroke="${INK}" stroke-width="2"><path d="M128 176 q0 -18 8 -24 q-8 -6 -6 -16 q10 -10 20 0 q2 10 -6 16 q8 6 8 24z" fill="#fff"/><path d="M196 176 q0 -26 10 -34 q-12 -6 -6 -20 l8 -10 l8 10 q6 14 -6 20 q10 8 10 34z" fill="${INK}"/></g>`+
+    person(70,126,1.15,{top:"#8E9B7E",pose:"hips",wow:true})+
+    person(262,140,.85,{top:"#FF851B",pose:"up",extra:`<text x="-62" y="-30" font-family="Caveat, cursive" font-size="20" font-weight="700" fill="${INK}">I win!</text>`})),
+  l:()=>scene("#D9E4C3",
+    person(236,74,1,{top:"#F4F1EA",pose:"hold",noLegs:true})+
+    `<rect x="170" y="112" width="128" height="64" fill="#C89B6D" stroke="${INK}" stroke-width="2"/><path d="M164 112 L304 112 L290 90 L178 90 Z" fill="#E86F5A" stroke="${INK}" stroke-width="2"/><rect x="190" y="124" width="26" height="14" rx="3" fill="#fff" stroke="${INK}" stroke-width="1.5"/><rect x="232" y="124" width="26" height="14" rx="3" fill="#fff" stroke="${INK}" stroke-width="1.5"/><g transform="translate(40 166)"><rect x="-16" y="-4" width="32" height="10" fill="#9DBA6A" stroke="${INK}" stroke-width="1.5"/><circle cx="-8" cy="-6" r="4" fill="#F4C542"/><circle cx="0" cy="-7" r="4" fill="#fff"/><circle cx="8" cy="-6" r="4" fill="#E86F8C"/></g><g transform="translate(10 34)"><rect x="0" y="0" width="160" height="34" rx="14" fill="#fff" stroke="${INK}" stroke-width="1.5"/><path d="M94 34 l-6 14 l16 -14z" fill="#fff" stroke="${INK}" stroke-width="1.5"/><path d="M89 33 h16" stroke="#fff" stroke-width="3"/><text x="80" y="23" text-anchor="middle" font-family="Caveat, cursive" font-size="20" font-weight="700" fill="${INK}">Nasi goreng satu!</text></g>`+
+    person(106,140,.85,{top:"#6E8FB8",pose:"wave"})),
+  i:()=>scene("#F2DCC6",
+    `<rect x="40" y="138" width="240" height="12" rx="4" fill="#C89B6D" stroke="${INK}" stroke-width="2"/><path d="M60 150 V176 M260 150 V176" stroke="${INK}" stroke-width="3"/><g transform="translate(220 128)"><rect x="-10" y="-6" width="20" height="16" rx="4" fill="#fff" stroke="${INK}" stroke-width="1.5"/><path d="M10 -2 q8 2 0 9" fill="none" stroke="${INK}" stroke-width="1.5"/><path d="M-4 -12 q3 -5 0 -10 M3 -12 q3 -5 0 -10" stroke="#9A8C7E" stroke-width="1.5" fill="none"/></g>`+
+    person(118,104,.9,{top:"#FF851B",pose:"hold",hat:"chef",pigtails:true,extra:`<path d="M-12 22 Q0 34 12 22 Z" fill="#fff" stroke="${INK}" stroke-width="1.5"/>`})+
+    person(240,96,1.1,{top:"#8E9B7E",pose:"down",shades:true,noLegs:true})),
+  f:()=>scene("#D3E0EC",
+    `<rect x="14" y="98" width="12" height="78" fill="#C89B6D" stroke="${INK}" stroke-width="2"/><rect x="294" y="98" width="12" height="78" fill="#C89B6D" stroke="${INK}" stroke-width="2"/>`+
+    [["#FF851B",58],["#6FB3A0",104],["#E86F8C",150],["#F4C542",196],["#6E8FB8",242]].map(([c,x],i)=>person(x,140,.82,{top:c,pose:i%2?"up":"wave",pigtails:i===2||i===4,skin:["#E9BE96","#C68E62","#F2CDA9","#8D5A3B","#E9BE96"][i],hair:i===3?"#E2B95B":"#2A211B"})).join("")),
+  c:()=>scene("#CDE5E9",
+    `<rect x="18" y="118" width="284" height="58" rx="6" fill="#8FD3DE" stroke="${INK}" stroke-width="2"/><path d="M30 134 q10 -5 20 0 t20 0 M200 150 q10 -5 20 0 t20 0" stroke="#fff" stroke-width="2" fill="none"/><ellipse cx="96" cy="140" rx="34" ry="13" fill="#F28FB0" stroke="${INK}" stroke-width="2"/><ellipse cx="96" cy="138" rx="12" ry="4" fill="#8FD3DE" stroke="${INK}" stroke-width="1.5"/><path d="M186 146 q30 -14 64 0 q-10 10 -32 10 q-22 0 -32 -10z" fill="#7CBF6A" stroke="${INK}" stroke-width="2"/><circle cx="248" cy="140" r="5" fill="#7CBF6A" stroke="${INK}" stroke-width="1.5"/>`+
+    person(96,118,.85,{top:"#FF851B",pose:"up",pigtails:true,noLegs:true})+
+    person(214,112,1.05,{top:"#F4F1EA",pose:"down",shades:true,noLegs:true,hat:"sun"})),
+  e:()=>scene("#EDE2CD",
+    `<path d="M150 164 L280 150 L286 160 L156 176 Z" fill="#fff" stroke="${INK}" stroke-width="2"/><g transform="translate(80 150)"><path d="M-26 0 L26 0 L20 26 L-20 26 Z" fill="#D8B98C" stroke="${INK}" stroke-width="2"/><path d="M-20 0 Q0 -26 20 0" fill="none" stroke="${INK}" stroke-width="2"/><rect x="-16" y="-14" width="9" height="16" rx="2" fill="#FF851B" stroke="${INK}" stroke-width="1.5"/><rect x="-4" y="-18" width="9" height="20" rx="2" fill="#6FB3A0" stroke="${INK}" stroke-width="1.5"/><rect x="8" y="-12" width="9" height="14" rx="2" fill="#E86F8C" stroke="${INK}" stroke-width="1.5"/></g>`+
+    person(222,128,1.05,{top:"#8E9B7E",pose:"up",shades:true,noLegs:true})+
+    person(40,140,.8,{top:"#F4C542",pose:"wave",pigtails:true,extra:`<rect x="-12" y="24" width="10" height="5" rx="2" fill="#7CBF6A" stroke="${INK}" stroke-width="1"/>`}))
+};
+
+/* ---------- Bali snack clickers ---------- */
+const face = (x,y,s)=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="-7" cy="0" r="3.2" fill="${INK}"/><circle cx="7" cy="0" r="3.2" fill="${INK}"/><circle cx="-6" cy="-1.2" r="1.1" fill="#fff"/><circle cx="8" cy="-1.2" r="1.1" fill="#fff"/><circle cx="-12.5" cy="5" r="3" fill="#FF9DB5" opacity=".85"/><circle cx="12.5" cy="5" r="3" fill="#FF9DB5" opacity=".85"/><path d="M-4 4 q4 4 8 0" fill="none" stroke="${INK}" stroke-width="2" stroke-linecap="round"/></g>`;
+const shreds = pts => pts.map(([x,y,r])=>`<path d="M${x} ${y} l3 ${r}" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`).join("");
+const SNACKS = [
+  {id:"klepon", name:"Klepon", en:"Pandan rice balls with a melty palm-sugar middle", c:"#D6EFC4", hz:660, svg:`<svg viewBox="0 0 100 100"><path d="M10 74 L50 92 L90 74 L50 60 Z" fill="#4E9A49" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/><path d="M50 92 L50 60" stroke="#2F6E2D" stroke-width="1.5"/><circle cx="33" cy="66" r="15" fill="#4FB54A" stroke="${INK}" stroke-width="2.5"/><circle cx="67" cy="66" r="15" fill="#4FB54A" stroke="${INK}" stroke-width="2.5"/><circle cx="50" cy="44" r="20" fill="#5DC657" stroke="${INK}" stroke-width="2.5"/><path d="M66 70 q2 8 -1 12" stroke="#7A4A1E" stroke-width="3" stroke-linecap="round"/>${shreds([[38,28,-2],[54,26,2],[62,34,-3],[28,58,2],[40,62,-2],[72,60,2],[60,58,-2]])}${face(50,46,.95)}</svg>`},
+  {id:"pisang", name:"Pisang goreng", en:"Crispy fried banana", c:"#FFE7A8", hz:740, svg:`<svg viewBox="0 0 100 100"><path d="M10 70 C8 54 22 50 34 52 C52 54 70 40 78 22 C82 14 92 16 92 26 C92 54 66 84 34 86 C20 87 11 80 10 70Z" fill="#E59A2F" stroke="${INK}" stroke-width="2.5" stroke-linejoin="round"/><path d="M16 72 C30 76 60 70 82 32" stroke="#F6C766" stroke-width="5" fill="none" stroke-linecap="round" opacity=".8"/>${[[22,60],[40,58],[58,52],[70,40],[80,30],[28,78],[50,76],[68,64],[84,46]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2.4" fill="#B96F17"/>`).join("")}<path d="M86 18 l6 -8" stroke="#7A5A2B" stroke-width="4" stroke-linecap="round"/>${face(52,64,.9)}</svg>`},
+  {id:"kelapa", name:"Es kelapa", en:"Iced young coconut", c:"#C8E8F2", hz:830, svg:`<svg viewBox="0 0 100 100"><path d="M62 8 L54 40" stroke="${INK}" stroke-width="9" stroke-linecap="round"/><path d="M62 8 L54 40" stroke="#FF6B6B" stroke-width="5" stroke-linecap="round" stroke-dasharray="6 6"/><circle cx="50" cy="60" r="32" fill="#7CC36A" stroke="${INK}" stroke-width="3"/><ellipse cx="50" cy="38" rx="20" ry="8" fill="#FFFDF8" stroke="${INK}" stroke-width="3"/>${face(50,64,1.05)}</svg>`},
+  {id:"dadar", name:"Dadar gulung", en:"Pandan pancake rolled around sweet coconut", c:"#E6DAFF", hz:880, svg:`<svg viewBox="0 0 100 100"><path d="M24 34 L80 34 Q92 34 92 56 Q92 78 80 78 L24 78 Z" fill="#58B957" stroke="${INK}" stroke-width="2.5"/><path d="M40 34 Q36 56 40 78 M58 34 Q54 56 58 78 M74 34 Q70 56 74 78" stroke="#3E9A3E" stroke-width="1.6" fill="none"/><ellipse cx="24" cy="56" rx="14" ry="22" fill="#58B957" stroke="${INK}" stroke-width="2.5"/><path d="M24 40 C14 44 14 68 24 72 C32 70 32 46 24 46 C18 50 18 64 24 66 C28 64 28 54 24 54" fill="none" stroke="#8C5A2B" stroke-width="4" stroke-linecap="round"/>${face(62,54,.95)}</svg>`}
+];
+
+
+/* ---------- sound: every sound is pre-made as a small audio file in the browser, then played like normal audio (iPhones allow this) ---------- */
+const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+const SR = 22050;
+function encodeWav(buf){
+  const d=buf.getChannelData(0), n=d.length, ab=new ArrayBuffer(44+n*2), v=new DataView(ab);
+  const w=(o,s)=>{ for(let i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i)); };
+  w(0,"RIFF"); v.setUint32(4,36+n*2,true); w(8,"WAVE"); w(12,"fmt "); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,SR,true); v.setUint32(28,SR*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,"data"); v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++){ const s=Math.max(-1,Math.min(1,d[i])); v.setInt16(44+i*2, s<0?s*0x8000:s*0x7FFF, true); }
+  return URL.createObjectURL(new Blob([ab],{type:"audio/wav"}));
+}
+function renderSound(dur, build){
+  const ctx = new OAC(1, Math.ceil(SR*dur), SR);
+  build(ctx, ctx.destination);
+  return new Promise(res=>{ let done=false; const fin=b=>{ if(done) return; done=true; res({url:encodeWav(b), buf:b}); }; ctx.oncomplete=e=>fin(e.renderedBuffer); const p=ctx.startRendering(); if(p && p.then) p.then(fin).catch(()=>{}); });
+}
+function sEnv(g,t,a,peak,dec){ g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(peak,t+a); g.gain.exponentialRampToValueAtTime(0.0001,t+a+dec); }
+function sTone(ctx,dest,type,f,t,a,peak,dec,fEnd){ const o=ctx.createOscillator(), g=ctx.createGain(); o.type=type; o.frequency.setValueAtTime(f,t); if(fEnd) o.frequency.exponentialRampToValueAtTime(fEnd,t+a+dec); sEnv(g,t,a,peak,dec); o.connect(g); g.connect(dest); o.start(t); o.stop(t+a+dec+.05); }
+let NOISE=null;
+function sHiss(ctx,dest,t,a,peak,dec,ftype,ff,q){
+  const b=ctx.createBuffer(1,Math.ceil(SR*(a+dec+.05)),SR), d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  const s=ctx.createBufferSource(), f=ctx.createBiquadFilter(), g=ctx.createGain(); s.buffer=b; f.type=ftype; f.frequency.value=ff; f.Q.value=q||1; sEnv(g,t,a,peak,dec); s.connect(f); f.connect(g); g.connect(dest); s.start(t);
+}
+const PENTA=[523.25,587.33,659.25,783.99,880,1046.5,1174.66,1318.5];
+const COIN=[987.77,1318.51,1567.98,1975.53,2637.02];
+const SOUND_DEFS = [
+  ["klepon",.25,(c,d)=>{ sTone(c,d,"sine",1100,0,.004,.6,.09,170); sHiss(c,d,0,.002,.2,.03,"bandpass",2400,4); }],
+  ["pisang",.2,(c,d)=>{ sHiss(c,d,0,.001,.8,.025,"highpass",3200,1); sTone(c,d,"square",2100,0,.001,.1,.02); sHiss(c,d,.05,.001,.45,.02,"highpass",2600,1); }],
+  ["dadar",.4,(c,d)=>{ sHiss(c,d,0,.02,.45,.22,"lowpass",900,.7); sTone(c,d,"sine",130,0,.005,.35,.12,80); }],
+  ...PENTA.map((f,i)=>["kelapa"+i,.5,(c,d)=>{ sTone(c,d,"sine",f,0,.004,.55,.35); sTone(c,d,"sine",f*4,0,.002,.1,.08); }]),
+  ["ui",.3,(c,d)=>{ sTone(c,d,"square",1318.5,0,.002,.28,.05); sTone(c,d,"square",1760,.05,.002,.28,.16); }],
+  ["neg",.3,(c,d)=>{ sTone(c,d,"triangle",330,0,.004,.4,.14,220); }],
+  ["mid",.25,(c,d)=>{ sTone(c,d,"triangle",587,0,.004,.35,.1); sTone(c,d,"square",1174,0,.002,.05,.04); }],
+  ["pos",.4,(c,d)=>{ sTone(c,d,"square",987.77,0,.002,.32,.07); sTone(c,d,"square",1318.5,.07,.002,.32,.22); }],
+  ["top",.8,(c,d)=>{ COIN.forEach((f,i)=>sTone(c,d,"square",f,i*.06,.002,.3,.14)); sHiss(c,d,.2,.01,.12,.35,"highpass",7000,1); sTone(c,d,"sine",1975.53,.3,.005,.2,.4); }],
+  ["jackpot",1.7,(c,d)=>{ for(let i=0;i<14;i++){ const f=COIN[i%COIN.length]*(i>=5?(i>=10?2:1.5):1)/1.5; sTone(c,d,"square",f,i*.06,.002,.1,.1); } [523.25,659.25,783.99,1046.5].forEach(f=>sTone(c,d,"triangle",f,.9,.01,.18,.7)); sHiss(c,d,.85,.01,.15,.6,"highpass",6500,1); }],
+  ["music",0,null]
+];
+/* upbeat loop: 8 bars at 124 bpm, ukulele-ish plucks, bouncy bass, claps on 2 and 4, shaker, a little whistled tune */
+const BPM=124, EIGHTH=60/BPM/2, BARS=8;
+function buildMusic(c,d){
+  const out=c.createGain(); out.gain.value=1.1; out.connect(d);
+  const chords=[[261.63,329.63,392.0],[196.0,246.94,293.66],[220.0,261.63,329.63],[174.61,220.0,261.63]];
+  const bass=[130.81,98.0,110.0,87.31];
+  const tune=[[659.25,0,783.99,0,880,783.99,659.25,0],[587.33,0,783.99,0,987.77,0,880,783.99],[523.25,0,659.25,0,880,0,783.99,659.25],[523.25,587.33,659.25,0,523.25,0,0,0]];
+  const pat=[0,1,2,1,0,2,1,2];
+  for(let s=0;s<BARS*8;s++){
+    const bar=Math.floor(s/8)%4, e=s%8, t=s*EIGHTH, ch=chords[bar];
+    sTone(c,out,"triangle",ch[pat[e]]*(e%4===3?2:1),t,.003,.11,.22);
+    if(e===0||e===3||e===4) sTone(c,out,"sine",bass[bar]*(e===3?1.5:1),t,.01,.22,.3);
+    if(e===2||e===6) sHiss(c,out,t,.002,.22,.08,"bandpass",1600,1.2);
+    if(e%2===1) sHiss(c,out,t,.003,.06,.045,"highpass",6500,1);
+    const n = Math.floor(s/32)===1 ? tune[bar][e] : 0;
+    if(n) sTone(c,out,"sine",n,t,.01,.09,.28);
+  }
+}
+const SND = {};
+let soundsReady = false;
+function addSound(key,r,n){ const url=r.url; SND[key]={url, buf:r.buf, els:Array.from({length:n},()=>{ const a=new Audio(url); a.preload="auto"; return a; }), i:0, unlocked:false}; }
+const SOUND_READY = (async()=>{
+  if(!OAC) return;
+  for(const [key,dur,fn] of SOUND_DEFS){
+    try{
+      if(key==="music"){ const r=await renderSound(BARS*8*EIGHTH, buildMusic); addSound("music",r,1); SND.music.els[0].loop=true; }
+      else { const r=await renderSound(dur, fn); addSound(key,r, key.startsWith("kelapa")?2:3); }
+    }catch(e){}
+  }
+  soundsReady = true;
+  if(MUSIC.on && gestured) startMusicEl();
+})();
+let gestured=false, AC=null, useWA=false, musicSrc=null;
+/* Backup path: if this browser refuses to play the little audio files, play the same sounds through Web Audio instead. */
+function playWA(key){ const s=SND[key]; if(!AC || !s || !s.buf) return; try{ if(AC.state==="suspended") AC.resume(); const src=AC.createBufferSource(); src.buffer=s.buf; src.connect(AC.destination); src.start(); }catch(e){} }
+function switchToWA(){ if(useWA) return; useWA=true; const m=SND.music&&SND.music.els[0]; if(m){ try{m.pause();}catch(e){} } if(MUSIC.on && !speaking) startMusicEl(); }
+function unlockAll(){
+  gestured=true;
+  try{ if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==="suspended") AC.resume(); const b=AC.createBuffer(1,1,22050), src=AC.createBufferSource(); src.buffer=b; src.connect(AC.destination); src.start(0); }catch(e){}
+  try{ if(navigator.audioSession) navigator.audioSession.type="playback"; }catch(e){}
+  Object.entries(SND).forEach(([k,s])=>{
+    if(s.unlocked || k==="music") return; s.unlocked=true;
+    s.els.forEach(a=>{ a.muted=true; let p; try{ p=a.play(); }catch(e){} if(p && p.then) p.then(()=>{ a.pause(); a.currentTime=0; a.muted=false; }).catch(()=>{ a.muted=false; s.unlocked=false; }); else { try{a.pause();}catch(e){} a.muted=false; } });
+  });
+}
+function play(key){
+  const s=SND[key]; if(!s) return;
+  if(useWA){ playWA(key); return; }
+  const a=s.els[s.i]; s.i=(s.i+1)%s.els.length;
+  try{ a.muted=false; a.currentTime=0; const p=a.play(); if(p && p.catch) p.catch(err=>{ if(!err || err.name!=="NotAllowedError"){ switchToWA(); playWA(key); } }); }catch(e){ switchToWA(); playWA(key); }
+}
+function playSnack(id,n){ play(id==="kelapa" ? "kelapa"+((n-1)%PENTA.length) : id); }
+
+const MUSIC = { on:false };
+function startMusicEl(){
+  const s=SND.music; if(!s || speaking || clipPlaying) return;
+  if(useWA){ if(musicSrc || !AC) return; try{ const g=AC.createGain(); g.gain.value=.9; musicSrc=AC.createBufferSource(); musicSrc.buffer=s.buf; musicSrc.loop=true; musicSrc.connect(g); g.connect(AC.destination); musicSrc.start(); }catch(e){} return; }
+  const m=s.els[0]; try{ const p=m.play(); if(p && p.catch) p.catch(err=>{ if(!err || err.name!=="NotAllowedError") switchToWA(); }); }catch(e){ switchToWA(); }
+}
+function stopMusic(){ const m=SND.music && SND.music.els[0]; if(m){ try{m.pause();}catch(e){} } if(musicSrc){ try{musicSrc.stop();}catch(e){} musicSrc=null; } }
+function setMusic(on){
+  MUSIC.on = on; lsSet("esv_ffh_music", on);
+  [["musicBtn",on?"🎵":"🔇"],["musicBtn2",on?"🎵 Music on":"🔇 Music off"],["musicBtn3",on?"🎵 Music on":"🔇 Music off"]].forEach(([id,t])=>{ const b=$i(id); if(b){ b.setAttribute("aria-pressed", on); b.textContent=t; } });
+  if(on) startMusicEl(); else { stopClip(); stopMusic(); }
+}
+["musicBtn","musicBtn2","musicBtn3"].forEach(id=>$i(id).addEventListener("click",()=>{ setMusic(!MUSIC.on); if(typeof track==="function") track("music",{on:MUSIC.on}); }));
+document.addEventListener("touchend", unlockAll, {capture:true, passive:true});
+document.addEventListener("click", e=>{
+  unlockAll();
+  const m=SND.music && SND.music.els[0];
+  if(MUSIC.on && !speaking && !clipPlaying && (useWA ? !musicSrc : (m && m.paused))) startMusicEl();
+  const b=e.target.closest("button");
+  if(b && !b.closest("#answers") && !b.classList.contains("clk") && !b.disabled) play("ui");
+}, true);
+
+/* ---------- clip sounds: each animation's own sound, played once when its card appears; music pauses meanwhile ---------- */
+var clipPlaying=false, clipEl=null, clipDone=null;
+const _surl={};
+function clipURL(id){ if(_surl[id]) return _surl[id]; const b=typeof CLIPSND!=="undefined"&&CLIPSND[id]; if(!b) return MEDIA_BASE&&VIDEO[id] ? MEDIA_BASE+"s/"+id+".m4a" : null; try{ const bin=atob(b), u=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) u[i]=bin.charCodeAt(i); _surl[id]=URL.createObjectURL(new Blob([u],{type:"audio/mp4"})); }catch(e){ _surl[id]="data:audio/mp4;base64,"+b; } return _surl[id]; }
+function unlockClip(){ if(clipEl) return; clipEl=new Audio(); clipEl.preload="auto"; const u=SND.ui&&SND.ui.url; if(u){ clipEl.src=u; clipEl.muted=true; const p=clipEl.play(); if(p&&p.then) p.then(()=>{ clipEl.pause(); clipEl.muted=false; }).catch(()=>{ clipEl.muted=false; }); } clipEl.addEventListener("ended",endClip); clipEl.addEventListener("error",endClip); }
+function endClip(){ if(!clipPlaying) return; clipPlaying=false; const d=clipDone; clipDone=null; if(d) d(); else if(MUSIC.on && !speaking) startMusicEl(); }
+function stopClip(){ if(clipEl && clipPlaying){ try{ clipEl.pause(); }catch(e){} } clipPlaying=false; clipDone=null; }
+function playClip(id, then){
+  const url=clipURL(id);
+  if(!url || !clipEl || !MUSIC.on){ if(then) then(); return false; }
+  stopClip(); clipDone=then||null; clipPlaying=true; stopMusic();
+  try{ clipEl.muted=false; clipEl.src=url; clipEl.currentTime=0; const p=clipEl.play(); if(p&&p.catch) p.catch(()=>{ endClip(); }); }catch(e){ endClip(); }
+  return true;
+}
+document.addEventListener("touchend", unlockClip, {capture:true, passive:true});
+document.addEventListener("click", unlockClip, true);
+
+/* ---------- read aloud ---------- */
+let speaking=false, readOn=false, voice=null;
+function pickVoice(){
+  try{
+    const vs = speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
+    const score=v=>(/premium/i.test(v.name)?60:0)+(/enhanced|natural|neural/i.test(v.name)?40:0)+(/Ava|Zoe|Allison|Samantha|Karen|Serena|Moira|Tessa|Kate|Susan|Google UK English Female|Google US English/.test(v.name)?20:0)+(/en-(GB|AU|SG|IE)/i.test(v.lang)?5:0)-(/Albert|Bad News|Bells|Boing|Bubbles|Cellos|Deranged|Good News|Hysterical|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Bahh|Junior|Ralph|Fred|Kathy|Grandpa|Grandma|Rocko|Shelley|Flo|Eddy|Reed|Sandy/.test(v.name)?100:0);
+    voice = vs.sort((x,y)=>score(y)-score(x))[0] || null;
+  }catch(e){ voice=null; }
+}
+try{ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }catch(e){}
+const canSpeak = "speechSynthesis" in window;
+function say(text){
+  if(!canSpeak || !readOn || !text) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if(voice) u.voice = voice; u.rate=.96; u.pitch=1.0;
+    u.onstart=()=>{ speaking=true; stopMusic(); };
+    u.onend=u.onerror=()=>{ speaking=false; if(MUSIC.on) startMusicEl(); };
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function hush(){ try{ speechSynthesis.cancel(); }catch(e){} if(speaking){ speaking=false; if(MUSIC.on) startMusicEl(); } }
+function setRead(on){ readOn = on && canSpeak; $i("readBtn").setAttribute("aria-pressed", readOn); if(!readOn) hush(); }
+if(!canSpeak) $i("readBtn").hidden = true;
+$i("readBtn").addEventListener("click",()=>{ if(!readOn){ setRead(true); speakCard(); } else setRead(false); if(typeof track==="function") track("read_aloud",{on:readOn}); });
+
+/* ---------- utils ---------- */
+const byId = id => IDEAS.concat(EASE).find(c=>c.id===id) || BELIEFS.find(c=>c.id===id);
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const rid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function lsDel(k){try{localStorage.removeItem(k);}catch(e){}}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.hidden = s.id!==id); window.scrollTo(0,0); const el=$i(id); if(el) el.scrollTop=0; if(typeof track==="function") track("screen",{id});}
+function buzz(ms){try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
+const rand = a => a[Math.floor(Math.random()*a.length)];
+document.querySelectorAll("[data-back]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.back)));
+
+// A/B test (17 Oct 2026): do the "Part X of 4" intro pages help or hurt?
+// Each phone is put in one arm for good: "intro" sees the pages, "no-intro" skips them
+// (the answer buttons already carry their labels) and gets a one-line cue from Sunny instead.
+// Override with ?intro=1 or ?intro=0. The kids' first Sunny page stays in both arms.
+function pickVariant(){
+  const q=new URLSearchParams(location.search).get("intro");
+  if(q==="1"||q==="0") return q==="1"?"intro":"no-intro";
+  let v=lsGet("esv_ab_intro", null);
+  if(v!=="intro" && v!=="no-intro"){ v=Math.random()<0.5?"intro":"no-intro"; lsSet("esv_ab_intro", v); }
+  return v;
+}
+
+/* ---------- state ---------- */
+let S;
+function newState(){
+  S = {
+    playId: rid(), variant: pickVariant(), mode:null, ages:[], city:null,
+    startedAt: new Date().toISOString(), finishedAt:null, completed:false,
+    ideaIds:[], players:{}, beliefs:{}, ease:{}, notes:{}, phase:null,
+    deck:[], idx:0, history:[], undos:0, shownAt:0, combo:0, unlocked:{}, seenSection:{},
+    persona:null, secondary:[], agreement:null, shareCopied:false, imageSaved:false, lead:null
+  };
+}
+function checkpointSave(){ if(S && !S.completed) lsSet("esv_ffh_resume", S); }
+
+/* ---------- storage for the team (Notion is filled from here) ---------- */
+let db=null, user=null, uid=null, downloads=null, myRuns=null, saveChain=Promise.resolve();
+async function initCaps(){
+  if(!window.claude || !window.claude.use) return;
+  try{ user = await window.claude.use("user"); }catch(e){ user=null; }
+  try{ db = await window.claude.use("db"); }catch(e){ db=null; }
+  try{ downloads = await window.claude.use("downloads"); }catch(e){ downloads=null; }
+  try{ uid = user ? await user.id() : null; }catch(e){ uid=null; }
+}
+function runRecord(){
+  return { playId:S.playId, variant:S.variant, mode:S.mode, ages:S.ages, city:S.city, startedAt:S.startedAt, finishedAt:S.finishedAt, completed:S.completed,
+    ideaIds:S.ideaIds, players:S.players, beliefs:S.beliefs, ease:S.ease, picks:S.picks||{}, notes:S.notes, undos:S.undos, persona:S.persona, personaName:(PERSONAS[S.persona]||{}).name||"", secondary:S.secondary,
+    agreement:S.agreement, feedback:S.feedback||null, utm:UTM, villaClicked:S.villaClicked, shareCopied:S.shareCopied, imageSaved:S.imageSaved, lead:S.lead, music:MUSIC.on, readAloud:readOn };
+}
+function deviceId(){ let d=null; try{ d=localStorage.getItem("esv_ffh_device"); if(!d){ d=(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2)); localStorage.setItem("esv_ffh_device",d); } }catch(e){} return d||"anon"; }
+let hostSaveTmr=null;
+function saveHosted(){
+  clearTimeout(hostSaveTmr);
+  hostSaveTmr=setTimeout(()=>{
+    const body=JSON.stringify({device:deviceId(), run:runRecord()});
+    try{ fetch("/api/ffh/play",{method:"POST",headers:{"Content-Type":"application/json"},body,keepalive:body.length<60000}).catch(()=>{}); }catch(e){}
+  }, 600);
+}
+function save(){
+  checkpointSave();
+  if(!window.claude){ saveHosted(); return; }
+  if(!db || !uid) return;
+  const rec = JSON.parse(JSON.stringify(runRecord()));
+  saveChain = saveChain.then(async()=>{
+    const ref = db.doc("plays/"+uid);
+    if(myRuns===null){
+      try{ const snap = await ref.get(); myRuns = (snap.exists && snap.data().runs) ? JSON.parse(JSON.stringify(snap.data().runs)) : {}; }
+      catch(e){ myRuns = {}; }
+    }
+    myRuns[rec.playId]=rec;
+    try{ await ref.set({runs:myRuns, updatedAt:new Date().toISOString()}); }catch(e){}
+  });
+}
+
+
+/* ---------- tracking (only on our own site, never on claude.ai) ----------
+   Our own anonymous stats: every screen, card, answer time, and where people leave.
+   Meta pixel: only the grown-up milestones, never kids' answers. */
+const TRACK_ON = !window.claude;
+const TESTER = (()=>{ try{ const q=new URLSearchParams(location.search); if(q.get("tester")==="1") localStorage.setItem("esv_ffh_tester","1"); if(q.get("tester")==="0") localStorage.removeItem("esv_ffh_tester"); return localStorage.getItem("esv_ffh_tester")==="1"; }catch(e){ return false; } })();
+const INAPP = /Instagram|FBAN|FBAV|FB_IAB|Line\/|WhatsApp|TikTok|MicroMessenger/i.test(navigator.userAgent) ? (navigator.userAgent.match(/Instagram|FBAN|FBAV|FB_IAB|Line|WhatsApp|TikTok|MicroMessenger/i)||[""])[0] : "";
+const UTM = (()=>{ const keys=["utm_source","utm_medium","utm_campaign","utm_content","utm_term","fbclid","ref"];
+  let u={}; try{ u=JSON.parse(sessionStorage.getItem("esv_ffh_utm")||"null")||{}; }catch(e){}
+  try{ const q=new URLSearchParams(location.search); let any=false; const n={}; keys.forEach(k=>{ const v=q.get(k); if(v){ n[k]=v.slice(0,120); any=true; } }); if(any){ u=n; sessionStorage.setItem("esv_ffh_utm",JSON.stringify(u)); } }catch(e){}
+  try{ if(Object.keys(u).length && !localStorage.getItem("esv_ffh_first_touch")) localStorage.setItem("esv_ffh_first_touch",JSON.stringify(Object.assign({at:new Date().toISOString()},u))); }catch(e){}
+  return u; })();
+const SESSION = (()=>{ try{ let v=sessionStorage.getItem("esv_ffh_session"); if(!v){ v=Math.random().toString(36).slice(2)+Date.now().toString(36); sessionStorage.setItem("esv_ffh_session",v); } return v; }catch(e){ return "s"+Date.now(); } })();
+const T0 = Date.now();
+let evQ=[], evTmr=null;
+function cookie(n){ const m=document.cookie.match(new RegExp("(?:^|; )"+n+"=([^;]*)")); return m?decodeURIComponent(m[1]):""; }
+function flushEvents(useBeacon){
+  if(!TRACK_ON || !evQ.length) return;
+  const body=JSON.stringify({device:deviceId(), session:SESSION, utm:UTM, tester:TESTER, fbp:cookie("_fbp"), fbc:cookie("_fbc") || (UTM.fbclid ? "fb.1."+T0+"."+UTM.fbclid : ""), page:location.href.split("#")[0], events:evQ.splice(0,50)});
+  try{
+    if(useBeacon && navigator.sendBeacon){ navigator.sendBeacon("/api/ffh/events", new Blob([body],{type:"application/json"})); }
+    else fetch("/api/ffh/events",{method:"POST",headers:{"Content-Type":"application/json"},body,keepalive:true}).catch(()=>{});
+  }catch(e){}
+  if(evQ.length) flushEvents(useBeacon);
+}
+const META = {  // our event -> Meta pixel event (grown-up milestones only)
+  landing:["track","ViewContent",{content_name:"Future Family Holidays"}],
+  game_start:["trackCustom","GameStart"],
+  part_reached:["trackCustom","GameProgress"],
+  game_complete:["track","CompleteRegistration",{content_name:"Future Family Holidays"}],
+  lead:["track","Lead",{content_name:"3 nights prize entry"}],
+  card_shared:["trackCustom","CardShared"],
+  villa_click:["trackCustom","VillaClick"],
+};
+function track(name, props){
+  if(!TRACK_ON) return;
+  const st = (typeof S!=="undefined" && S) ? S : {};
+  const ev = {name, t:Date.now()-T0, at:new Date().toISOString(), playId:st.playId||null, phase:st.phase||null, idx:(typeof st.idx==="number"?st.idx:null), props:Object.assign({}, props||{}, {v: st.variant || (typeof pickVariant==="function" ? pickVariant() : ""), land: window.__LAND || ""})};
+  ev.eventId = (st.playId||SESSION)+"-"+name+(props&&props.part?"-"+props.part:"");
+  evQ.push(ev);
+  const m = META[name];
+  if(m && window.fbq && st.phase!=="kid" && !TESTER){ try{ const extra=Object.assign({}, m[2]||{}, name==="part_reached"?{part:props.part}:{}, name==="game_complete"?{persona:props.persona}:{}); fbq(m[0], m[1], extra, {eventID:ev.eventId}); }catch(e){} }
+  clearTimeout(evTmr);
+  if(m) flushEvents(false); else evTmr=setTimeout(()=>flushEvents(false), 4000);
+}
+document.addEventListener("visibilitychange",()=>{
+  if(!TRACK_ON) return;
+  if(document.visibilityState==="hidden"){
+    const scr=[...document.querySelectorAll(".screen")].find(x=>!x.hidden);
+    const st=(typeof S!=="undefined"&&S)?S:{}; const it=st.deck&&st.deck[st.idx];
+    track("leave",{screen:scr?scr.id:"", card:it?it.id:null, title:it?((itemData(it)||{}).t||""):"", cardKind:it?it.kind:null, secs:Math.round((Date.now()-T0)/1000)});
+    flushEvents(true);
+  } else track("return",{});
+});
+addEventListener("pagehide",()=>flushEvents(true));
+
+/* ---------- mascot: Sunny, the sun from the logo ---------- */
+function drawBuddy(){
+  $i("buddy").innerHTML = `
+  <g id="bd">
+    <ellipse cx="50" cy="95" rx="24" ry="3.5" fill="rgba(30,26,22,.15)"/>
+    <circle cx="50" cy="52" r="38" fill="#FF851B"/>
+    <g id="eyesN"><g class="blink"><ellipse cx="38" cy="46" rx="5.5" ry="7" fill="${INK}"/><ellipse cx="62" cy="46" rx="5.5" ry="7" fill="${INK}"/><circle cx="40" cy="43" r="2" fill="#fff"/><circle cx="64" cy="43" r="2" fill="#fff"/></g></g>
+    <g id="eyesH" style="display:none" fill="#C2503F"><path d="M38 44 c0 -5 -8 -5 -8 0 c0 4 8 8 8 9 c0 -1 8 -5 8 -9 c0 -5 -8 -5 -8 0z"/><path d="M62 44 c0 -5 -8 -5 -8 0 c0 4 8 8 8 9 c0 -1 8 -5 8 -9 c0 -5 -8 -5 -8 0z"/></g>
+    <g id="eyesS" style="display:none" fill="#FFF3B0" stroke="${INK}" stroke-width="1.2"><path d="M38 37 l2.6 6 6.4 .6 -4.9 4.2 1.5 6.3 -5.6 -3.4 -5.6 3.4 1.5 -6.3 -4.9 -4.2 6.4 -.6z"/><path d="M62 37 l2.6 6 6.4 .6 -4.9 4.2 1.5 6.3 -5.6 -3.4 -5.6 3.4 1.5 -6.3 -4.9 -4.2 6.4 -.6z"/></g>
+    <g id="eyesX" style="display:none" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"><path d="M32 47 h12"/><path d="M56 47 h12"/></g>
+    <circle cx="27" cy="58" r="5" fill="#FFC2A8" opacity=".9"/><circle cx="73" cy="58" r="5" fill="#FFC2A8" opacity=".9"/>
+    <path id="mouth" d="M43 62 q7 7 14 0" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+  </g>`;
+  const st = document.createElement("style");
+  st.textContent = `#bd{transform-origin:50px 90px;animation:bob 2.4s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-4px)}}
+  .blink{transform-origin:50px 46px;animation:blink 4s infinite}
+  @keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+  #bd.jump{animation:jump .5s cubic-bezier(.3,1.6,.6,1)}
+  @keyframes jump{40%{transform:translateY(-14px) rotate(-6deg)}}
+  #bd.shake{animation:shake .4s}
+  @keyframes shake{25%{transform:rotate(-8deg)}75%{transform:rotate(8deg)}}`;
+  document.head.appendChild(st);
+}
+let moodTimer=null;
+function mood(kind, text){
+  const eyes = {love:"eyesH", book:"eyesS", nope:"eyesX", maybe:"eyesN", idle:"eyesN"};
+  ["eyesN","eyesH","eyesS","eyesX"].forEach(id=>{ const el=$i(id); if(el) el.style.display = (id===(eyes[kind]||"eyesN"))?"":"none"; });
+  const m = $i("mouth");
+  if(m){ m.setAttribute("d", kind==="nope" ? "M43 67 q7 -6 14 0" : kind==="maybe" ? "M43 65 h14" : kind==="book" ? "M41 61 q9 12 18 0z" : "M43 62 q7 7 14 0"); m.setAttribute("fill", kind==="book" ? INK : "none"); }
+  const bd = $i("bd");
+  if(bd){ bd.classList.remove("jump","shake"); void bd.getBoundingClientRect(); if(kind==="book"||kind==="love") bd.classList.add("jump"); if(kind==="nope") bd.classList.add("shake"); }
+  if(text) $i("bubble").textContent = text;
+  clearTimeout(moodTimer);
+  if(kind!=="idle") moodTimer = setTimeout(()=>mood("idle"), 1100);
+}
+const LINES = {love:["Ooh yes","Love that","Same!!","Adding it"],book:["Booking it!!","Pack the bags","Now we're talking","Say less"],nope:["Nah","Skip","Not for us","Next!"],maybe:["Hmm…","Maybe","Could be fun","Thinking…"]};
+const KIDLINES = {love:["Yesss","Cool!","Me too!","Ooh"],book:["BEST EVER!!","Woohoo!","Yay yay yay","Let's go!"],nope:["Nope!","Boring","No way","Next!"],maybe:["Hmm…","Maybe…","Not sure"]};
+
+/* ---------- setup ---------- */
+function renderChips(){
+  if(typeof renderModes==="function") renderModes();
+  $i("ageChips").innerHTML = AGES.map(a=>`<button class="chip" type="button" aria-pressed="${S.ages.includes(a)}" data-age="${a}">${a}</button>`).join("");
+  $i("cityChips").innerHTML = CITIES.map(c=>`<button class="chip" type="button" aria-pressed="${S.city===c}" data-city="${c}">${c}</button>`).join("");
+}
+$i("ageChips").addEventListener("click",e=>{const b=e.target.closest("[data-age]");if(!b)return;const a=b.dataset.age;S.ages=S.ages.includes(a)?S.ages.filter(x=>x!==a):S.ages.concat(a);renderChips();});
+$i("cityChips").addEventListener("click",e=>{const b=e.target.closest("[data-city]");if(!b)return;S.city=S.city===b.dataset.city?null:b.dataset.city;renderChips();});
+$i("startBtn").addEventListener("click",()=>{
+  unlockAll();
+  const pref = lsGet("esv_ffh_music", null);
+  setMusic(pref===null ? true : pref);
+  lsDel("esv_ffh_resume"); newState(); S.mode="parent"; renderChips(); track("game_start",{}); show("s-who");
+});
+function renderModes(){ document.querySelectorAll("#s-who [data-mode]").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.mode===S.mode))); }
+$i("s-who").addEventListener("click",e=>{const b=e.target.closest("[data-mode]");if(!b)return;S.mode=b.dataset.mode;renderModes();if(document.documentElement.classList.contains("inapp"))setTimeout(()=>$i("agesNext").click(),300);});
+$i("agesNext").addEventListener("click",()=>{
+  if(!S.mode) S.mode="parent";
+  track("mode_chosen",{mode:S.mode});
+  const kidPlays = S.mode==="kid" || S.mode==="turns";
+  // 12 ideas: 2 from five themes and 1 from the other two, rotating; cards matched to the kids' ages where possible
+  const order = shuffle(GAME_WORLDS);
+  S.ideaIds = order.flatMap((w,i)=>{
+    const pool = IDEAS.filter(c=>c.w===w && !RETIRED.includes(c.id) && !(kidPlays && c.parentOnly));
+    const fit = shuffle(pool.filter(c=>fitsAges(c.id))), rest = shuffle(pool.filter(c=>!fitsAges(c.id)));
+    return fit.concat(rest).slice(0, i<5 ? 2 : 1).map(c=>c.id);
+  });
+  S.players = {}; S.beliefs = {}; S.ease = {}; S.picks = {}; S.notes = {}; S.unlocked = {}; S.seenSection = {};
+  track("ages_done",{ages:S.ages, city:S.city});
+  save();
+  startPhase(S.mode==="kid" ? "kid" : S.mode==="together" ? "together" : "parent");
+});
+
+/* ---------- deck: grouped by question type, so the buttons always mean the same thing within a part ---------- */
+function buildDeck(who){
+  const ideas = shuffle(S.ideaIds).map(id=>({kind:"idea",id}));
+  const picks = PICKS.map(p=>({kind:"pick",id:p.id}));
+  if(who==="kid") return ideas.concat(picks);
+  const beliefs = shuffle(BELIEFS.filter(b=>!RETIRED.includes(b.id))).slice(0,3).map(b=>({kind:"belief",id:b.id}));
+  // every "Sorted" card that suits the kids' ages (the answers decide what we prepare)
+  const ease = shuffle(EASE.filter(c=>fitsAges(c.id))).map(c=>({kind:"ease",id:c.id}));
+  return ideas.concat(picks, beliefs, ease);
+}
+function checkpoints(total){ return [Math.ceil(total/3), Math.ceil(total*2/3), total]; }
+const snackOffset = ()=> S.phase==="kid" && S.mode==="turns" ? 1 : 0;
+function renderProgressMarks(){
+  const total=S.deck.length, cps=checkpoints(total), prog=$i("prog");
+  prog.querySelectorAll(".cp").forEach(n=>n.remove());
+  cps.forEach((c,i)=>{ const sn=SNACKS[(i+snackOffset())%SNACKS.length]; const d=document.createElement("span"); d.className="cp"+(S.unlocked[S.phase+":"+i]?" got":""); d.style.left=(c/total*100)+"%"; d.innerHTML=sn.svg; d.title=sn.name; prog.appendChild(d); });
+}
+function startPhase(who){
+  S.phase = who; S.deck = buildDeck(who); S.idx = 0; S.history = []; S.combo=0;
+  prefetchMedia(S.deck);
+  track("round_start",{round:who});
+  S.players[who] = S.players[who] || {votes:{}, ms:{}};
+  setRead(who==="kid");
+  $i("cmt").placeholder = who==="kid" ? "Want to say something? Type it here" : "Comment on this one (optional)";
+  checkpointSave();
+  next();
+}
+const kindOf = it => (it.kind==="idea"||it.kind==="pick") ? (it.kind+(S.phase==="kid"?"Kid":"")) : it.kind;
+const SECTIONS = {
+  idea:{part:"Part 1 of 4", title:"Holiday ideas", text:"12 ideas, some sensible, some silly. Tell me what you'd actually want on a holiday with your kids.", say:""},
+  ideaKid:{part:"Your turn!", title:"Hi! I'm Sunny.", text:"I'll show you some holiday ideas. Tap a button to vote. Sunny reads every card out loud.", say:"Hi! I'm Sunny, the Endless Summer sun. I'm going to show you some holiday ideas. If you love it, tap the green button. If you don't like it, tap the pink button. If you're not sure, tap the middle one. And if it would be the best holiday ever, tap the big orange button at the bottom. Ready? Tap start!"},
+  pick:{part:"Part 2 of 4", title:"Pick your favourites", text:"Three quick ones: board games, dress-up and sports. Tap as many as you like, then Next.", say:""},
+  pickKid:{part:"Part 2", title:"Pick your favourites!", text:"Tap every picture you like. You can pick lots! Then tap Next.", say:"Now pick your favourites! Tap every picture you like. You can pick lots. When you're done, tap the big orange button."},
+  belief:{part:"Part 3 of 4", title:"Three quick ones about you", text:"Next are 3 things parents often say. Tell me if each one sounds like you. The buttons change a little for this part.", say:""},
+  ease:{part:"Part 4 of 4, last one", title:"The boring-but-brilliant stuff", text:"A few little things in a family villa. Would you expect it, would it make your day, or would you rather bring your own?", say:""}
+};
+function sectionLegend(k){
+  if(k==="pick"||k==="pickKid") return `<div class="legend" style="grid-template-columns:repeat(3,1fr)"><div class="ans mid">🚢<small>tap to pick</small></div><div class="ans mid" style="border-color:var(--sun-deep)">🧱 ✓<small>picked</small></div><div class="ans mid">🔴<small>tap to pick</small></div><div class="ans top" style="grid-column:1/-1">Next ›<small>when you're done</small></div></div>`;
+  const L=LBL[k];
+  const hint={idea:["Not for us","Could be fun","Want it","Would travel for it"],ideaKid:["Don't like it","Not sure","Like it","The best!"],belief:["","","",""],ease:["Irrelevant to us","Too personal","Should be there","Made my day"]}[k];
+  return `<div class="legend">${["neg","mid","pos"].map((p,i)=>`<div class="ans ${p}">${L[p]}${hint[i]?`<small>${hint[i]}</small>`:""}</div>`).join("")}<div class="ans top" style="grid-column:1/-1">${L.top}${hint[3]?`<small>${hint[3]}</small>`:""}</div></div>`;
+}
+function showSection(k){
+  const sec=SECTIONS[k];
+  $i("sectionBody").innerHTML = `<p class="label">${sec.part}</p><h2>${sec.title}</h2><p class="muted">${sec.text}</p>
+    <div class="keybox"><p class="fine">How the buttons work in this part</p>${sectionLegend(k)}</div>
+    <button class="btn" id="sectionGo" type="button">Start</button>
+    ${S.phase==="kid"&&canSpeak?`<button class="linkbtn" id="sectionSay" type="button">🔊 Hear it again</button>`:""}`;
+  show("s-section"); track("section_view",{part:k, round:S.phase});
+  if(sec.say && readOn) say(sec.say);
+  $i("sectionGo").addEventListener("click",()=>{ S.seenSection[S.phase+":"+k]=true; track("part_reached",{part:k, round:S.phase}); checkpointSave(); hush(); show("s-deck"); renderProgressMarks(); renderStack(); });
+  const again=$i("sectionSay"); if(again) again.addEventListener("click",()=>{ setRead(true); say(sec.say); });
+}
+function next(){
+  if(S.idx>=S.deck.length){ finishPhase(); return; }
+  const k = kindOf(S.deck[S.idx]);
+  if(!S.seenSection[S.phase+":"+k]){
+    if((S.variant==="no-intro" || S.quick) && k!=="ideaKid"){
+      const sec=SECTIONS[k];
+      S.seenSection[S.phase+":"+k]=true; track("part_reached",{part:k, round:S.phase, intro:false}); checkpointSave();
+      show("s-deck"); renderProgressMarks(); renderStack();
+      const cue={idea:"12 ideas", ideaKid:"", pick:"pick as many, then Next", pickKid:"Tap every one you like!", belief:"3 about you", ease:"the little things"}[k];
+      if(cue && !(S.quick && k==="idea")) $i("bubble").textContent = (sec.part.startsWith("Part")? sec.part.replace(", last one","")+": ":"") + cue;
+      return;
+    }
+    showSection(k); return;
+  }
+  show("s-deck"); renderProgressMarks(); renderStack();
+}
+function itemData(it){ return it.kind==="belief" ? BELIEFS.find(b=>b.id===it.id) : it.kind==="pick" ? PICKS.find(p=>p.id===it.id) : byId(it.id); }
+function noteKey(it){ return S.phase+":"+it.id; }
+function cardHTML(it, isKid){
+  const c = itemData(it);
+  if(it.kind==="pick"){
+    const sel=S.pickSel||[];
+    return `<div class="copy"><h2>${esc(isKid?c.k:c.t)}</h2><p>${esc(isKid?c.kd:c.s)}</p></div><div class="pickgrid">${c.opts.map(([id,em,name])=>`<button type="button" class="opt" data-opt="${id}" aria-pressed="${sel.includes(id)}"><span>${em}</span>${esc(name)}</button>`).join("")}</div>`;
+  }
+  if(it.kind==="belief") return `<div class="art" style="background-color:var(--w-q)"><span class="world">Just for grown-ups</span><span class="sticker">💭</span></div><div class="copy"><h2>${esc(c.t)}</h2></div>`;
+  const w = WORLDS[c.w];
+  const photo = PHOTO[c.id];
+  const art = VIDEO[c.id] ? `<video data-clip="1" class="illus vid" muted autoplay loop playsinline preload="auto" poster="${photo||ASSETS["p_"+c.id]||""}" data-e="${c.e}" data-id="${c.id}" src="${vidURL(c.id)}"></video>` : ILLUS[c.id] ? `<img class="illus" alt="" src="${photo}" draggable="false">` : photo ? `<img class="phbg" alt="" aria-hidden="true" src="${photo}" draggable="false"><img class="ph" data-id="${c.id}" alt="" src="${photo}" draggable="false" style="object-position:${POS[c.id]||"50% 50%"}">` : `<span class="sticker">${c.e}</span>`;
+  const label = it.kind==="ease" ? "Sorted" : w.name;
+  const title = isKid ? c.k : c.t, line = isKid ? c.kd : c.s;
+  const isPhoto = photo && !VIDEO[c.id] && !ILLUS[c.id];
+  return `<div class="art${isPhoto?" photo":""}" style="background-color:${VIDEO[c.id]&&CLIPBG[c.id]||ILLUS[c.id]||w.color}"><span class="world">${label}</span>${art}</div><div class="copy"><h2>${esc(title)}</h2><p>${esc(line)}</p></div>`;
+}
+function speakCard(){
+  const it=S.deck[S.idx]; if(!it || $i("s-deck").hidden) return;
+  const c=itemData(it);
+  if(it.kind==="pick") say(S.phase==="kid" ? `${c.k} ${c.kd}` : `${c.t} ${c.s}`);
+  else if(S.phase==="kid" && it.kind==="idea") say(`${c.k}. ${c.kd}`);
+  else if(it.kind==="belief") say(c.t);
+  else say(`${c.t}. ${c.s}`);
+}
+function renderStack(){
+  const stage = $i("stage"); stage.innerHTML="";
+  const total = S.deck.length;
+  $i("countTxt").textContent = Math.min(S.idx+1,total)+"/"+total;
+  $i("progFill").style.width = (S.idx/total*100)+"%";
+  $i("deckBack").hidden = !(S.idx===0 && !(S.phase==="kid" && S.mode==="turns"));
+  $i("undoBtn").disabled = S.history.length===0;
+  const isKid = S.phase==="kid";
+  const it = S.deck[S.idx];
+  if(it.kind==="pick"){ const prev=S.picks&&S.picks[S.phase]&&S.picks[S.phase][it.id]; S.pickSel = prev ? prev.slice() : []; }
+  const nx = S.deck[S.idx+1];
+  if(nx && nx.kind===it.kind && it.kind!=="pick"){ const b=document.createElement("div"); b.className="card back"+(nx.kind==="belief"?" belief":"")+(isKid?" kid":""); b.innerHTML=cardHTML(nx,isKid); stage.appendChild(b); }
+  const card = document.createElement("div");
+  card.className = "card enter"+(it.kind==="belief"?" belief":"")+(it.kind==="pick"?" pick":"")+(isKid?" kid":"");
+  card.innerHTML = cardHTML(it,isKid);
+  stage.appendChild(card);
+  track("card_view",{card:it.id, title:(itemData(it)||{}).t||"", kind:it.kind, n:S.idx+1, of:S.deck.length});
+  fitPhotos(stage); requestAnimationFrame(()=>fitPhotos(stage));
+  card.querySelectorAll("video.vid").forEach(v=>{
+    v.muted=true;
+    const sticker=el=>{ const sp=document.createElement("span"); sp.className="sticker"; sp.textContent=v.dataset.e||""; el.replaceWith(sp); };
+    const fallback=()=>{ const src=v.getAttribute("poster"); if(!src){ sticker(v); return; } const img=document.createElement("img"); img.className="illus"; img.alt=""; img.dataset.clip="1"; img.dataset.id=v.dataset.id; img.addEventListener("error",()=>sticker(img),{once:true}); img.addEventListener("load",()=>fitPhoto(img),{once:true}); img.src=src; v.replaceWith(img); };
+    v.querySelectorAll("source").forEach(x=>x.addEventListener("error",fallback,{once:true}));
+    v.addEventListener("error",function onErr(){ const id=v.dataset.id, b=typeof VIDDATA!=="undefined"&&VIDDATA[id]; if(b && v.src.startsWith("blob:")){ v.src="data:video/mp4;base64,"+b; const q=v.play(); if(q&&q.catch) q.catch(()=>{}); return; } v.removeEventListener("error",onErr); fallback(); });
+    const retry=()=>{ document.removeEventListener("touchend",retry,true); document.removeEventListener("click",retry,true); if(v.isConnected && v.paused){ const q=v.play(); if(q&&q.catch) q.catch(()=>{}); } };
+    const p=v.play(); if(p && p.catch) p.catch(()=>{ document.addEventListener("touchend",retry,true); document.addEventListener("click",retry,true); });
+  });
+  if(it.kind==="pick"){
+    card.querySelector(".pickgrid").addEventListener("click",e=>{
+      const o=e.target.closest(".opt"); if(!o) return;
+      const id=o.dataset.opt, on=!S.pickSel.includes(id);
+      S.pickSel = on ? S.pickSel.concat(id) : S.pickSel.filter(x=>x!==id);
+      o.setAttribute("aria-pressed", on); play(on?"pos":"mid"); buzz(8); updatePickBtn();
+    });
+    document.querySelectorAll("#answers .ans").forEach(b=>b.classList.toggle("gone", b.dataset.pos!=="top"));
+    updatePickBtn();
+  } else {
+    attachSwipe(card);
+    const L = LBL[kindOf(it)];
+    document.querySelectorAll("#answers .ans").forEach(b=>{ b.classList.remove("gone"); b.textContent = L[b.dataset.pos]; });
+  }
+  $i("cmt").value = S.notes[noteKey(it)] || "";
+  S.shownAt = performance.now();
+  stopClip();
+  if(VIDEO[it.id] && clipURL(it.id) && MUSIC.on) setTimeout(()=>playClip(it.id, ()=>{ if(readOn) speakCard(); else if(MUSIC.on) startMusicEl(); }), 200);
+  else if(readOn) setTimeout(speakCard, 250);
+  else if(MUSIC.on && !speaking) startMusicEl();
+}
+$i("answers").addEventListener("click",e=>{
+  const b=e.target.closest(".ans"); if(!b) return;
+  const p=b.dataset.pos, card=$("#stage .card:not(.back)");
+  if(b.classList.contains("gone")) return;
+  if(!busy) play(p);
+  flyOut(card, p==="pos"?1:p==="neg"?-1:0, p==="top"?-1:0, ()=>vote(p));
+});
+function attachSwipe(card){
+  let sx=0, sy=0, dx=0, dy=0, active=false;
+  card.addEventListener("pointerdown",e=>{ if(e.pointerType==="mouse"&&e.button!==0) return; active=true; sx=e.clientX; sy=e.clientY; dx=dy=0; card.classList.remove("snap","enter"); try{card.setPointerCapture(e.pointerId);}catch(_){} });
+  card.addEventListener("pointermove",e=>{ if(!active) return; dx=e.clientX-sx; dy=e.clientY-sy; card.style.transform=`translate(${dx}px,${Math.min(dy,0)}px) rotate(${dx/18}deg)`; });
+  const end=()=>{ if(!active) return; active=false;
+    let p=null; if(-dy>110 && -dy>Math.abs(dx)) p="top"; else if(dx>110) p="pos"; else if(dx<-110) p="neg";
+    if(p){ flyOut(card, p==="pos"?1:p==="neg"?-1:0, p==="top"?-1:0, ()=>vote(p)); return; }
+    card.classList.add("snap"); card.style.transform=""; };
+  card.addEventListener("pointerup",end); card.addEventListener("pointercancel",end);
+}
+let busy=false;
+function flyOut(card, dirX, dirY, done){
+  if(busy) return; busy=true;
+  if(!card){ busy=false; done(); return; }
+  card.style.pointerEvents="none"; card.classList.remove("snap","enter"); card.classList.add("fly");
+  const tx = dirX*window.innerWidth*1.2, ty = dirY ? dirY*window.innerHeight*.9 : 40;
+  card.style.transform = `translate(${tx}px,${ty}px) rotate(${dirX*20}deg)` + (dirX||dirY ? "" : " scale(.9)");
+  setTimeout(()=>{ busy=false; done(); }, 200);
+}
+function updatePickBtn(){ const n=(S.pickSel||[]).length; $("#answers .ans.top").textContent = n ? `Next ›  (${n} picked)` : "None of these, next ›"; }
+function captureComment(it){ const txt=$i("cmt").value.trim(), k=noteKey(it); if(txt) S.notes[k]=txt; else delete S.notes[k]; }
+function vote(p){
+  const it = S.deck[S.idx]; if(!it) return;
+  hush(); captureComment(it);
+  const who=S.phase;
+  let v;
+  if(it.kind==="pick"){ v=(S.pickSel||[]).slice(); S.picks=S.picks||{}; (S.picks[who]=S.picks[who]||{})[it.id]=v; }
+  else v = VAL[it.kind][p];
+  if(it.kind==="pick"){}
+  else if(it.kind==="idea"){ S.players[who].votes[it.id]=v; S.players[who].ms[it.id]=Math.round(performance.now()-S.shownAt); }
+  else if(it.kind==="belief") S.beliefs[it.id]=v; else S.ease[it.id]=v;
+  S.history.push({it, v});
+  track("card_answer",{card:it.id, title:(itemData(it)||{}).t||"", kind:it.kind, answer:Array.isArray(v)?v.length+" picked":v, ms:Math.round(performance.now()-S.shownAt), comment:!!S.notes[noteKey(it)]});
+  const kind = it.kind==="pick" ? "love" : {pos:"love",top:"book",neg:"nope",mid:"maybe"}[p];
+  if(kind==="love"||kind==="book") S.combo++; else S.combo=0;
+  const cb=$i("combo"); if(S.combo>=3){ cb.textContent="x"+S.combo+" combo"; cb.classList.add("on"); } else cb.classList.remove("on");
+  buzz(kind==="book"?[20,40,20]:12);
+  if(kind==="book") burst(14);
+  S.idx++; save();
+  const cps = checkpoints(S.deck.length), hit = cps.indexOf(S.idx), lines = S.phase==="kid" ? KIDLINES : LINES;
+  if(hit>=0 && !S.unlocked[S.phase+":"+hit]){
+    S.unlocked[S.phase+":"+hit]=true; checkpointSave();
+    mood("book", hit===2 ? "Done!!" : hit===0 ? "Level up!" : "Halfway hero!");
+    renderProgressMarks();
+    track("snack_unlocked",{level:hit+1});
+    levelUp(SNACKS[(hit+snackOffset())%SNACKS.length], hit, next);
+    return;
+  }
+  const nextCp = cps.find(c=>c>S.idx), left = nextCp ? nextCp-S.idx : 0;
+  const nextSn = nextCp ? SNACKS[(cps.indexOf(nextCp)+snackOffset())%SNACKS.length] : null;
+  mood(kind, nextSn && left<=2 ? `${left} more to ${nextSn.name}!` : rand(lines[kind]));
+  next();
+}
+function levelUp(sn, hit, after){
+  const msg = hit===2 ? "All done!" : hit===0 ? "Level 1 cleared" : "Level 2 cleared";
+  $i("levelBox").innerHTML = `${sn.svg}<p class="label">${msg}</p><h2>You unlocked ${sn.name}!</h2><p class="muted">${sn.en}. A clicker that does nothing. That's the point. It's waiting for you at the end.</p><button class="btn small" id="lvlGo" type="button">${hit===2?"See my results":"Keep going"}</button>`;
+  $i("levelUp").hidden=false; burst(40); play("jackpot");
+  if(readOn) say(`You unlocked ${sn.name}! ${hit===2?"Tap see my results.":"Tap keep going."}`);
+  $i("lvlGo").addEventListener("click",()=>{ hush(); $i("levelUp").hidden=true; after(); });
+}
+$i("undoBtn").addEventListener("click",()=>{
+  const last = S.history.pop(); if(!last) return;
+  const who=S.phase, it=last.it;
+  if(it.kind==="idea"){ delete S.players[who].votes[it.id]; delete S.players[who].ms[it.id]; }
+  else if(it.kind==="pick"){ if(S.picks&&S.picks[who]) delete S.picks[who][it.id]; }
+  else if(it.kind==="belief") delete S.beliefs[it.id]; else delete S.ease[it.id];
+  S.idx--; S.undos++; S.combo=0; $i("combo").classList.remove("on");
+  mood("maybe","Changed your mind?"); checkpointSave(); renderStack();
+});
+$i("deckBack").addEventListener("click",()=>{ hush(); show("s-who"); });
+$i("cmt").addEventListener("change",()=>{ const it=S.deck[S.idx]; if(it){ captureComment(it); save(); } });
+function finishPhase(){
+  save();
+  if(S.phase==="parent" && S.mode==="turns"){ openPass(); return; }
+  showResult();
+}
+
+/* ---------- snack clickers ---------- */
+const SND_LABEL = {klepon:"pop!", pisang:"click-clack", kelapa:"do re mi", dadar:"squish"};
+function clickerHTML(sn){
+  return `<button type="button" class="clk" data-snack="${sn.id}" style="--c:${sn.c}" aria-label="${sn.name} clicker"><span class="ring"></span><span class="base">${sn.svg}</span><span class="n" data-n>0</span><span class="nm">${sn.name}</span><span class="en">${sn.en}</span><span class="snd">♪ ${SND_LABEL[sn.id]}</span></button>`;
+}
+function wireClickers(root, onClick){
+  root.addEventListener("pointerdown",e=>{ const b=e.target.closest(".clk"); if(b) b.classList.add("down"); });
+  root.addEventListener("click",e=>{
+    const b=e.target.closest(".clk"); if(!b) return;
+    const sn=SNACKS.find(s=>s.id===b.dataset.snack);
+    const n=b.querySelector("[data-n]"); const c=(+n.textContent)+1; n.textContent=c;
+    playSnack(sn.id,c); buzz(8);
+    b.classList.add("down"); setTimeout(()=>b.classList.remove("down"),90);
+    const p=document.createElement("span"); p.className="plus"; p.textContent="+1"; b.appendChild(p); setTimeout(()=>p.remove(),620);
+    onClick && onClick(sn, c);
+  });
+  const up=()=>{ root.querySelectorAll(".clk.down").forEach(b=>b.classList.remove("down")); };
+  root.addEventListener("pointerup",up); root.addEventListener("pointerleave",up); root.addEventListener("pointercancel",up);
+}
+
+/* ---------- pass the phone ---------- */
+let gateCount=0;
+function openPass(){
+  gateCount=0;
+  $i("gateClickers").innerHTML = SNACKS.map(clickerHTML).join("");
+  $i("gateDots").innerHTML = Array.from({length:10},()=>"<i></i>").join("");
+  show("s-pass");
+}
+wireClickers($i("gateClickers"), ()=>{
+  gateCount++;
+  [...$i("gateDots").children].forEach((d,i)=>d.classList.toggle("on", i<gateCount));
+  if(gateCount===10){ burst(30); setTimeout(()=>startPhase("kid"),400); }
+});
+$i("gateSkip").addEventListener("click",()=>startPhase("kid"));
+
+/* ---------- scoring ---------- */
+function scoreWorlds(){
+  const sum={}, n={};
+  const add=(w,p,max)=>{ sum[w]=(sum[w]||0)+p; n[w]=(n[w]||0)+max; };
+  Object.values(S.players).forEach(pl=>Object.entries(pl.votes).forEach(([id,v])=>add(byId(id).w, POINTS[v], 3)));
+  Object.entries(S.beliefs).forEach(([id,v])=>add(BELIEFS.find(b=>b.id===id).w, BPOINTS[v], 2));
+  Object.entries(S.ease).forEach(([,v])=>add("e", EPOINTS[v], 3));
+  const out={}; Object.keys(sum).forEach(w=>out[w]= n[w] ? sum[w]/n[w] : 0);
+  return out;
+}
+function topPick(){
+  const tally={};
+  Object.values(S.players).forEach(pl=>Object.entries(pl.votes).forEach(([id,v])=>{ tally[id]=(tally[id]||0)+POINTS[v]+(v==="book"?.5:0); }));
+  const best = Object.entries(tally).sort((a,b)=>b[1]-a[1])[0];
+  return best && best[1]>=2 ? byId(best[0]).t : "";
+}
+function compareTurns(){
+  const p=S.players.parent, k=S.players.kid;
+  if(!p||!k) return null;
+  const pos = v => v==="love"||v==="book" ? "yes" : v==="nope" ? "no" : "meh";
+  const ids = Object.keys(k.votes).filter(id=>p.votes[id]);
+  if(!ids.length) return null;
+  let same=0; const diffs=[];
+  ids.forEach(id=>{ const a=pos(p.votes[id]), b=pos(k.votes[id]); if(a===b) same++; else if(a!=="meh"&&b!=="meh") diffs.push({id,pv:p.votes[id],kv:k.votes[id]}); });
+  return {pct:Math.round(same/ids.length*100), diff:diffs[0]||null};
+}
+
+/* ---------- the card families post (1080 × 1920 story) ---------- */
+function loadImg(src){ return new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=src; }); }
+function wrap(x, text, maxW){ const ws=text.split(" "), out=[]; let l=""; ws.forEach(w=>{ const t=l?l+" "+w:w; if(x.measureText(t).width>maxW && l){ out.push(l); l=w; } else l=t; }); if(l) out.push(l); return out; }
+function normContact(v){ v=(v||"").trim(); const m=v.match(/instagram\.com\/([A-Za-z0-9._]{2,30})/i); if(m) return "@"+m[1]; return v.replace(/^@+/,"@"); }
+function shareName(){ const c=normContact((S.lead&&S.lead.contact)||$i("contact")?.value||""); return /^@?[A-Za-z0-9._]{2,30}$/.test(c) && !c.includes("@",1) ? "@"+c.replace(/^@/,"") : "Our family"; }
+async function buildCard(){
+  try{ await Promise.all(["60px Belleza","700 40px Caveat","800 30px Nunito","500 30px Nunito"].map(f=>document.fonts.load(f))); }catch(e){}
+  const k=S.persona, P=PERSONAS[k], W=1080, H=1920, c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d");
+  x.fillStyle="#FAF6EE"; x.fillRect(0,0,W,H);
+  const lg=await loadImg(ASSETS.LOGO); const lw=440, lh=lw*lg.height/lg.width; x.drawImage(lg,(W-lw)/2,130,lw,lh);
+  let y=130+lh+110; x.textAlign="center"; x.fillStyle="#C45F0E"; x.font="800 30px Nunito"; x.fillText("OUR FAMILY HOLIDAY PERSONA",W/2,y);
+  y+=40;
+  x.font="86px Belleza"; const nameL=wrap(x,P.name,920);
+  x.font="500 34px Nunito"; const lineL=wrap(x,P.line,900).slice(0,4);
+  const tp=topPick(), chipsH=92+(tp?92:0);
+  const textH=110+nameL.length*94+6+lineL.length*46+44+chipsH;
+  const maxPh=940*210/320, room=1580-y-textH; const ph=Math.max(300,Math.min(maxPh,room)), pw=ph*320/210;
+  const pic=await loadImg("data:image/svg+xml;charset=utf-8,"+encodeURIComponent(DRAW[k]()));
+  x.save(); x.beginPath(); (x.roundRect?x.roundRect((W-pw)/2,y,pw,ph,36):x.rect((W-pw)/2,y,pw,ph)); x.clip(); x.drawImage(pic,(W-pw)/2,y,pw,ph); x.restore();
+  y+=ph+110;
+  x.fillStyle="#1E1A16"; x.font="86px Belleza"; nameL.forEach(l=>{x.fillText(l,W/2,y);y+=94;});
+  y+=6; x.font="500 34px Nunito"; x.fillStyle="#6B5F53"; lineL.forEach(l=>{x.fillText(l,W/2,y);y+=46;});
+  y+=44;
+  const chip=(t,cy)=>{ x.font="800 32px Nunito"; let tt=t; while(x.measureText(tt).width>880 && tt.length>8) tt=tt.slice(0,-2); if(tt!==t) tt=tt.trim()+"…"; const bw=x.measureText(tt).width+64; x.fillStyle="#FFFFFF"; x.strokeStyle="#1E1A16"; x.lineWidth=3; x.beginPath(); (x.roundRect?x.roundRect((W-bw)/2,cy-46,bw,68,34):x.rect((W-bw)/2,cy-46,bw,68)); x.fill(); x.stroke(); x.fillStyle="#1E1A16"; x.fillText(tt,W/2,cy); };
+  const d=new Date(S.finishedAt||Date.now()).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+  chip(shareName()+" · "+d, y); y+=92;
+  if(tp) chip("Our top pick: "+tp, y);
+  const bandY=1620; x.fillStyle="#FF851B"; x.fillRect(0,bandY,W,H-bandY);
+  x.fillStyle="#1E1A16"; x.font="700 62px Caveat"; x.fillText("Which one is your family?",W/2,bandY+95);
+  x.font="800 42px Nunito"; x.fillText("Play at @endless.summer.bali",W/2,bandY+168);
+  x.font="700 30px Nunito"; x.fillText("Win 3 nights at our villa in Uluwatu, Bali",W/2,bandY+228);
+  return c;
+}
+
+/* ---------- result ---------- */
+const TERMS = `<div class="terms" id="terms" hidden>
+  <b>Prize terms</b>
+  <p>Win 3 nights at Endless Summer Villa, Uluwatu. Play the game, post your family card on Instagram (story or feed) and tag @endless.summer.bali and the family you'd bring. Your account must be public so we can see it.</p>
+  <p>One winning family, chosen by my kids. Closes 15 Dec 2026. Announced on @endless.summer.bali and by DM within 2 weeks of closing.</p>
+  <p>Up to 8 guests, on dates we agree together within 12 months, outside June–September and Christmas/New Year. Villa only: flights, transfers, meals and activities aren't included. Not exchangeable for cash.</p>
+  <p>Privacy: we count anonymous visits and use the Meta pixel to see which of our ads bring families here. Your answers and your kids' answers are never sent to Meta. <button class="linkbtn" id="noAdsBtn" type="button" style="padding:0">Turn off ad tracking</button></p>
+</div>`;
+function showResult(){
+  hush(); setRead(false);
+  const sc = scoreWorlds();
+  const ranked = Object.entries(sc).sort((a,b)=>b[1]-a[1]).map(([w])=>w);
+  S.persona = ranked[0] || "c"; S.secondary = ranked.slice(1,3);
+  const cmp = compareTurns(); S.agreement = cmp ? cmp.pct : null;
+  S.completed = true; S.finishedAt = new Date().toISOString();
+  save(); lsDel("esv_ffh_resume");
+  track("game_complete",{persona:(PERSONAS[S.persona]||{}).name, mode:S.mode, secs:S.startedAt?Math.round((Date.now()-new Date(S.startedAt))/1000):null});
+  const P = PERSONAS[S.persona];
+  const places = BALI[S.persona] || [];
+  let vsHTML = "";
+  if(cmp){ const d=cmp.diff; vsHTML = `<div class="panel"><p class="label">Parent vs kid</p><div class="vs"><span class="big">${cmp.pct}%</span><span>agreed. ${cmp.pct>=70?"Suspiciously harmonious.":cmp.pct>=45?"Pretty normal family.":"Two very different holidays."}</span></div>${d?`<p>You said <b>${GROWN_WORD[d.pv]}</b> to “${esc(byId(d.id).t)}”. Your kid said <b>${KID_WORD[d.kv]}</b>.</p>`:""}</div>`; }
+  $i("resultBody").innerHTML = `
+    <div class="panel" style="gap:8px">
+      <p class="label">Your family holiday persona</p>
+      <h1 style="font-size:2rem">${P.name}</h1>
+      <p class="muted">${P.line}</p>
+    </div>
+    <div class="panel">
+      <img class="cardimg" id="cardImg" alt="Your family holiday persona card">
+      <label class="field" for="contact">Your Instagram handle or email<input id="contact" autocomplete="email" inputmode="email" placeholder="@yourhandle or you@email.com"></label>
+      <label class="check" for="consent"><input type="checkbox" id="consent"> <span>Enter me for the 3 free nights. <button class="linkbtn" id="termsBtn" type="button" style="padding:0">Prize terms</button></span></label>
+      ${TERMS}
+      <button class="btn dim" id="saveShare" type="button">Save my card and share</button>
+      <p class="fine" id="saveMsg" role="status">Post it, tag @endless.summer.bali and the family you'd bring.</p>
+    </div>
+    <div class="panel">
+      <p class="label">Your Uluwatu list</p>
+      <p class="muted">Places near the villa that ${P.name.replace(/^The /,"the ")} would love. Our own picks.</p>
+      <ul class="places">${places.map(([n,t])=>`<li><span class="pin" aria-hidden="true">📍</span><div><b>${esc(n)}</b><span>${esc(t)}</span></div></li>`).join("")}</ul>
+    </div>
+    ${vsHTML}
+    <div class="panel" style="text-align:center">
+      <p class="label">Your snack clickers</p>
+      <p class="hand">They do nothing. That's the point.</p>
+      <div class="clickers" id="resultClickers">${SNACKS.map(clickerHTML).join("")}</div>
+      <p class="fine">No sound? Check your phone isn't on silent.</p>
+    </div>
+    <a class="btn ghost" id="villaBtn" href="https://www.endlesssummerbali.com/?utm_source=ffh_game&utm_medium=game&utm_campaign=future_family_holidays" target="_blank" rel="noopener">See the villa we're building this for</a>
+    <button class="btn ghost" id="againBtn" type="button">Play again with someone else</button>`;
+  show("s-result"); burst(60);
+  let canvas=null, tmr=null;
+  const render = async()=>{ canvas = await buildCard(); $i("cardImg").src = canvas.toDataURL("image/png"); };
+  render();
+  const valid = v => { v=normContact(v); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || /^@?[A-Za-z0-9._]{2,30}$/.test(v); };
+  const check = ()=>{ const ok = valid($i("contact").value) && $i("consent").checked; $i("saveShare").classList.toggle("dim", !ok); };
+  $i("contact").addEventListener("input",()=>{ check(); clearTimeout(tmr); tmr=setTimeout(render,450); });
+  $i("consent").addEventListener("change",check);
+  const na=$i("noAdsBtn"); if(na) na.addEventListener("click",()=>{ try{ localStorage.setItem("esv_ffh_noads","1"); }catch(e){} try{ if(window.fbq) fbq("consent","revoke"); }catch(e){} na.textContent="Ad tracking is off"; na.disabled=true; });
+  $i("termsBtn").addEventListener("click",e=>{ e.preventDefault(); const t=$i("terms"); t.hidden=!t.hidden; });
+  $i("saveShare").addEventListener("click",async()=>{
+    const contact=normContact($i("contact").value), msg=$i("saveMsg");
+    if(!valid(contact)){ msg.textContent="Add your Instagram handle (like @yourname) or your email first."; $i("contact").focus(); return; }
+    if(!$i("consent").checked){ msg.textContent="Tick the box to enter for the 3 free nights, then tap again."; return; }
+    S.lead={contact, isEmail:contact.includes("@",1)&&/\./.test(contact), consent:true, at:new Date().toISOString()};
+    track("lead",{isEmail:S.lead.isEmail});
+    await render();
+    const caption=`We're ${P.name} 🌞 Just voted on what @endless.summer.bali builds next for families in Uluwatu. @_______ come with us?`;
+    try{ await navigator.clipboard.writeText(caption); S.shareCopied=true; }catch(e){}
+    const blob = await new Promise(r=>canvas.toBlob(r,"image/png"));
+    const slug = shareName().replace(/^@/,"").toLowerCase().replace(/[^a-z0-9]+/g,"-") || "our-family";
+    let saved=false, how="";
+    const fname=`endless-summer-${slug}.png`;
+    const isIOS=/iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+    const isMobile=isIOS || /Android/i.test(navigator.userAgent);
+    let hostedURL=null;
+    if(!window.claude){ try{ const r=await fetch("/api/ffh/card?id="+encodeURIComponent(S.playId),{method:"POST",headers:{"Content-Type":"image/png"},body:blob}); if(r.ok){ hostedURL=(await r.json()).url; S.cardURL=hostedURL; } }catch(e){} }
+    const holdToSave=()=>{ // long-press on an image gives "Save to Photos" on iPhone and "Download image" on Android
+      const o=document.createElement("div"); o.className="holdsave"; o.setAttribute("role","dialog");
+      const inAppTip = INAPP && hostedURL ? `<p style="font-size:.9rem">Not saving? Instagram's browser sometimes blocks it. <a href="${hostedURL}" target="_blank" rel="noopener"><b>Open your card here</b></a>, tap <b>•••</b> at the top right and choose <b>Open in external browser</b>, then press and hold the card to save it.</p>` : "";
+      o.innerHTML=`<b>${isIOS?"Press and hold the card, then tap Save to Photos":"Press and hold the card, then tap Download image"}</b><img alt="Your family card" src="${hostedURL||canvas.toDataURL("image/png")}"><p>${S.shareCopied?"The caption is copied too. ":""}Post the card and tag @endless.summer.bali and the family you'd bring.</p>${inAppTip}<button class="btn" type="button">Done</button>`;
+      o.querySelector("button").addEventListener("click",()=>o.remove()); document.body.appendChild(o); track("card_hold_save",{inApp:INAPP});
+    };
+    if(downloads){ try{ await downloads.save({filename:fname, data:blob}); saved=true; how="file"; }catch(e){} }
+    else if(!window.claude){
+      const file=new File([blob],fname,{type:"image/png"});
+      // share the image alone: adding text makes iPhone hide "Save Image" in the share sheet
+      const canFileShare = isMobile && !INAPP && navigator.canShare && navigator.canShare({files:[file]});
+      if(canFileShare){
+        try{ await navigator.share({files:[file]}); saved=true; how="share"; }
+        catch(e){
+          if(e && e.name==="AbortError"){ holdToSave(); saved=true; how="hold"; }
+          else { holdToSave(); saved=true; how="hold"; }
+        }
+      }
+      else if(isMobile){ holdToSave(); saved=true; how="hold"; }
+      else { try{ const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=fname; document.body.appendChild(a); a.click(); a.remove(); saved=true; how="file"; }catch(e){} }
+    }
+    S.imageSaved=saved; save();
+    track(saved?"card_shared":"card_share_failed",{copied:!!S.shareCopied, how});
+    msg.textContent = how==="share" ? "Tap Save Image to put it in your Photos. The caption is copied, so just paste it when you post."
+                    : how==="hold" ? "Saved your entry. Press and hold the card to put it in your Photos."
+                    : saved ? (S.shareCopied ? "Saved, and the caption is copied. Post it and tag the family you'd bring." : "Saved. Post it and tag @endless.summer.bali and the family you'd bring.")
+                            : "You're entered. Press and hold the card to save it, then post and tag us.";
+    burst(30);
+  });
+  wireClickers($i("resultClickers"), (sn,n)=>{ if(n%25===0) burst(20); });
+  $i("againBtn").addEventListener("click",()=>{ track("play_again",{}); newState(); S.mode="parent"; renderChips(); show("s-who"); });
+  $i("villaBtn").addEventListener("click",()=>{ S.villaClicked=true; save(); track("villa_click",{}); flushEvents(true); });
+}
+
+/* ---------- confetti ---------- */
+const cv=$i("confetti"), cx=cv.getContext("2d"); let parts=[], raf=null;
+function burst(n){
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  cv.width=innerWidth; cv.height=innerHeight;
+  const cols=["#FF851B","#8E9B7E","#B07A4C","#F1E4BC","#F3D7D2","#CDE5E9"];
+  for(let i=0;i<n;i++) parts.push({x:innerWidth/2,y:innerHeight*.35,vx:(Math.random()-.5)*12,vy:-Math.random()*11-3,r:Math.random()*6+4,c:cols[i%cols.length],a:Math.random()*6,life:70});
+  if(!raf) frame();
+}
+function frame(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=.4; p.a+=.2; p.life--; cx.save(); cx.translate(p.x,p.y); cx.rotate(p.a); cx.fillStyle=p.c; cx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2); cx.restore(); });
+  parts=parts.filter(p=>p.life>0);
+  raf = parts.length ? requestAnimationFrame(frame) : (cx.clearRect(0,0,cv.width,cv.height), null);
+}
+
+/* ---------- boot + resume ---------- */
+newState();
+drawBuddy();
+renderChips();
+initCaps();
+const saved = lsGet("esv_ffh_resume", null);
+if(saved && !saved.completed && saved.deck && saved.deck.length){
+  $i("resumeBox").hidden=false;
+  const done = Object.values(saved.players||{}).reduce((s,p)=>s+Object.keys(p.votes||{}).length,0) + Object.keys(saved.beliefs||{}).length + Object.keys(saved.ease||{}).length;
+  $i("resumeTxt").textContent = `You've done ${done} card${done===1?"":"s"} already.`;
+  $i("resumeBtn").addEventListener("click",()=>{ track("resume",{});
+    unlockAll(); S = saved;
+    const pref = lsGet("esv_ffh_music", null); setMusic(pref===null ? true : pref);
+    setRead(S.phase==="kid"); next();
+  });
+  $i("restartBtn").addEventListener("click",()=>{ lsDel("esv_ffh_resume"); $i("resumeBox").hidden=true; });
+}
+(()=>{ let loadMs=null; try{ const nav=performance.getEntriesByType("navigation")[0]; loadMs=Math.round(nav ? (nav.domContentLoadedEventEnd||nav.responseEnd) : performance.now()); }catch(e){ loadMs=Math.round(performance.now()); }
+  track("landing",{resumable:!$i("resumeBox").hidden, source:UTM.utm_source||UTM.ref||"", campaign:UTM.utm_campaign||"", loadMs, inApp:INAPP, mobile:/Mobi|Android|iPhone/i.test(navigator.userAgent)}); })();
+// A/B test (20 Oct 2026): ad clickers land straight on the first card ("quick") vs the welcome page ("classic").
+// Only for visitors from Meta ads, one group per phone for good. Override with ?land=quick or ?land=classic.
+(()=>{
+  const q=new URLSearchParams(location.search).get("land");
+  const fromAd = (UTM.utm_source||"")==="meta" || !!UTM.fbclid;
+  if(!q && !fromAd) return;
+  if(!$i("resumeBox").hidden) return;
+  let arm = q==="quick"||q==="classic" ? q : lsGet("esv_ab_land", null);
+  if(arm!=="quick" && arm!=="classic"){ arm = Math.random()<0.5 ? "quick" : "classic"; lsSet("esv_ab_land", arm); }
+  window.__LAND = arm;
+  if(arm!=="quick") return;
+  newState(); S.mode="parent"; S.quick=true; renderChips();
+  track("game_start",{quick:true});
+  const once=()=>{ document.removeEventListener("pointerdown",once,true); try{ unlockAll(); const pref=lsGet("esv_ffh_music", null); setMusic(pref===null ? true : pref); }catch(e){} };
+  document.addEventListener("pointerdown",once,true);
+  $i("agesNext").click();
+  $i("bubble").textContent="Your votes decide what we build!";
+})();
+if(TESTER) window.__ffh={buildCard,showResult,PERSONAS,get S(){ return S; }};
+})();
+</script>
+
+</body>
+</html>

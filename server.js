@@ -61,9 +61,11 @@ function ffhHtml(req, dir) {
   const base = (process.env.PUBLIC_URL || (req.protocol + "://" + req.get("host"))).replace(/\/$/, "");
   const pixel = PIXEL_ID ? `<script>(function(){try{if(localStorage.getItem('esv_ffh_noads'))return}catch(e){}!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${PIXEL_ID}');fbq('track','PageView');})();</script>` : "";
   if (TAPS_JS === null) { try { TAPS_JS = fs.readFileSync(path.join(__dirname, "taps.js"), "utf8"); } catch (e) { TAPS_JS = ""; } }
-  return pages[dir].split("{{BASE}}").join(base).replace("<!--PIXEL-->", pixel + (TAPS_JS ? "<script>" + TAPS_JS + "</script>" : ""));
+  return pages[dir].split("{{BASE}}").join(base).replace("<!--PIXEL-->", INAPP_JS + pixel + (TAPS_JS ? "<script>" + TAPS_JS + "</script>" : ""));
 }
 let TAPS_JS = null;
+// Marks Instagram / Facebook in-app browsers (or ?inapp=1 for testing) so the games can put the buttons at the top of the sheet
+const INAPP_JS = `<script>(function(){try{if(/Instagram|FBAN|FBAV|FB_IAB/i.test(navigator.userAgent)||/[?&]inapp=1/.test(location.search))document.documentElement.classList.add('inapp');}catch(e){}})();</script>`;
 // Which game is live at /play. Roll back by setting GAME_VERSION=v1 in Render (Environment) — no code change needed.
 //   v2 = "Plan Game" (4-day plan, live from 26 Oct 2026)   v1 = "Vote Game" (original persona game, 9–26 Oct 2026)
 const LIVE_GAME = () => (process.env.GAME_VERSION || "v2").toLowerCase() === "v1" ? FFH_DIR : FFH2_DIR;
@@ -75,7 +77,8 @@ app.get(["/play", "/play/", "/play/index.html"], (req, res) => {
 });
 // TEST LINK: /play/next shows the next version before it goes live (same tracking, but open it with ?tester=1)
 app.get(["/play/next", "/play/next/"], (req, res) => {
-  const dir = fs.existsSync(path.join(__dirname, "ffh2next", "index.html")) ? path.join(__dirname, "ffh2next") : FFH2_DIR;
+  let dir = fs.existsSync(path.join(__dirname, "ffh2next", "index.html")) ? path.join(__dirname, "ffh2next") : FFH2_DIR;
+  if (req.query.game === "v1") dir = fs.existsSync(path.join(__dirname, "ffhnext", "index.html")) ? path.join(__dirname, "ffhnext") : FFH_DIR;
   try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, dir).replace("<head>", '<head><meta name="robots" content="noindex">')); }
   catch (e) { console.error(e); res.status(500).send("Game not found"); }
 });
