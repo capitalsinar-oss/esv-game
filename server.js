@@ -66,7 +66,9 @@ function ffhHtml(req, dir) {
 //   v2 = "Plan Game" (4-day plan, live from 26 Oct 2026)   v1 = "Vote Game" (original persona game, 9–26 Oct 2026)
 const LIVE_GAME = () => (process.env.GAME_VERSION || "v2").toLowerCase() === "v1" ? FFH_DIR : FFH2_DIR;
 app.get(["/play", "/play/", "/play/index.html"], (req, res) => {
-  try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, LIVE_GAME())); }
+  // ?game=v1 = old Vote Game (A/B arm, from 28 Oct 2026); ?intro=1 = Plan Game with the opening page
+  const dir = req.query.game === "v1" ? FFH_DIR : LIVE_GAME();
+  try { res.set("Cache-Control", "no-cache").type("html").send(ffhHtml(req, dir)); }
   catch (e) { console.error(e); res.status(500).send("Game not found"); }
 });
 // TEST LINK: /play/next shows the next version before it goes live (same tracking, but open it with ?tester=1)
