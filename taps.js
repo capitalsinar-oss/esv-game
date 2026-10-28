@@ -28,7 +28,7 @@
   function push(name, props){
     var sc = screen();
     props.game = game(); props.scr = sc.s; props.h = sc.h; props.v = props.game === 'v1' ? 'v1' : 'v2';
-    props.intro = props.game === 'v2intro' ? 1 : 0;
+    props.intro = props.game === 'v2intro' ? 1 : 0; props.inapp = document.documentElement.classList.contains('inapp') ? 1 : 0;
     q.push({ name: name, t: Date.now() - T0, at: new Date().toISOString(), props: props });
     if (q.length >= 20) flush(false);
   }

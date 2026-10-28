@@ -393,8 +393,8 @@ function tapData(req) {
     if (!["tap", "swipe_try", "rage_tap"].includes(e.name)) continue;
     const p = e.props || {}; if (want && p.game !== want) continue;
     sessions.add(e.session);
-    const key = (p.game || "?") + " | " + (p.scr || "?") + " | " + (p.h || "");
-    const sc = screens[key] || (screens[key] = { game: p.game, screen: p.scr, heading: p.h, taps: 0, dead: 0, swipes: 0, rage: 0, deadOn: {}, hits: {}, points: [] });
+    const key = (p.game || "?") + " | " + (p.scr || "?") + " | " + (p.h || "") + " | " + (p.inapp ? 1 : 0);
+    const sc = screens[key] || (screens[key] = { game: p.game, screen: p.scr, heading: p.h, inapp: p.inapp ? 1 : 0, taps: 0, dead: 0, swipes: 0, rage: 0, deadOn: {}, hits: {}, points: [] });
     if (e.name === "tap") { sc.taps++; if (p.dead) { sc.dead++; sc.deadOn[p.on] = (sc.deadOn[p.on] || 0) + 1; } else sc.hits[p.hit] = (sc.hits[p.hit] || 0) + 1;
       if (sc.points.length < 400) sc.points.push([p.x, p.y, p.dead ? 1 : 0]); }
     if (e.name === "swipe_try") { sc.swipes++; if (sc.points.length < 400) sc.points.push([p.x, p.y, 2]); }
@@ -417,10 +417,10 @@ app.get("/play/heat", (req, res) => {
 Game <select id="g"><option value="">all</option><option value="v2">new game</option><option value="v2intro">new + opening page</option><option value="v1">old game</option></select> · testers and Meta review bots removed</p><div id="o" class="grid"></div>
 <script>const esc=s=>String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 let MAN=null;async function load(){if(!MAN){try{MAN=await (await fetch('/play/v2/heat/index.json',{cache:'no-store'})).json();}catch(e){MAN={};}}
-const pic=s=>{let m=MAN[s.game+'|'+s.heading];if(!m){const k=Object.keys(MAN).find(k=>k.split('|').slice(1).join('|')===s.heading);m=k&&MAN[k];}return m;};
+const pic=s=>{let m=s.inapp&&MAN[s.game+'|'+s.heading+'|inapp'];if(m)return m;m=MAN[s.game+'|'+s.heading];if(!m){const k=Object.keys(MAN).find(k=>k.split('|').slice(1).join('|')===s.heading);m=k&&MAN[k];}return m;};
 const g=document.getElementById('g').value;const d=await (await fetch('/api/ffh/taps.json'+(g?'?game='+g:''))).json();
 document.querySelector('.sub').firstChild.textContent='Every tap since '+d.since.replace('T',' ')+' UTC, by screen · '+d.sessions+' visitors. ';
-document.getElementById('o').innerHTML=d.screens.map(s=>'<div class="card"><b>'+({v2:'New game',v2intro:'New + opening page',v1:'Old game'}[s.game]||esc(s.game))+'</b><div class="k">'+esc(s.heading)+'</div>'+
+document.getElementById('o').innerHTML=d.screens.map(s=>'<div class="card"><b>'+({v2:'New game',v2intro:'New + opening page',v1:'Old game'}[s.game]||esc(s.game))+(s.inapp?' · inside Instagram/FB':'')+'</b><div class="k">'+esc(s.heading)+'</div>'+
 (m=>m?'<div class="ph" style="height:'+Math.round(260*m.h/m.w)+'px;background-image:url(/play/v2/heat/'+m.f+')">':'<div class="ph none">')(pic(s))+s.points.map(p=>'<i class="d" style="left:'+(p[0]*100)+'%;top:'+(p[1]*100)+'%;background:'+(p[2]==2?'#3B6FD8':p[2]?'#E0452E':'#2E9E6A')+'"></i>').join('')+'</div>'+
 '<div class="k"><b>'+s.taps+'</b> taps · <b>'+s.dead+'</b> dead · <b>'+s.swipes+'</b> swipe tries · <b>'+s.rage+'</b> rage taps</div>'+
 (s.deadOn.length?'<div class="k">Dead taps on: '+s.deadOn.map(x=>esc(x[0])+' ('+x[1]+')').join(', ')+'</div>':'')+'</div>').join('')||'<p>No taps yet.</p>';}
