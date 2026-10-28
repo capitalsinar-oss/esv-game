@@ -478,7 +478,7 @@ function playClip(id){ if(!CLIPS[id]||!clipEl||!musicOn||!gestured) return; clip
 function stopClip(){ if(clipEl&&clipOn){ try{clipEl.pause();}catch(e){} clipOn=false; if(musicOn) tryMusic(); } }
 document.addEventListener('click',unlockClip,true); document.addEventListener('touchend',unlockClip,{capture:true,passive:true});
 function kickVideos(){ document.querySelectorAll('video').forEach(v=>{ v.muted=true; v.defaultMuted=true; v.playsInline=true; v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline',''); const p=v.play(); if(p&&p.catch) p.catch(()=>{}); }); }
-function render(){ _render(); kickVideos(); if(gestured) nudge(); }
+function render(){ _render(); kickVideos(); if(gestured) nudge(); const rs=document.getElementById('restart'); if(rs) rs.style.visibility=(S.screen==='intro'||(S.screen==='card'&&S.i===0))?'hidden':''; }
 function _render(){
   if(S.screen==='intro') return introScreen();
   if(S.screen==='card') return cardScreen();
