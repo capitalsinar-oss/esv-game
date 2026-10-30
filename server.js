@@ -22,6 +22,15 @@ function requireAdmin(req, res, next) {
   next();
 }
 
+// Read-only reporting key (added 30 Oct 2026, Jayne's OK): opens ONLY the plays export
+// (export.csv / export.json) so Claude can rank cards and check contact details without the admin password.
+const REPORT_TOKEN = process.env.REPORT_TOKEN || "";
+function requireReader(req, res, next) {
+  const provided = req.query.token || req.headers["x-admin-token"] || req.headers["x-report-token"] || "";
+  if (REPORT_TOKEN && provided === REPORT_TOKEN) return next();
+  return requireAdmin(req, res, next);
+}
+
 // --- helper: turn rows into CSV safely (quotes, commas, newlines handled) ---
 function toCsv(headers, rows) {
   const esc = (v) => {
@@ -125,7 +134,7 @@ app.post("/api/ffh/play", (req, res) => {
 });
 
 // === TEAM: every play as a spreadsheet ===
-app.get("/api/ffh/export.csv", requireAdmin, (req, res) => {
+app.get("/api/ffh/export.csv", requireReader, (req, res) => {
   const plays = loadPlays();
   const j = v => (v === undefined || v === null) ? "" : (typeof v === "string" ? v : JSON.stringify(v));
   const rows = Object.entries(plays).map(([id, p]) => {
@@ -158,7 +167,7 @@ app.get("/api/ffh/draw.csv", requireAdmin, (req, res) => {
   res.setHeader("Content-Type", "text/csv"); res.setHeader("Content-Disposition", 'attachment; filename="ffh_draw_entries.csv"');
   res.send(toCsv(["entered","game","instagram_or_email","adults","kids_ages","market","travel_window","draw_answers","play_id"], rows));
 });
-app.get("/api/ffh/export.json", requireAdmin, (req, res) => res.json(loadPlays()));
+app.get("/api/ffh/export.json", requireReader, (req, res) => res.json(loadPlays()));
 
 // === GAME: anonymous behaviour events (screens, cards, time, where people leave) ===
 const FFH_EVENTS = path.join(DATA_DIR, "ffh-events.jsonl");
