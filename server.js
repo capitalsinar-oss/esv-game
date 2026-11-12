@@ -620,6 +620,23 @@ function logPlays(ids) {
   console.log("FFH_ROWS_START " + list.length + " " + new Date().toISOString());
   for (const id of list) console.log("FFH_ROW " + JSON.stringify(playRow(id, plays[id], testDevices)));
   console.log("FFH_ROWS_END " + list.length);
+  if (!ids) {
+    try {
+      const sum = require("./segments").summarise(plays);
+      console.log("FFH_SEG_START " + sum.families);
+      for (const s of sum.segments) console.log("FFH_SEG " + JSON.stringify(s));
+      const utm = {};
+      for (const p of Object.values(plays)) { const r = p.run || {}; if (!r.completed || (r.game || "v1") !== "v1") continue; const u = r.utm || {}; const k = [u.utm_source, u.utm_campaign, u.utm_content, u.ref, u.fbclid ? "fbclid" : ""].filter(Boolean).join("|") || "none"; utm[k] = (utm[k] || 0) + 1; }
+      console.log("FFH_UTM " + JSON.stringify(utm));
+      for (const id of list) {
+        const r = plays[id].run || {}; if ((r.game || "v1") !== "v1") continue;
+        const row = playRow(id, plays[id], testDevices); let y = 0, t = 0;
+        for (const pl of Object.values(r.players || {})) for (const v of Object.values((pl || {}).votes || {})) { t++; if (v === "love" || v === "book") y++; }
+        console.log("FFH_FAM " + JSON.stringify([id, row.t ? 1 : 0, String(row.at).slice(0, 10), row.mode || "", (row.ages || []).join(" "), row.city || "", require("./segments").source(r.utm), r.personaName || r.persona || "", y + "/" + t, row.villa ? 1 : 0, row.c ? 1 : 0]));
+      }
+      console.log("FFH_SEG_END");
+    } catch (e) { console.error("ffh segments failed:", e.message); }
+  }
 }
 
 app.listen(PORT, () => { console.log("Future Family Holidays running on port " + PORT); setTimeout(() => { try { logPlays(); } catch (e) { console.error("ffh log export failed:", e.message); } }, 3000); });
