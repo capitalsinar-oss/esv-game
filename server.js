@@ -604,25 +604,22 @@ const PORT = process.env.PORT || 3000;
 // Render connector (no browser, no admin token) and copy them into the Campaign Brain sheet.
 // Contact details are NOT printed: only whether a contact was left, plus a flag for Jayne's own test devices.
 const TEST_LEAD = /tisjayne|daysatjati/i;
-function playForLog(id, p) {
-  const r = Object.assign({}, p.run || {});
-  const lead = r.lead || {};
-  delete r.lead;
-  r.hasContact = !!lead.contact; r.isEmail = !!lead.isEmail; r.consent = !!lead.consent;
-  return { id, device: p.device, firstAt: p.firstAt, updatedAt: p.updatedAt, test: TEST_LEAD.test(String(lead.contact || "")), run: r };
+function shortVotes(o) { const out = {}; for (const [k, v] of Object.entries(o || {})) out[k] = String(v).charAt(0); return out; }
+function playRow(id, p, testDevices) {
+  const r = p.run || {}, lead = r.lead || {}, u = r.utm || {};
+  const v = {}; for (const [who, pl] of Object.entries(r.players || {})) v[who] = shortVotes((pl || {}).votes);
+  return { id, t: TEST_LEAD.test(String(lead.contact || "")) || testDevices.has(p.device), at: p.firstAt, fin: r.finishedAt || "", g: r.game || "v1",
+    mode: r.mode, ages: r.ages, city: r.city, src: u.utm_source || u.ref || "", cmp: u.utm_campaign || "", ad: u.utm_content || "", fb: !!u.fbclid,
+    per: r.persona, sec: r.secondary, v, b: r.beliefs, e: r.ease, k: r.picks, n: r.notes, c: !!lead.contact, villa: !!r.villaClicked };
 }
+// Prints one compact line per finished play (contact details left out). ids = only these plays; otherwise every finished play.
 function logPlays(ids) {
   const plays = loadPlays();
-  const list = (ids || Object.keys(plays)).filter(id => plays[id]);
   const testDevices = new Set(Object.values(plays).filter(p => TEST_LEAD.test(String(((p.run || {}).lead || {}).contact || ""))).map(p => p.device));
-  console.log("FFH_EXPORT_START " + list.length + " " + new Date().toISOString());
-  for (const id of list) {
-    const o = playForLog(id, plays[id]);
-    if (testDevices.has(o.device)) o.test = true;
-    const s = JSON.stringify(o), n = Math.ceil(s.length / 1500);
-    for (let i = 0; i < n; i++) console.log("FFH_EXPORT " + id + " " + (i + 1) + "/" + n + " " + s.slice(i * 1500, (i + 1) * 1500));
-  }
-  console.log("FFH_EXPORT_END " + list.length);
+  const list = (ids || Object.keys(plays)).filter(id => plays[id] && (plays[id].run || {}).completed);
+  console.log("FFH_ROWS_START " + list.length + " " + new Date().toISOString());
+  for (const id of list) console.log("FFH_ROW " + JSON.stringify(playRow(id, plays[id], testDevices)));
+  console.log("FFH_ROWS_END " + list.length);
 }
 
 app.listen(PORT, () => { console.log("Future Family Holidays running on port " + PORT); setTimeout(() => { try { logPlays(); } catch (e) { console.error("ffh log export failed:", e.message); } }, 3000); });
