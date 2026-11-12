@@ -129,6 +129,7 @@ app.post("/api/ffh/play", (req, res) => {
     const prev = plays[playId];
     plays[playId] = { device: String(device || "").slice(0, 80), firstAt: prev ? prev.firstAt : now, updatedAt: now, run };
     savePlays(plays);
+    if (run.completed && !(prev && prev.run && prev.run.completed)) { try { logPlays([playId]); } catch (e) {} }
     res.json({ ok: true });
   } catch (e) { console.error(e); res.status(500).json({ error: e.message }); }
 });
@@ -598,4 +599,30 @@ app.get("/", (req, res) => res.redirect(302, "/play" + (req.url.includes("?") ? 
 app.get("/healthz", (req, res) => res.send("ok"));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Future Family Holidays running on port " + PORT));
+
+// === TEAM: print every play to the Render log as compact JSON lines, so Claude can read them with the
+// Render connector (no browser, no admin token) and copy them into the Campaign Brain sheet.
+// Contact details are NOT printed: only whether a contact was left, plus a flag for Jayne's own test devices.
+const TEST_LEAD = /tisjayne|daysatjati/i;
+function playForLog(id, p) {
+  const r = Object.assign({}, p.run || {});
+  const lead = r.lead || {};
+  delete r.lead;
+  r.hasContact = !!lead.contact; r.isEmail = !!lead.isEmail; r.consent = !!lead.consent;
+  return { id, device: p.device, firstAt: p.firstAt, updatedAt: p.updatedAt, test: TEST_LEAD.test(String(lead.contact || "")), run: r };
+}
+function logPlays(ids) {
+  const plays = loadPlays();
+  const list = (ids || Object.keys(plays)).filter(id => plays[id]);
+  const testDevices = new Set(Object.values(plays).filter(p => TEST_LEAD.test(String(((p.run || {}).lead || {}).contact || ""))).map(p => p.device));
+  console.log("FFH_EXPORT_START " + list.length + " " + new Date().toISOString());
+  for (const id of list) {
+    const o = playForLog(id, plays[id]);
+    if (testDevices.has(o.device)) o.test = true;
+    const s = JSON.stringify(o), n = Math.ceil(s.length / 1500);
+    for (let i = 0; i < n; i++) console.log("FFH_EXPORT " + id + " " + (i + 1) + "/" + n + " " + s.slice(i * 1500, (i + 1) * 1500));
+  }
+  console.log("FFH_EXPORT_END " + list.length);
+}
+
+app.listen(PORT, () => { console.log("Future Family Holidays running on port " + PORT); setTimeout(() => { try { logPlays(); } catch (e) { console.error("ffh log export failed:", e.message); } }, 3000); });
